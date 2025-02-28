@@ -1,0 +1,6 @@
+@Ozgenc_ERP_HostAddress = http://localhost:7285
+
+GET {{Ozgenc_ERP_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

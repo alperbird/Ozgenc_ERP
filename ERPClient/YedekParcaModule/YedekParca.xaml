@@ -1,0 +1,143 @@
+﻿<Window x:Class="ERPClient.YedekParca"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ERPClient"
+        mc:Ignorable="d"
+        Title="YedekParca" Height="600" Width="1000" Background="#F4F4F4"
+        WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <!-- Üst Header -->
+            <RowDefinition Height="*"/>
+            <!-- İçerik -->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5000*" />
+            <!-- DataGrid -->
+            <ColumnDefinition Width="1.5*"/>
+            <!-- Sağ Taraf -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Üst Header -->
+        <DockPanel Grid.Row="0" Background="#003366" Height="50">
+            <TextBlock Text="Yedek Parça Yönetimi" Foreground="White" FontSize="20" FontWeight="Bold"
+                       VerticalAlignment="Center" Margin="20,0,0,0"/>
+            <Button Background="DarkRed" BorderThickness="0" Cursor="Hand" Click="btnClose_Click" HorizontalAlignment="Right" Margin="0,0,20,0" Width="100">
+                <Image Source="/Assets/exit.png" Width="75" Height="44"/>
+            </Button>
+        </DockPanel>
+
+        <!-- İçerik Bölümü -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="35*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <!--Arama Çubuğu-->
+
+            <!-- Yedek Parça Listesi (Sol Taraf) -->
+            <StackPanel Grid.Column="0" Margin="10">
+                <TextBlock Text="Yedek Parçalar" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                <!-- Arama Çubuğu -->
+                <Border Grid.Column="0" Margin="10" Padding="5" Background="White" BorderBrush="#CCC" BorderThickness="1" CornerRadius="15" Width="300">
+                    <DockPanel>
+                        <!-- Arama Metin Kutusu -->
+                        <TextBox Name="txtSearch" Width="250" Height="35" FontSize="14"
+                            BorderThickness="0" Background="Transparent"
+                            TextChanged="txtSearch_TextChanged"
+                            KeyDown="txtSearch_KeyDown"/>
+
+                        <!-- Arama Butonu -->
+                        <Button Width="40" Height="35" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="btnSearch_Click">
+                            <Image Source="/Assets/magnifying.png" Width="30" Height="30"/>
+                        </Button>
+                    </DockPanel>
+                </Border>
+                <ContentControl Name="MainContent" Grid.Row="1" Grid.Column="0"/>
+                <DataGrid Name="dgYedekParca" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Visibility="Visible"
+                          Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          BorderBrush="#003366" BorderThickness="1" RowHeight="50" SelectionChanged="dgYedekParca_SelectionChanged">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                        <DataGridTextColumn Header="Makineler" Binding="{Binding MakineAdi}" Width="150">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Sınıf" Binding="{Binding Sinif}" Width="150"/>
+                        <DataGridTextColumn Header="Parça Adı" Binding="{Binding ParcaAdi}" Width="*"/>
+                        <DataGridTextColumn Header="Fiyat (TL)" Binding="{Binding FiyatTL}" Width="100"/>
+                        <DataGridTextColumn Header="Fiyat (EUR)" Binding="{Binding FiyatEUR}" Width="100"/>
+
+                        <!-- Güncelle Butonu -->
+                        <DataGridTemplateColumn Header="Güncelle" Width="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button  Width="Auto" Height="Auto" Background="LightSkyBlue" Foreground="White"
+                    BorderThickness="0" Cursor="Hand" Click="btnUpdate_Click">
+                                        <Image Source="/Assets/update.png" Width="30" Height="30"/>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Sil" Width="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Width="Auto" Height="Auto" Background="#CC0000" Foreground="White"
+                    BorderThickness="0" Cursor="Hand" Click="btnDelete_Click">
+                                        <Image Source="/Assets/delete.png" Width="30" Height="30" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <!-- Sağ Taraf: Yeni Yedek Parça Ekleme -->
+            <Border Grid.Column="1" Padding="20" Margin="20" Background="#F4F4F4" BorderBrush="#CCC" BorderThickness="1" CornerRadius="10">
+                <StackPanel>
+                    <!-- Başlık ve İkon -->
+                    <Image Source="/Assets/spareparts.png" Height="120" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="Yeni Yedek Parça Ekle" FontSize="18" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,20"/>
+
+                    <!-- Makine Adı -->
+                    <TextBlock Text="Makine:" FontWeight="Bold"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="150" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                        <ListBox Name="lstMakine" Width="250" Margin="0,5,0,10"
+                     ItemsSource="{Binding Machines}"
+                     DisplayMemberPath="MakineAdi" 
+                     SelectedValuePath="Id" 
+                     SelectionMode="Multiple"/>
+                    </ScrollViewer>
+
+                    <!-- Sınıf -->
+                    <TextBlock Text="Sınıf:" FontWeight="Bold"/>
+                    <TextBox Name="txtSinif" Width="250" Margin="0,5,0,10"/>
+
+                    <!-- Parça Adı -->
+                    <TextBlock Text="Parça Adı:" FontWeight="Bold"/>
+                    <TextBox Name="txtParcaAdi" Width="250" Margin="0,5,0,10"/>
+
+                    <!-- Fiyat TL -->
+                    <TextBlock Text="Fiyat (TL):" FontWeight="Bold"/>
+                    <TextBox Name="txtTL" Width="250" Margin="0,5,0,10"/>
+
+                    <!-- Fiyat EUR -->
+                    <TextBlock Text="Fiyat (EUR):" FontWeight="Bold"/>
+                    <TextBox Name="txtEUR" Width="250" Margin="0,5,0,10"/>
+
+                    <!-- Ekle Butonu -->
+                    <Button Content="➕ Ekle" Width="150" Height="40" Background="#28A745" Foreground="White"
+                BorderThickness="0" Cursor="Hand" Margin="10,20,0,10" Click="btnAdd_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
