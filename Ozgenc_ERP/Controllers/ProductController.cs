@@ -3,6 +3,7 @@ using EntityLayer.DTOs;
 using EntityLayer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -69,54 +70,26 @@ namespace ApiLayer.Controllers
 
         [HttpPost]
         [Produces("application/json")]
-        public async Task<IActionResult> Create([FromBody] ProductDto productDto)
+        public async Task<IActionResult> Create([FromBody] ProductCreateDto productDto)
         {
             if (productDto == null)
-            {
                 return BadRequest(new { message = "Ürün bilgisi boş olamaz!" });
-            }
 
             if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);  // Model doğrulama hatalarını dön
-            }
+                return BadRequest(ModelState);
 
-            // DTO'yu Model'e çeviriyoruz
             var product = new Product
             {
                 Sinif = productDto.Sinif,
                 ParcaAdi = productDto.ParcaAdi,
                 FiyatTL = productDto.FiyatTL,
-                FiyatEUR = productDto.FiyatEUR,
-                ProductMachines = productDto.ProductMachines?.Select(pm => new ProductMachine
-                {
-                    MakineId = pm.MakineId,
-                    ProductId = pm.ProductId
-                }).ToList()
+                FiyatEUR = productDto.FiyatEUR
             };
 
-            await _service.AddProductAsync(product);
+            await _service.AddProductAsync(product, productDto.MakineIdleri);
 
-            // Eklenen ürünü geri dönmek için DTO formatına çevir
-            var createdProductDto = new ProductDto
-            {
-                Id = product.Id,
-                Sinif = product.Sinif,
-                ParcaAdi = product.ParcaAdi,
-                FiyatTL = product.FiyatTL,
-                FiyatEUR = product.FiyatEUR,
-                ProductMachines = product.ProductMachines?.Select(pm => new ProductMachineDto
-                {
-                    Id = pm.Id,
-                    ProductId = pm.ProductId,
-                    MakineId = pm.MakineId,
-                    Machine = new MachineDto { Id = pm.Machine?.Id ?? 0, MakineAdi = pm.Machine?.MakineAdi }
-                }).ToList()
-            };
-
-            return CreatedAtAction(nameof(Get), new { id = createdProductDto.Id }, createdProductDto);
+            return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
         }
-
 
         [HttpPut("{id}")]
         [Produces("application/json")]
@@ -132,18 +105,18 @@ namespace ApiLayer.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Produces("application/json")]
         public async Task<IActionResult> Delete(int id)
         {
-            var product = await _service.GetProductByIdAsync(id);
-            if (product == null)
+            var result = await _service.DeleteProductAsync(id);
+
+            if (!result)
             {
-                return NotFound(new { message = "Silinecek ürün bulunamadı!" });
+                return NotFound(new { message = "Ürün bulunamadı veya silinemedi!" });
             }
 
-            await _service.DeleteProductAsync(id);
-            return Ok(new { message = "Ürün başarıyla silindi!" });
+            return NoContent(); // 204 - Başarılı ama içerik yok
         }
+
     }
 
 }

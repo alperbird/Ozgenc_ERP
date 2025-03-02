@@ -116,85 +116,33 @@ namespace ERPClient
             }
         }
 
-
-
-
-
-
-
         // Yeni ürün ekleme
         private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // **1️⃣ Seçilen makineleri alıyoruz**
                 var selectedMachineIds = lstMakine.SelectedItems.Cast<Machine>().Select(m => m.Id).ToList();
 
-                if (!selectedMachineIds.Any())
-                {
-                    MessageBox.Show("Lütfen en az bir makine seçin!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                // **2️⃣ Yeni ürünü oluşturuyoruz**
-                var product = new Product
+                var productDto = new ProductCreateDto
                 {
                     Sinif = txtSinif.Text,
                     ParcaAdi = txtParcaAdi.Text,
                     FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
-                    FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0
+                    FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
+                    MakineIdleri = selectedMachineIds
                 };
 
-                // **3️⃣ Ürünü JSON'a çevirip API'ye POST atıyoruz**
-                string productJson = System.Text.Json.JsonSerializer.Serialize(product, new JsonSerializerOptions { WriteIndented = true });
-                MessageBox.Show($"Giden JSON:\n{System.Text.Json.JsonSerializer.Serialize(product, new JsonSerializerOptions { WriteIndented = true })}");
+                string jsonContent = System.Text.Json.JsonSerializer.Serialize(productDto, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
 
+                //MessageBox.Show($"Giden JSON:\n{jsonContent}");
 
-                var productContent = new StringContent(productJson, Encoding.UTF8, "application/json");
+                var productContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                 HttpResponseMessage productResponse = await _client.PostAsync(apiUrl, productContent);
+                productResponse.EnsureSuccessStatusCode();
 
-                if (!productResponse.IsSuccessStatusCode)
-                {
-                    MessageBox.Show($"Ürün eklenemedi! API Hatası: {productResponse.StatusCode}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                string productResponseBody = await productResponse.Content.ReadAsStringAsync();
-                var createdProduct = System.Text.Json.JsonSerializer.Deserialize<Product>(productResponseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (createdProduct == null || createdProduct.Id == 0)
-                {
-                    MessageBox.Show("Ürün kaydedilemedi, Many-to-Many eklenemedi!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                // **4️⃣ Many-to-Many ilişkiyi ekliyoruz**
-                var productMachines = selectedMachineIds
-                    .Select(id => new ProductMachine { MakineId = id, ProductId = createdProduct.Id })
-                    .ToList();
-
-                if (!productMachines.Any())
-                {
-                    MessageBox.Show("Seçili makineler kaydedilemedi!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                // **5️⃣ Many-to-Many ilişkisini API'ye PUT ile gönderiyoruz**
-                createdProduct.ProductMachines = productMachines;
-
-                string finalJson = System.Text.Json.JsonSerializer.Serialize(createdProduct, new JsonSerializerOptions { WriteIndented = true });
-                MessageBox.Show($"Güncellenmiş JSON:\n{finalJson}");
-
-                var finalContent = new StringContent(finalJson, Encoding.UTF8, "application/json");
-                HttpResponseMessage finalResponse = await _client.PutAsync($"{apiUrl}/{createdProduct.Id}", finalContent);
-
-                if (!finalResponse.IsSuccessStatusCode)
-                {
-                    MessageBox.Show($"Makine ilişkisi eklenemedi! API Hatası: {finalResponse.StatusCode}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                // **6️⃣ Başarı mesajı**
                 MessageBox.Show("Ürün ve makineler başarıyla kaydedildi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                 LoadTable();
                 CleanForm();
@@ -204,6 +152,7 @@ namespace ERPClient
                 MessageBox.Show($"Ekleme işlemi başarısız: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
 
 
@@ -224,41 +173,42 @@ namespace ERPClient
         // Ürün Silme
         private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (_selectedProduct == null)
+            if (sender is Button btn)
             {
-                MessageBox.Show("Lütfen silmek için bir ürün seç!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            MessageBoxResult result = MessageBox.Show(
-                $"{_selectedProduct.ParcaAdi} adlı ürünü silmek istediğine emin misin?",
-                "Silme Onayı",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning
-            );
-
-            if (result == MessageBoxResult.Yes)
-            {
-                try
+                if (btn.Tag is ProductDto selectedProductDto) // DTO geliyor, Product değil!
                 {
-                    HttpResponseMessage response = await _client.DeleteAsync($"{apiUrl}/{_selectedProduct.Id}");
+                    var result = MessageBox.Show(
+                        $"Ürün '{selectedProductDto.ParcaAdi}' ve ilişkili makineler silinecek! Emin misin?",
+                        "Silme Onayı",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
 
-                    if (response.IsSuccessStatusCode)
+                    if (result == MessageBoxResult.Yes)
                     {
-                        MessageBox.Show($"Ürün (ID: {_selectedProduct.Id}) başarıyla silindi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
-                        LoadTable();
-                    }
-                    else
-                    {
-                        MessageBox.Show($"Silme işlemi başarısız! {response.StatusCode}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                        HttpResponseMessage response = await _client.DeleteAsync($"{apiUrl}/{selectedProductDto.Id}");
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            MessageBox.Show("Ürün başarıyla silindi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                            LoadTable(); // Tabloyu güncelle
+                        }
+                        else
+                        {
+                            string errorMessage = await response.Content.ReadAsStringAsync();
+                            MessageBox.Show($"Silme başarısız: {errorMessage}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"Hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Tag içerisinde ProductDto nesnesi yok, DataGrid’e atanmış mı kontrol et!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
+
+
+
+
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             this.Close();

@@ -24,7 +24,12 @@ namespace BusinessLayer.Services
 
         public async Task<List<Product>> SearchProductsAsync(string query) => await _repository.SearchProductsAsync(query);
 
-        public async Task AddProductAsync(Product product) => await _repository.AddProduct(product);
+        public async Task AddProductAsync(Product product, List<int>? makineIdleri)
+        {
+            await _repository.AddProduct(product, makineIdleri); // Eksik olan parametreyi ekledik!
+        }
+
+
 
         public async Task UpdateProductAsync(Product product)
         {
@@ -52,15 +57,10 @@ namespace BusinessLayer.Services
             }
         }
 
-        public async Task DeleteProductAsync(int id)
+        public async Task<bool> DeleteProductAsync(int id)
         {
-            var product = await _repository.GetByIdAsync(id); // ✅ GetByIdAsync kullanıldı
-
-            if (product != null)
-            {
-                product.ProductMachines?.Clear(); // Many-to-Many temizle
-                await _repository.DeleteProduct(id);
-            }
+            return await _repository.DeleteProduct(id);
         }
     }
+    
 }

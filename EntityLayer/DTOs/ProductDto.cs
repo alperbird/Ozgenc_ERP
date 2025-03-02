@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace EntityLayer.DTOs
 {
     public class ProductDto
-    {
+    {// GET işlemimizi yapabilmek adına ProductDto sınıfımızı oluşturduk.
         public int Id { get; set; }
         public string? Sinif { get; set; }
         public string? ParcaAdi { get; set; }

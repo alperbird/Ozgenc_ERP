@@ -47,21 +47,24 @@ namespace DataAccessLayer.Repositories
         }
 
 
-        public async Task AddProduct(Product p)
+        public async Task AddProduct(Product p, List<int>? makineIdleri)
         {
             await _context.Products.AddAsync(p);
-            await _context.SaveChangesAsync(); //Önce Product eklenmeli ki ID oluşsun
+            await _context.SaveChangesAsync(); // Önce Product eklenmeli ki ID oluşsun!
 
-            if (p.ProductMachines != null && p.ProductMachines.Any())
+            if (makineIdleri != null && makineIdleri.Any())
             {
-                foreach (var pm in p.ProductMachines)
+                var productMachines = makineIdleri.Select(id => new ProductMachine
                 {
-                    pm.ProductId = p.Id; //Yeni eklenen Product'ın ID'sini atıyoruz
-                    _context.ProductMachines.Add(pm);
-                }
-                await _context.SaveChangesAsync(); //Many-to-Many tablosuna kaydet
+                    ProductId = p.Id,  // Yeni eklenen ürünün ID’sini al!
+                    MakineId = id
+                }).ToList();
+
+                await _context.ProductMachines.AddRangeAsync(productMachines);
+                await _context.SaveChangesAsync(); // Many-to-Many tablosuna kaydet!
             }
         }
+
 
 
 
@@ -92,18 +95,22 @@ namespace DataAccessLayer.Repositories
         }
 
 
-        public async Task DeleteProduct(int id)
+        public async Task<bool> DeleteProduct(int id)
         {
             var product = await _context.Products
-                .Include(p => p.ProductMachines)
+                .Include(p => p.ProductMachines) // Many-to-Many'yi çekiyoruz
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (product != null)
+            if (product == null)
             {
-                _context.ProductMachines.RemoveRange(product.ProductMachines); // Many-to-Many tablosunu temizle
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
+                return false; // Ürün yoksa hata ver
             }
+
+            _context.ProductMachines.RemoveRange(product.ProductMachines); // Bağlı makineleri sil
+            _context.Products.Remove(product); // Son olarak ürünü sil
+            await _context.SaveChangesAsync();
+            return true;
         }
+
     }
 }
