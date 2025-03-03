@@ -277,18 +277,32 @@ namespace ERPClient
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
-                var filteredProducts = System.Text.Json.JsonSerializer.Deserialize<List<Product>>(responseBody, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }) ?? new List<Product>();
+                //MessageBox.Show($"API Yanıtı:\n{responseBody}"); // Debug için
 
-                dgYedekParca.ItemsSource = filteredProducts; // DataGrid’i güncelle
+                // Önce JSON'u dinamik olarak deserialize edelim
+                var jsonDocument = JsonDocument.Parse(responseBody);
+                var root = jsonDocument.RootElement;
+
+                if (root.TryGetProperty("$values", out JsonElement valuesElement))
+                {
+                    var filteredProducts = System.Text.Json.JsonSerializer.Deserialize<List<Product>>(valuesElement.GetRawText(), new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    dgYedekParca.ItemsSource = filteredProducts;
+                }
+                else
+                {
+                    MessageBox.Show("Beklenen JSON formatı gelmedi!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Arama yapılırken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         #endregion
 
         // DataGrid Seçim Değiştiğinde
