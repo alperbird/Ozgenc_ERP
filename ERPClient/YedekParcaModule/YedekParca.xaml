@@ -59,7 +59,7 @@
                 <ContentControl Name="MainContent" Grid.Row="1" Grid.Column="0"/>
                 <DataGrid Name="dgYedekParca" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Visibility="Visible"
                           Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Single" SelectionUnit="FullRow"
-                          BorderBrush="#003366" BorderThickness="1" RowHeight="50" SelectionChanged="dgYedekParca_SelectionChanged">
+                          BorderBrush="#003366" BorderThickness="1" RowHeight="63" SelectionChanged="dgYedekParca_SelectionChanged">
                     
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
@@ -67,6 +67,8 @@
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                    <Setter Property="FontSize" Value="10"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
