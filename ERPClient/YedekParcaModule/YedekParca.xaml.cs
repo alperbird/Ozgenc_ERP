@@ -20,6 +20,7 @@ using ERPClient.YedekParcaModule;
 using System.IO;
 using EntityLayer.DTOs;
 using Newtonsoft.Json;
+using System.Collections.ObjectModel;
 
 namespace ERPClient
 {
@@ -34,6 +35,11 @@ namespace ERPClient
         private List<Product> tumParcalar = new List<Product>(); // Tüm verileri saklamak için
         private Product? _selectedProduct;
 
+        private ObservableCollection<Product> allProducts = new ObservableCollection<Product>(); // Tüm veriler burada tutulacak
+        private ObservableCollection<Product> paginatedProducts = new ObservableCollection<Product>(); // DataGrid'e bağlanacak veri
+        private int currentPage = 1;
+        private int pageSize = 10;
+
         public YedekParca()
         {
             InitializeComponent();
@@ -46,32 +52,48 @@ namespace ERPClient
         {
             try
             {
+                // Önce Yedek Parça listesini API'den çekiyoruz
                 HttpResponseMessage response = await _client.GetAsync(apiUrl);
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
+                List<ProductDto> yedekparcaDtos = JsonConvert.DeserializeObject<List<ProductDto>>(responseBody) ?? new List<ProductDto>();
 
-                // Newtonsoft.Json kullanarak deserialize et!
-                List<ProductDto> yedekparca = JsonConvert.DeserializeObject<List<ProductDto>>(responseBody) ?? new List<ProductDto>();
+                // Şimdi makine listesini API'den çekiyoruz
+                HttpResponseMessage machineResponse = await _client.GetAsync(apiUrlMachine);
+                machineResponse.EnsureSuccessStatusCode();
 
-                // WPF DataGrid'e bağla
-                dgYedekParca.ItemsSource = yedekparca;
+                string machineResponseBody = await machineResponse.Content.ReadAsStringAsync();
+                List<Machine> machines = JsonConvert.DeserializeObject<List<Machine>>(machineResponseBody) ?? new List<Machine>();
+
+                // DTO -> Model dönüşümü (Makine isimlerini de ekliyoruz)
+                allProducts = new ObservableCollection<Product>(yedekparcaDtos.Select(dto => new Product
+                {
+                    Id = dto.Id,
+                    Sinif = dto.Sinif,
+                    ParcaAdi = dto.ParcaAdi,
+                    FiyatTL = dto.FiyatTL,
+                    FiyatEUR = dto.FiyatEUR,
+                    ProductMachines = dto.ProductMachines.Select(pmDto => new ProductMachine
+                    {
+                        Id = pmDto.Id,
+                        ProductId = pmDto.ProductId,
+                        MakineId = pmDto.MakineId
+                    }).ToList(), // DTO'dan Model'e çeviriyoruz
+
+                    MakineAdi = string.Join(", ", dto.ProductMachines
+                        .Select(pm => machines.FirstOrDefault(m => m.Id == pm.MakineId)?.MakineAdi ?? "Bilinmeyen Makine")) // Makine isimlerini çekiyoruz
+                }));
+
+                UpdatePagination();
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
                 MessageBox.Show($"Veri yüklenirken hata oluştu: {ex.Message}");
             }
-            catch (System.Text.Json.JsonException ex)
-            {
-                MessageBox.Show($"JSON Çözümleme Hatası: {ex.Message}");
-            }
         }
 
-
-
-
-
-        // Makine listesini API’den çek
+        // Makine listeleme
         private async void LoadMachines()
         {
             try
@@ -153,9 +175,6 @@ namespace ERPClient
             }
         }
 
-
-
-
         // Ürün Güncelleme
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -170,22 +189,23 @@ namespace ERPClient
             }
         }
 
+
         // Ürün Silme
         private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn)
             {
-                if (btn.Tag is ProductDto selectedProductDto) // DTO geliyor, Product değil!
+                if (btn.Tag is Product selectedProduct) // DTO yerine Product modeli kullanıyoruz
                 {
                     var result = MessageBox.Show(
-                        $"Ürün '{selectedProductDto.ParcaAdi}' ve ilişkili makineler silinecek! Emin misin?",
+                        $"Ürün '{selectedProduct.ParcaAdi}' ve ilişkili makineler silinecek! Emin misin?",
                         "Silme Onayı",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Warning);
 
                     if (result == MessageBoxResult.Yes)
                     {
-                        HttpResponseMessage response = await _client.DeleteAsync($"{apiUrl}/{selectedProductDto.Id}");
+                        HttpResponseMessage response = await _client.DeleteAsync($"{apiUrl}/{selectedProduct.Id}");
 
                         if (response.IsSuccessStatusCode)
                         {
@@ -201,18 +221,18 @@ namespace ERPClient
                 }
                 else
                 {
-                    MessageBox.Show("Tag içerisinde ProductDto nesnesi yok, DataGrid’e atanmış mı kontrol et!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Tag içerisinde Product nesnesi yok, DataGrid’e atanmış mı kontrol et!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
 
 
-
-
+        //Programı kapat
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
+
         // UI Temizleme
         private void CleanForm()
         {
@@ -274,13 +294,20 @@ namespace ERPClient
         // DataGrid Seçim Değiştiğinde
         private void dgYedekParca_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (dgYedekParca.SelectedItem is Product selected)
+            if (dgYedekParca.SelectedItem is Product selectedProduct)
             {
-                _selectedProduct = selected;
-                Console.WriteLine($"Seçili Ürün: {_selectedProduct.ParcaAdi} (ID: {_selectedProduct.Id})");
+                _selectedProduct = allProducts.FirstOrDefault(p => p.Id == selectedProduct.Id);
+
+                if (_selectedProduct != null)
+                {
+                    Console.WriteLine($"Seçili Ürün: {_selectedProduct.ParcaAdi} (ID: {_selectedProduct.Id})");
+                }
             }
         }
 
+
+
+        //Selecbox içerisinde mouse kaydırma işlemi
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             var scrollViewer = sender as ScrollViewer;
@@ -290,6 +317,50 @@ namespace ERPClient
                 e.Handled = true;
             }
         }
+
+        #region Pagination İşlemleri
+
+        private void UpdatePagination()
+        {
+            if (allProducts.Count == 0) return; // Eğer hiç veri yoksa pagination çalıştırma
+
+            int totalItems = allProducts.Count;
+            int totalPages = (totalItems + pageSize - 1) / pageSize;
+            int skip = (currentPage - 1) * pageSize;
+
+            paginatedProducts.Clear();
+            foreach (var item in allProducts.Skip(skip).Take(pageSize))
+            {
+                paginatedProducts.Add(item);
+            }
+
+            dgYedekParca.ItemsSource = paginatedProducts;
+            txtPageInfo.Text = $"Sayfa {currentPage} / {totalPages}";
+
+            btnPrevious.IsEnabled = currentPage > 1;
+            btnNext.IsEnabled = currentPage < totalPages;
+        }
+
+
+        private void btnPrevious_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--;
+                UpdatePagination();
+            }
+        }
+
+        private void btnNext_Click(object sender, RoutedEventArgs e)
+        {
+            if ((currentPage * pageSize) < allProducts.Count)
+            {
+                currentPage++;
+                UpdatePagination();
+            }
+        }
+        #endregion
+
     }
 
 }

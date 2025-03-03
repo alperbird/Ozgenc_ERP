@@ -65,9 +65,6 @@ namespace DataAccessLayer.Repositories
             }
         }
 
-
-
-
         public async Task UpdateProduct(Product p)
         {
             var existingProduct = await _context.Products
@@ -76,24 +73,63 @@ namespace DataAccessLayer.Repositories
 
             if (existingProduct != null)
             {
-                // **Eski Many-to-Many ilişkilerini temizle**
-                _context.ProductMachines.RemoveRange(existingProduct.ProductMachines);
+                existingProduct.Sinif = p.Sinif;
+                existingProduct.ParcaAdi = p.ParcaAdi;
+                existingProduct.FiyatTL = p.FiyatTL;
+                existingProduct.FiyatEUR = p.FiyatEUR;
 
-                // **Yeni Many-to-Many ilişkilerini ekle**
+                // **ProductMachines Güncelle**
                 if (p.ProductMachines != null)
                 {
-                    foreach (var pm in p.ProductMachines)
-                    {
-                        pm.ProductId = p.Id;
-                        _context.ProductMachines.Add(pm);
-                    }
+                    // **Yeni ilişkileri oluştururken ProductId ekle!**
+                    existingProduct.ProductMachines = p.ProductMachines
+                        .Select(pm => new ProductMachine
+                        {
+                            Id = 0, // **Yeni kaydı IDENTITY olarak ekle**
+                            ProductId = p.Id, // **BURADA ProductId'yi ekliyoruz**
+                            MakineId = pm.MakineId
+                        })
+                        .ToList();
                 }
 
-                _context.Entry(existingProduct).CurrentValues.SetValues(p);
                 await _context.SaveChangesAsync();
             }
         }
 
+        #region ProductMachine İşlemleri (Create-Update)
+        public async Task ClearProductMachinesAsync(int productId)
+        {
+            var existingProductMachines = _context.ProductMachines.Where(pm => pm.ProductId == productId).ToList();
+            _context.ProductMachines.RemoveRange(existingProductMachines);
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task<Product> GetByIdWithProductMachinesAsync(int productId)
+        {
+            return await _context.Products
+                .Include(p => p.ProductMachines)
+                .ThenInclude(pm => pm.Machine) // **Makine nesnesini de getiriyoruz!**
+                .FirstOrDefaultAsync(p => p.Id == productId);
+        }
+
+
+        public void RemoveProductMachines(List<ProductMachine> machinesToRemove)
+        {
+            _context.ProductMachines.RemoveRange(machinesToRemove);
+        }
+
+        public async Task AddProductMachines(List<ProductMachine> machinesToAdd)
+        {
+            foreach (var pm in machinesToAdd)
+            {
+                pm.Id = 0; // **ID'leri sıfırla**
+                _context.ProductMachines.Add(pm);
+            }
+            await _context.SaveChangesAsync();
+        }
+
+        #endregion
 
         public async Task<bool> DeleteProduct(int id)
         {

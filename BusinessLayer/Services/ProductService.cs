@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Repositories;
+using EntityLayer.DTOs;
 using EntityLayer.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -29,33 +30,46 @@ namespace BusinessLayer.Services
             await _repository.AddProduct(product, makineIdleri); // Eksik olan parametreyi ekledik!
         }
 
-
-
-        public async Task UpdateProductAsync(Product product)
+        public async Task UpdateProductAsync(ProductUpdateDto productDto)
         {
-            var existingProduct = await _repository.GetByIdAsync(product.Id); // ✅ GetByIdAsync kullanıldı
+            var existingProduct = await _repository.GetByIdWithProductMachinesAsync(productDto.Id);
 
             if (existingProduct != null)
             {
-                existingProduct.Sinif = product.Sinif;
-                existingProduct.ParcaAdi = product.ParcaAdi;
-                existingProduct.FiyatTL = product.FiyatTL;
-                existingProduct.FiyatEUR = product.FiyatEUR;
+                existingProduct.Sinif = productDto.Sinif;
+                existingProduct.ParcaAdi = productDto.ParcaAdi;
+                existingProduct.FiyatTL = productDto.FiyatTL;
+                existingProduct.FiyatEUR = productDto.FiyatEUR;
 
-                // **Many-to-Many Güncelleme**
-                existingProduct.ProductMachines.Clear();
-                if (product.ProductMachines != null)
+                Console.WriteLine("[LOG] Güncelleme Başladı -> Ürün ID: " + productDto.Id);
+                Console.WriteLine("[LOG] Eski ilişkili makineler: " + string.Join(", ", existingProduct.ProductMachines.Select(pm => pm.MakineId)));
+
+                try
                 {
-                    foreach (var pm in product.ProductMachines)
-                    {
-                        pm.ProductId = product.Id;
-                        existingProduct.ProductMachines.Add(pm);
-                    }
+                    // **Burada hata olup olmadığını logla**
+                    Console.WriteLine("[LOG] Silinecek makineler: " + string.Join(", ", existingProduct.ProductMachines.Select(pm => pm.MakineId)));
+                    _repository.RemoveProductMachines(existingProduct.ProductMachines.ToList());
+                    Console.WriteLine("[LOG] Makineler başarıyla kaldırıldı.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("[HATA] Makineleri kaldırırken hata oluştu: " + ex.Message);
+                    throw;
                 }
 
+                var newProductMachines = productDto.MakineIdleri
+                    .Select(id => new ProductMachine { ProductId = productDto.Id, MakineId = id })
+                    .ToList();
+
+                await _repository.AddProductMachines(newProductMachines);
+                Console.WriteLine("[LOG] Yeni makineler eklendi: " + string.Join(", ", newProductMachines.Select(pm => pm.MakineId)));
+
                 await _repository.UpdateProduct(existingProduct);
+                Console.WriteLine("[LOG] Güncelleme başarıyla tamamlandı -> Ürün ID: " + productDto.Id);
             }
         }
+
+
 
         public async Task<bool> DeleteProductAsync(int id)
         {

@@ -29,13 +29,13 @@ namespace DataAccessLayer.Data
                 .HasOne(pm => pm.Product)
                 .WithMany(p => p.ProductMachines)
                 .HasForeignKey(pm => pm.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ProductMachine>()
                 .HasOne(pm => pm.Machine)
                 .WithMany(m => m.ProductMachines)
                 .HasForeignKey(pm => pm.MakineId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Product>()
                 .Property(p => p.FiyatTL)

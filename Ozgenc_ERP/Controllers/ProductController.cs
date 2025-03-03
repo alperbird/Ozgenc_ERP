@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ApiLayer.Controllers
@@ -93,16 +94,31 @@ namespace ApiLayer.Controllers
 
         [HttpPut("{id}")]
         [Produces("application/json")]
-        public async Task<IActionResult> Update(int id, [FromBody] Product product)
+        public async Task<IActionResult> Update(int id, [FromBody] ProductUpdateDto productDto)
         {
-            if (product == null || id != product.Id)
+            if (productDto == null || id != productDto.Id)
             {
                 return BadRequest(new { message = "Güncellenecek ürün geçersiz!" });
             }
 
-            await _service.UpdateProductAsync(product);
-            return Ok(new { message = "Ürün başarıyla güncellendi!" });
+            try
+            {
+                await _service.UpdateProductAsync(productDto);
+
+                return Ok(new
+                {
+                    message = "Ürün başarıyla güncellendi!",
+                    updatedProduct = productDto
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Güncelleme sırasında hata oluştu!", error = ex.Message });
+            }
         }
+
+
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

@@ -91,13 +91,13 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("EntityLayer.Entities.Machine", "Machine")
                         .WithMany("ProductMachines")
                         .HasForeignKey("MakineId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("EntityLayer.Entities.Product", "Product")
                         .WithMany("ProductMachines")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Machine");

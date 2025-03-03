@@ -10,5 +10,7 @@ namespace EntityLayer.DTOs
     {
         public int Id { get; set; }
         public string? MakineAdi { get; set; }
+
+
     }
 }

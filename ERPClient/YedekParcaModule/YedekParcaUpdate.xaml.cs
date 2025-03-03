@@ -1,4 +1,5 @@
-﻿using ERPClient.Model;
+﻿using EntityLayer.DTOs;
+using ERPClient.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,18 +27,18 @@ namespace ERPClient.YedekParcaModule
         private Product _selectedProduct;
         private readonly HttpClient _client;
         private readonly string apiUrl = "http://192.168.5.68:5001/api/Product";
-        private readonly string apiMachineUrl = "http://192.168.5.68:5001/api/Machine"; // Makine listesi için API
+        private readonly string apiMachineUrl = "http://192.168.5.68:5001/api/Machine";
 
         public YedekParcaUpdate(Product product, HttpClient client)
         {
             _selectedProduct = product;
             _client = client;
             InitializeComponent();
-            LoadMachines(); // Makineleri yükle
+            LoadMachines();
             LoadProductData(); // Seçili ürünü yükle
         }
 
-        // ✅ Makine listesini API'den çek
+        //Makine listele
         private async void LoadMachines()
         {
             try
@@ -57,10 +58,10 @@ namespace ERPClient.YedekParcaModule
                 // 📌 **Seçili makineleri işaretle**
                 foreach (var machine in machines)
                 {
-                    var selectedMachineIds = _selectedProduct.ProductMachines.Select(pm => pm.MakineId).ToList(); // Many-to-Many kullan
+                    var selectedMachineIds = _selectedProduct.ProductMachines.Select(pm => pm.MakineId).ToList(); 
                     if (selectedMachineIds.Contains(machine.Id))
                     {
-                        lstMakine.SelectedItems.Add(machine); // Çoklu seçim yapıyoruz
+                        lstMakine.SelectedItems.Add(machine);
                     }
                 }
             }
@@ -84,57 +85,66 @@ namespace ERPClient.YedekParcaModule
         {
             try
             {
-                //Çoklu makine seçimi al
                 var selectedMachineIds = lstMakine.SelectedItems.Cast<Machine>().Select(m => m.Id).ToList();
 
-                if (selectedMachineIds.Count == 0)
+                var updatedProduct = new ProductUpdateDto
                 {
-                    MessageBox.Show("Lütfen en az bir makine seçin!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
+                    Id = _selectedProduct.Id,
+                    Sinif = txtSinif.Text,
+                    ParcaAdi = txtParcaAdi.Text,
+                    FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
+                    FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
+                    MakineIdleri = selectedMachineIds
+                };
 
-                _selectedProduct.ProductMachines = selectedMachineIds
-                    .Select(id => new ProductMachine { MakineId = id, ProductId = _selectedProduct.Id })
-                    .ToList();
+                string jsonContent = System.Text.Json.JsonSerializer.Serialize(updatedProduct, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
 
-                _selectedProduct.Sinif = txtSinif.Text;
-                _selectedProduct.ParcaAdi = txtParcaAdi.Text;
-                _selectedProduct.FiyatTL = decimal.Parse(txtTL.Text);
-                _selectedProduct.FiyatEUR = decimal.Parse(txtEUR.Text);
+                MessageBox.Show($"Giden JSON:\n{jsonContent}", "Güncelleme JSON", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                var jsonContent = new StringContent(JsonSerializer.Serialize(_selectedProduct), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PutAsync($"{apiUrl}/{_selectedProduct.Id}", jsonContent);
+                var productContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                HttpResponseMessage productResponse = await _client.PutAsync($"{apiUrl}/{_selectedProduct.Id}", productContent);
 
-                if (response.IsSuccessStatusCode)
+                string responseContent = await productResponse.Content.ReadAsStringAsync();
+
+                if (productResponse.IsSuccessStatusCode)
                 {
                     MessageBox.Show("Ürün başarıyla güncellendi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    // **Ana sayfadaki tabloyu yenile**
                     var mainWindow = Application.Current.Windows.OfType<YedekParca>().FirstOrDefault();
                     if (mainWindow != null)
                     {
-                        mainWindow.LoadTable(); // DataGrid Yenile
+                        mainWindow.LoadTable(); // **DataGrid Yenilensin**
                     }
 
-                    // **Açılan pencereyi kapat**
                     Window.GetWindow(this)?.Close();
                 }
                 else
                 {
-                    MessageBox.Show($"Güncelleme başarısız! {response.StatusCode}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Güncelleme başarısız! {productResponse.StatusCode}\n{responseContent}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Güncelleme işlemi başarısız: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
 
         // Geri butonu (Kapat)
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
             Window.GetWindow(this)?.Close();
         }
+
+        private string GetMachineNameById(int id)
+        {
+            var machine = lstMakine.Items.Cast<Machine>().FirstOrDefault(m => m.Id == id);
+            return machine?.MakineAdi ?? "Bilinmeyen Makine"; // **Eğer bulamazsa "Bilinmeyen Makine" döndür**
+        }
+
     }
 
 }

@@ -12,6 +12,7 @@ namespace EntityLayer.Entities
         public int Id { get; set; } //PRIMARY KEY ve IDENTITY olacak!
 
         public int ProductId { get; set; }
+        [JsonIgnore]
         public Product? Product { get; set; }
 
         public int MakineId { get; set; }

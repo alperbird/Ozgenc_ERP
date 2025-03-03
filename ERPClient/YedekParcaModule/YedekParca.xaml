@@ -60,6 +60,7 @@
                 <DataGrid Name="dgYedekParca" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Visibility="Visible"
                           Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Single" SelectionUnit="FullRow"
                           BorderBrush="#003366" BorderThickness="1" RowHeight="50" SelectionChanged="dgYedekParca_SelectionChanged">
+                    
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                         <DataGridTextColumn Header="Makineler" Binding="{Binding MakineAdi}" Width="150">
@@ -98,8 +99,14 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                    <Button Name="btnPrevious" Content="◀ Önceki" Click="btnPrevious_Click" Padding="5,2" Margin="5,0"/>
+                    <TextBlock Name="txtPageInfo" Text="Sayfa 1" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <Button Name="btnNext" Content="Sonraki ▶" Click="btnNext_Click" Padding="5,2" Margin="5,0"/>
+                </StackPanel>
 
+            </StackPanel>
+            
             <!-- Sağ Taraf: Yeni Yedek Parça Ekleme -->
             <Border Grid.Column="1" Padding="20" Margin="20" Background="#F4F4F4" BorderBrush="#CCC" BorderThickness="1" CornerRadius="10">
                 <StackPanel>

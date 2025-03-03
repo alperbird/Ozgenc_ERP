@@ -28,7 +28,7 @@
         <StackPanel Grid.Row="1" Margin="20">
             <TextBlock Text="Makine:" FontWeight="Bold"/>
             <ListBox Name="lstMakine" Width="250" Height="100" Margin="0,5,0,10"
-                     SelectionMode="Extended" DisplayMemberPath="MakineAdi" SelectedValuePath="Id"/>
+                     SelectionMode="Multiple" DisplayMemberPath="MakineAdi" SelectedValuePath="Id"/>
 
             <TextBlock Text="Sınıf:" FontWeight="Bold"/>
             <TextBox Name="txtSinif" Width="250" Margin="0,5,0,10"/>
