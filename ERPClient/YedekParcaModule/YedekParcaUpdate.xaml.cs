@@ -26,8 +26,8 @@ namespace ERPClient.YedekParcaModule
     {
         private Product _selectedProduct;
         private readonly HttpClient _client;
-        private readonly string apiUrl = "http://192.168.5.68:5001/api/Product";
-        private readonly string apiMachineUrl = "http://192.168.5.68:5001/api/Machine";
+        private readonly string apiUrl = "http://192.168.5.81:5001/api/Product";
+        private readonly string apiMachineUrl = "http://192.168.5.81:5001/api/Machine";
 
         public YedekParcaUpdate(Product product, HttpClient client)
         {

@@ -40,7 +40,7 @@ namespace ApiLayer
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
@@ -49,11 +49,12 @@ namespace ApiLayer
                     c.RoutePrefix = string.Empty; // Swagger'ı doğrudan ana dizine yönlendirir
                 });
             }
-            else
-            {
-                app.UseDeveloperExceptionPage();
-            }
-                app.UseHttpsRedirection();
+            //else
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //app.UseHttpsRedirection();
+
             app.UseAuthorization();
             app.MapControllers();
             app.Run();

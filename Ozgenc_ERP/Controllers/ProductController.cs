@@ -58,6 +58,7 @@ namespace ApiLayer.Controllers
             return product is null ? NotFound(new { message = "Ürün bulunamadı!" }) : Ok(product);
         }
 
+
         [HttpGet("search")]
         [Produces("application/json")]
         public async Task<IActionResult> SearchProducts([FromQuery] string? query)
@@ -68,6 +69,7 @@ namespace ApiLayer.Controllers
             var result = await _service.SearchProductsAsync(query);
             return Ok(result);
         }
+
 
         [HttpPost]
         [Produces("application/json")]
@@ -91,6 +93,7 @@ namespace ApiLayer.Controllers
 
             return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
         }
+
 
         [HttpPut("{id}")]
         [Produces("application/json")]
@@ -116,8 +119,6 @@ namespace ApiLayer.Controllers
                 return StatusCode(500, new { message = "Güncelleme sırasında hata oluştu!", error = ex.Message });
             }
         }
-
-
 
 
         [HttpDelete("{id}")]

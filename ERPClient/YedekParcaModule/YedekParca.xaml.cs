@@ -30,8 +30,8 @@ namespace ERPClient
     public partial class YedekParca : Window
     {
         private readonly HttpClient _client = new HttpClient();
-        private const string apiUrl = "http://192.168.5.68:5001/api/Product";
-        private const string apiUrlMachine = "http://192.168.5.68:5001/api/Machine";
+        private const string apiUrl = "http://192.168.5.81:5001/api/Product";
+        private const string apiUrlMachine = "http://192.168.5.81:5001/api/Machine";
         private List<Product> tumParcalar = new List<Product>(); // Tüm verileri saklamak için
         private Product? _selectedProduct;
 
