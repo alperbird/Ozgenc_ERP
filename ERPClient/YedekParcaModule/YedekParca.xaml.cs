@@ -66,6 +66,9 @@ namespace ERPClient
                 string machineResponseBody = await machineResponse.Content.ReadAsStringAsync();
                 List<Machine> machines = JsonConvert.DeserializeObject<List<Machine>>(machineResponseBody) ?? new List<Machine>();
 
+                // MakineId -> MakineAdi eşleştirmesi için Dictionary oluştur
+                var machineDict = machines.ToDictionary(m => m.Id, m => m.MakineAdi);
+
                 // DTO -> Model dönüşümü (Makine isimlerini de ekliyoruz)
                 allProducts = new ObservableCollection<Product>(yedekparcaDtos.Select(dto => new Product
                 {
@@ -81,8 +84,9 @@ namespace ERPClient
                         MakineId = pmDto.MakineId
                     }).ToList(), // DTO'dan Model'e çeviriyoruz
 
+                    // Makine ID'leri üzerinden isimleri dictionary'den al
                     MakineAdi = string.Join(", ", dto.ProductMachines
-                        .Select(pm => machines.FirstOrDefault(m => m.Id == pm.MakineId)?.MakineAdi ?? "Bilinmeyen Makine")) // Makine isimlerini çekiyoruz
+                        .Select(pm => machineDict.TryGetValue(pm.MakineId, out var makineAdi) ? makineAdi : "Bilinmeyen Makine"))
                 }));
 
                 UpdatePagination();
@@ -92,6 +96,7 @@ namespace ERPClient
                 MessageBox.Show($"Veri yüklenirken hata oluştu: {ex.Message}");
             }
         }
+
 
         // Makine listeleme
         private async void LoadMachines()
@@ -277,31 +282,32 @@ namespace ERPClient
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
-                //MessageBox.Show($"API Yanıtı:\n{responseBody}"); // Debug için
-
-                // Önce JSON'u dinamik olarak deserialize edelim
-                var jsonDocument = JsonDocument.Parse(responseBody);
-                var root = jsonDocument.RootElement;
-
-                if (root.TryGetProperty("$values", out JsonElement valuesElement))
+                var filteredProducts = JsonConvert.DeserializeObject<List<Product>>(responseBody, new JsonSerializerSettings
                 {
-                    var filteredProducts = System.Text.Json.JsonSerializer.Deserialize<List<Product>>(valuesElement.GetRawText(), new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    MissingMemberHandling = MissingMemberHandling.Ignore,
+                    NullValueHandling = NullValueHandling.Ignore
+                }) ?? new List<Product>();
 
-                    dgYedekParca.ItemsSource = filteredProducts;
-                }
-                else
+
+                // Eğer arama sonucu geldiyse pagination'ı sıfırla
+                allProducts = new ObservableCollection<Product>(filteredProducts);
+                currentPage = 1; // Sayfayı başa al
+
+                // Eğer 10’dan fazla sonuç varsa otomatik 2. sayfaya geç
+                if (allProducts.Count > pageSize)
                 {
-                    MessageBox.Show("Beklenen JSON formatı gelmedi!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    currentPage = 2;
                 }
+
+                UpdatePagination();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Arama yapılırken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Arama yapılırken hata oluştu: {ex.Message}");
             }
         }
+
+
 
         #endregion
 

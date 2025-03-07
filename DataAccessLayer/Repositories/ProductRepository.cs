@@ -39,12 +39,15 @@ namespace DataAccessLayer.Repositories
         public async Task<List<Product>> SearchProductsAsync(string query)
         {
             return await _context.Products
-                .AsNoTracking() //Veriyi hafızaya çekmeden işle!
+                .AsNoTracking()
+                .Include(p => p.ProductMachines)
+                .ThenInclude(pm => pm.Machine)  // Makine bilgilerini dahil et
                 .Where(p => p.ParcaAdi.Contains(query) ||
-                            p.ProductMachines.Any(pm => pm.Machine.MakineAdi.Contains(query)) ||
-                            p.Sinif.Contains(query))
+                            p.Sinif.Contains(query) ||
+                            p.ProductMachines.Any(pm => pm.Machine.MakineAdi.Contains(query)))
                 .ToListAsync();
         }
+
 
 
         public async Task AddProduct(Product p, List<int>? makineIdleri)

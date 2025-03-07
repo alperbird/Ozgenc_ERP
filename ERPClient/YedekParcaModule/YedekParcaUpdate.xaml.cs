@@ -102,7 +102,7 @@ namespace ERPClient.YedekParcaModule
                     WriteIndented = true
                 });
 
-                MessageBox.Show($"Giden JSON:\n{jsonContent}", "Güncelleme JSON", MessageBoxButton.OK, MessageBoxImage.Information);
+                //MessageBox.Show($"Giden JSON:\n{jsonContent}", "Güncelleme JSON", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 var productContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                 HttpResponseMessage productResponse = await _client.PutAsync($"{apiUrl}/{_selectedProduct.Id}", productContent);
