@@ -14,6 +14,7 @@ namespace DataAccessLayer.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Machine> Machines { get; set; }
         public DbSet<ProductMachine> ProductMachines { get; set; }
+        public DbSet<Customer> Customers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
