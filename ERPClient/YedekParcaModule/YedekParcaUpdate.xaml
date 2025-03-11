@@ -31,7 +31,8 @@
                      SelectionMode="Multiple" DisplayMemberPath="MakineAdi" SelectedValuePath="Id"/>
 
             <TextBlock Text="Sınıf:" FontWeight="Bold"/>
-            <TextBox Name="txtSinif" Width="250" Margin="0,5,0,10"/>
+            <ComboBox Name="cmbSinif" Width="250" Margin="0,5,0,10"/>
+
 
             <TextBlock Text="Parça Adı:" FontWeight="Bold"/>
             <TextBox Name="txtParcaAdi" Width="250" Margin="0,5,0,10"/>

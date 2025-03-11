@@ -32,19 +32,20 @@ namespace ApiLayer.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> AddCustomer(Customer c) // Insert
         {
-            await _service.AddCustomer(c);
+            await _service.AddAsync(c);
             return CreatedAtAction(nameof(GetById), new { id = c.Id }, c);
         }
-        [HttpPut]
-        public async Task<ActionResult> UpdateCustomer(Customer c) // Update
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateCustomer(int id, Customer c) // Update
         {
-            await _service.UpdateCustomer(c);
+            if (id != c.Id) return BadRequest("ID eşleşmiyor!");
+            await _service.UpdateAsync(c);
             return NoContent();
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCustomer(int id) // Delete
         {
-            await _service.DeleteCustomer(id);
+            await _service.DeleteAsync(id);
             return NoContent();
         }
     }

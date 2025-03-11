@@ -28,19 +28,19 @@ namespace DataAccessLayer.Repositories
             return await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task AddCustomer(Customer c)
+        public async Task AddAsync(Customer c)
         {
             await _context.Customers.AddAsync(c);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateCustomer(Customer c)
+        public async Task UpdateAsync(Customer c)
         {
             _context.Customers.Update(c);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteCustomer(int id)
+        public async Task DeleteAsync(int id)
         {
             var customer = await GetByIdAsync(id);
             if (customer != null)

@@ -30,8 +30,12 @@ namespace ApiLayer
 
             builder.Services.AddScoped<ProductService>();
             builder.Services.AddScoped<ProductRepository>();
+
             builder.Services.AddScoped<MachineService>();
             builder.Services.AddScoped<MachineRepository>();
+
+            builder.Services.AddScoped<CustomerRepository>();
+            builder.Services.AddScoped<CustomerService>();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -46,6 +46,8 @@ namespace ERPClient
             InitializeComponent();
             LoadTable();
             LoadMachines(); // Makine listesini yükle
+            LoadSinif();
+
         }
 
         // Tüm ürünleri getir
@@ -153,7 +155,7 @@ namespace ERPClient
 
                 var productDto = new ProductCreateDto
                 {
-                    Sinif = txtSinif.Text,
+                    Sinif = cmbSinif.SelectedItem.ToString(),
                     ParcaAdi = txtParcaAdi.Text,
                     FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
                     FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
@@ -243,7 +245,7 @@ namespace ERPClient
         private void CleanForm()
         {
             lstMakine.SelectedItems.Clear();
-            txtSinif.Clear();
+            cmbSinif.SelectedItem = null;
             txtParcaAdi.Clear();
             txtTL.Clear();
             txtEUR.Clear();
@@ -382,6 +384,24 @@ namespace ERPClient
         }
         #endregion
 
+        // Sınıf değerlerini artık comboboxa atadık. textblock yerine combobox kullanıyoruz.
+        private void cmbSinif_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void LoadSinif()
+        {
+            List<string> Sinif = new List<string>
+            {
+                "-",
+               "MEKANİK",
+               "ELEKTRİK",
+               "PNÖMATİK",
+               "GENEL"
+            };
+            cmbSinif.ItemsSource = Sinif;
+        }
     }
 
 }

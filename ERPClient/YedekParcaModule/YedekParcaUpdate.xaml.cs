@@ -35,6 +35,7 @@ namespace ERPClient.YedekParcaModule
             _client = client;
             InitializeComponent();
             LoadMachines();
+            LoadSinif();
             LoadProductData(); // Seçili ürünü yükle
         }
 
@@ -58,7 +59,7 @@ namespace ERPClient.YedekParcaModule
                 // 📌 **Seçili makineleri işaretle**
                 foreach (var machine in machines)
                 {
-                    var selectedMachineIds = _selectedProduct.ProductMachines.Select(pm => pm.MakineId).ToList(); 
+                    var selectedMachineIds = _selectedProduct.ProductMachines.Select(pm => pm.MakineId).ToList();
                     if (selectedMachineIds.Contains(machine.Id))
                     {
                         lstMakine.SelectedItems.Add(machine);
@@ -74,7 +75,10 @@ namespace ERPClient.YedekParcaModule
         // Ürün bilgilerini yükle
         private void LoadProductData()
         {
-            txtSinif.Text = _selectedProduct.Sinif;
+            if (cmbSinif.Items.Contains(_selectedProduct.Sinif))
+            {
+                cmbSinif.SelectedItem = _selectedProduct.Sinif;
+            }
             txtParcaAdi.Text = _selectedProduct.ParcaAdi;
             txtTL.Text = _selectedProduct.FiyatTL.ToString();
             txtEUR.Text = _selectedProduct.FiyatEUR.ToString();
@@ -90,7 +94,7 @@ namespace ERPClient.YedekParcaModule
                 var updatedProduct = new ProductUpdateDto
                 {
                     Id = _selectedProduct.Id,
-                    Sinif = txtSinif.Text,
+                    Sinif = cmbSinif.SelectedItem.ToString(),
                     ParcaAdi = txtParcaAdi.Text,
                     FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
                     FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
@@ -145,6 +149,18 @@ namespace ERPClient.YedekParcaModule
             return machine?.MakineAdi ?? "Bilinmeyen Makine"; // **Eğer bulamazsa "Bilinmeyen Makine" döndür**
         }
 
-    }
+        private void LoadSinif()
+        {
+            List<string> Sinif = new List<string>
+            {
+                "-",
+               "MEKANİK",
+               "ELEKTRİK",
+               "PNÖMATİK",
+               "GENEL"
+            };
+            cmbSinif.ItemsSource = Sinif;
+        }
 
+    }
 }

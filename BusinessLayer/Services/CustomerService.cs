@@ -27,19 +27,19 @@ namespace BusinessLayer.Services
             return await _repo.GetByIdAsync(id);
         }
 
-        public async Task AddCustomer(Customer c)
+        public async Task AddAsync(Customer c)
         {
-            await _repo.AddCustomer(c);
+            await _repo.AddAsync(c);
         }
 
-        public async Task UpdateCustomer(Customer c)
+        public async Task UpdateAsync(Customer c)
         {
-            await _repo.UpdateCustomer(c);
+            await _repo.UpdateAsync(c);
         }
 
-        public async Task DeleteCustomer(int id)
+        public async Task DeleteAsync(int id)
         {
-            await _repo.DeleteCustomer(id);
+            await _repo.DeleteAsync(id);
         }
 
     }
