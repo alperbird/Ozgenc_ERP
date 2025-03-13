@@ -22,6 +22,7 @@ namespace ApiLayer.Controllers
             var customer = await _service.GetAllAsync();
             var dto = customer.Select(c => new CustomerCreateDto
             {
+                Id = c.Id,
                 CustomerName = c.CustomerName,
                 Address = c.Address,
                 DeliveryAddress = c.DeliveryAddress,
