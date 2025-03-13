@@ -1,0 +1,166 @@
+﻿<Window x:Class="ERPClient.MusteriModule.Customer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ERPClient.MusteriModule"
+        mc:Ignorable="d"
+        Title="Customer" Height="600" Width="1000" Background="#F4F4F4"
+        WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <!-- Üst Header -->
+            <RowDefinition Height="*"/>
+            <!-- İçerik -->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5000*" />
+            <!-- DataGrid -->
+            <ColumnDefinition Width="1.5*"/>
+            <!-- Sağ Taraf -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Üst Header -->
+        <DockPanel Grid.Row="0" Background="#003366" Height="50">
+            <TextBlock Text="CRM" Foreground="White" FontSize="20" FontWeight="Bold"
+                   VerticalAlignment="Center" Margin="20,0,0,0"/>
+            <Button Background="DarkRed" BorderThickness="0" Cursor="Hand" HorizontalAlignment="Right" Margin="0,0,20,0" Width="100" Click="Button_Click">
+                <Image Source="/Assets/exit.png" Width="75" Height="44"/>
+            </Button>
+        </DockPanel>
+
+        <!-- İçerik Bölümü -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="35*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <!--Arama Çubuğu-->
+
+            <!-- Yedek Parça Listesi (Sol Taraf) -->
+            <StackPanel Grid.Column="0" Margin="10">
+                <TextBlock Text="Müşteri İşlemleri" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                <!-- Arama Çubuğu -->
+                <!--<Border Grid.Column="0" Margin="10" Padding="5" Background="White" BorderBrush="#CCC" BorderThickness="1" CornerRadius="15" Width="300">
+                    <DockPanel>
+                        --><!-- Arama Metin Kutusu --><!--
+                        <TextBox Name="txtSearch" Width="250" Height="35" FontSize="14"
+                        BorderThickness="0" Background="Transparent"
+                        TextChanged="txtSearch_TextChanged"
+                        KeyDown="txtSearch_KeyDown"/>
+
+                        --><!-- Arama Butonu --><!--
+                        <Button Width="40" Height="35" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="btnSearch_Click">
+                            <Image Source="/Assets/magnifying.png" Width="30" Height="30"/>
+                        </Button>
+                    </DockPanel>
+                </Border>-->
+                <ContentControl Name="MainContent" Grid.Row="1" Grid.Column="0"/>
+                <DataGrid x:Name="dgMusteri" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Visibility="Visible"
+                      Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Single" SelectionUnit="FullRow"
+                      BorderBrush="#003366" BorderThickness="1" RowHeight="63" SelectionChanged="dgMusteri_SelectionChanged">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="30"/>
+                        <!--<DataGridTextColumn Header="Resim" Binding="{Binding CustomerPhoto}" Width="100"/>-->
+                        <DataGridTextColumn Header="Müşteri" Binding="{Binding CustomerName}" Width="90"/>
+
+                        <DataGridTextColumn Header="Adres" Binding="{Binding Address}" Width="100">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                    <Setter Property="FontSize" Value="10"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Teslimat Adresi" Binding="{Binding DeliveryAddress}" Width="100">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                    <Setter Property="FontSize" Value="10"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="İletişim" Binding="{Binding Contact}" Width="*"/>
+                        <DataGridTextColumn Header="Mail" Binding="{Binding Email}" Width="*"/>
+                        <DataGridTextColumn Header="GSM" Binding="{Binding PhoneNumber}" Width="*"/>
+                        <DataGridTextColumn Header="VatNumber" Binding="{Binding TaxNo}" Width="*"/>
+                        <DataGridTextColumn Header="Eklenme Tarihi" Binding="{Binding Date}" Width="*"/>
+
+                        <!-- Güncelle Butonu -->
+                        <DataGridTemplateColumn Header="Güncelle" Width="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button  Width="Auto" Height="Auto" Background="LightSkyBlue" Foreground="White"
+                BorderThickness="0" Cursor="Hand" Click="btnUpdate_Click">
+                                        <Image Source="/Assets/update.png" Width="30" Height="30"/>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Sil" Width="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Width="Auto" Height="Auto" Background="#CC0000" Foreground="White"
+                BorderThickness="0" Cursor="Hand" Click="btnDelete_Click" Tag="{Binding}">
+                                        <Image Source="/Assets/delete.png" Width="30" Height="30" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                    <Button Name="btnPrevious" Content="◀ Önceki" Click="btnPrevious_Click" Padding="5,2" Margin="5,0"/>
+                    <TextBlock Name="txtPageInfo" Text="Sayfa 1" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <Button Name="btnNext" Content="Sonraki ▶" Click="btnNext_Click" Padding="5,2" Margin="5,0"/>
+                </StackPanel>
+
+            </StackPanel>
+
+            <!-- Sağ Taraf: Yeni Müşteri Ekleme -->
+            <Border Grid.Column="1" Padding="20" Margin="20" Background="#F4F4F4" BorderBrush="#CCC" BorderThickness="1" CornerRadius="10">
+                <StackPanel Margin="0,0,0,-15">
+                    <!-- Başlık ve İkon -->
+                    <Image Source="/Assets/customer.png" Width="100" Height="87"/>
+                    <TextBlock Text="Yeni Müşteri Ekle" FontSize="18" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,20"/>
+
+                    <!-- Müşteri Adı -->
+                    <TextBlock Text="Müşteri:" FontWeight="Bold"/>
+                    <TextBox x:Name="txtCustomer" Width="250" Margin="0,2,0,5"/>
+
+                    <!-- Müşteri Adres -->
+                    <TextBlock Text="Adres:" FontWeight="Bold"/>
+                    <TextBox x:Name="txtAddress" Width="250" Margin="0,2,0,5"/>
+
+                    <!-- Müşteri Teslimat Adresi -->
+                    <TextBlock Text="Müşteri Teslimat Adresi:" FontWeight="Bold"/>
+                    <TextBox x:Name="txtDeliveryAddress" Width="250" Margin="0,2,0,5"/>
+
+                    <!-- Müşteri Telefon -->
+                    <TextBlock Text="İletişim:" FontWeight="Bold"/>
+                    <TextBox x:Name="txtContact" Width="250" Margin="0,2,0,5"/>
+
+                    <!-- Müşteri Mail -->  
+                    <TextBlock Text="Müşteri Email:" FontWeight="Bold"/>
+                    <TextBox x:Name="txtEmail" Width="250" Margin="0,2,0,5"/>
+
+                    <!-- Müşteri GSM -->
+                    <TextBlock Text="Müşteri GSM:" FontWeight="Bold"/>
+                    <TextBox x:Name="txtPhoneNumber" Width="250" Margin="0,2,0,5"/>
+
+                    <TextBlock Text="Müşteri Tax No:" FontWeight="Bold"/>
+                    <TextBox x:Name="txtTaxNo" Width="250" Margin="0,2,0,5"/>
+
+                    <!-- Ekle Butonu -->
+                    <Button Content="➕ Ekle" Width="150" Height="40" Background="#28A745" Foreground="White"
+            BorderThickness="0" Cursor="Hand" Margin="10,20,0,10" Click="btnAdd_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

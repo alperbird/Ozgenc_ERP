@@ -79,18 +79,9 @@
                     <TreeViewItem Header="Müşteriler">
                         <TreeViewItem>
                             <TreeViewItem.Header>
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" PreviewMouseDown="TextBlockMusteri_Click">
                                     <Image Source="/Assets/addcustomer.png" Width="30" Height="30" Margin="0,0,5,0"/>
-                                    <TextBlock Text="Yeni Müşteri Ekle"/>
-                                </StackPanel>
-                            </TreeViewItem.Header>
-                        </TreeViewItem>
-
-                        <TreeViewItem>
-                            <TreeViewItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="/Assets/listcustomer.png" Width="30" Height="30" Margin="0,0,5,0"/>
-                                    <TextBlock Text="Müşteri Listesi"/>
+                                    <TextBlock Text="Müşteri Listesi" Foreground="Black" Cursor="Hand"/>
                                 </StackPanel>
                             </TreeViewItem.Header>
                         </TreeViewItem>

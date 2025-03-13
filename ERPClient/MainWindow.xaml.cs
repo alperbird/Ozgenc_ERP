@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using ERPClient.MusteriModule;
+using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,5 +51,14 @@ public partial class MainWindow : Window
 
         YedekParca yp = new YedekParca();
         yp.Show();
+    }
+
+    private void TextBlockMusteri_Click(object sender, MouseButtonEventArgs e)
+    {
+        MessageBox.Show("Müşteri Listesi Açılıyor...");
+        e.Handled = true;
+
+        Customer c = new Customer();
+        c.Show();
     }
 }

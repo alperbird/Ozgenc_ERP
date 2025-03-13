@@ -299,7 +299,7 @@ namespace ERPClient
                 // Eğer 10’dan fazla sonuç varsa otomatik 2. sayfaya geç
                 if (allProducts.Count > pageSize)
                 {
-                    currentPage = 2;
+                    currentPage = 1;
                 }
 
                 UpdatePagination();
@@ -390,6 +390,7 @@ namespace ERPClient
 
         }
 
+        //Parça sınıflandırması combobox doldurma
         private void LoadSinif()
         {
             List<string> Sinif = new List<string>
