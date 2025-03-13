@@ -133,7 +133,7 @@
 
                     <!-- Parça Adı -->
                     <TextBlock Text="Parça Adı:" FontWeight="Bold"/>
-                    <TextBox Name="txtParcaAdi" Width="250" Margin="0,5,0,10"/>
+                    <TextBox Name="txtParcaAdi" Width="250" Margin="0,5,0,10" AcceptsReturn="True"/>
 
                     <!-- Fiyat TL -->
                     <TextBlock Text="Fiyat (TL):" FontWeight="Bold"/>

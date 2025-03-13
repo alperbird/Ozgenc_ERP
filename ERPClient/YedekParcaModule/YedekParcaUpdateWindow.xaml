@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ERPClient.YedekParcaModule"
         mc:Ignorable="d"
-        Title="YedekParcaUpdateWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen" WindowStyle="None">
+        Title="YedekParcaUpdateWindow" Height="430" Width="450" WindowStartupLocation="CenterScreen" WindowStyle="None">
     <Grid>
         <Frame Name="contentFrame" NavigationUIVisibility="Hidden"/>
     </Grid>

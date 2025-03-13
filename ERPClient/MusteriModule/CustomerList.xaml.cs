@@ -1,6 +1,7 @@
 ﻿using EntityLayer.DTOs;
 using EntityLayer.Entities;
 using ERPClient.Model;
+using ERPClient.YedekParcaModule;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -24,13 +25,16 @@ namespace ERPClient.MusteriModule
     /// <summary>
     /// Interaction logic for Customer.xaml
     /// </summary>
-    public partial class Customer : Window
+    public partial class CustomerList : Window
     {
+
         private readonly HttpClient _client = new HttpClient();
         private const string apiUrl = "http://192.168.5.81:5001/api/Customer";
+        private Model.Customer? _selectedCustomer;
+        private ObservableCollection<Model.Customer> allCustomer = new ObservableCollection<Model.Customer>();
 
 
-        public Customer()
+        public CustomerList()
         {
             InitializeComponent();
             //dgMusteri.ItemsSource = _customer;
@@ -105,17 +109,72 @@ namespace ERPClient.MusteriModule
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
+            if (dgMusteri.SelectedItem == null)
+            {
+                MessageBox.Show("Lütfen güncellenecek müşteriyi seçin!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
+            if (dgMusteri.SelectedItem is EntityLayer.DTOs.CustomerCreateDto dto)
+            {
+                var selectedCustomer = new ERPClient.Model.Customer
+                {
+                    Id = dto.Id,
+                    CustomerName = dto.CustomerName,
+                    Address = dto.Address,
+                    DeliveryAddress = dto.DeliveryAddress,
+                    Contact = dto.Contact,
+                    Email = dto.Email,
+                    PhoneNumber = dto.PhoneNumber,
+                    TaxNo = dto.TaxNo,
+                    Date = dto.Date
+                };
+
+                var updateWindow = new CustomerUpdateWindow(selectedCustomer, _client);
+                updateWindow.ShowDialog();
+
+                LoadTable();
+            }
+            else
+            {
+                MessageBox.Show("Lütfen güncellemek için bir ürün seçin.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
+            if (dgMusteri.SelectedItem is EntityLayer.DTOs.CustomerCreateDto selectedCustomer)
+            {
+                var result = MessageBox.Show($"Müşteri '{selectedCustomer.CustomerName}' silinecek! Onaylıyor musunuz?",
+                                             "Silme Onayı", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
+                if (result == MessageBoxResult.Yes)
+                {
+                    HttpResponseMessage response = await _client.DeleteAsync($"{apiUrl}/{selectedCustomer.Id}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Müşteri başarıyla silindi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                        LoadTable();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Müşteri silinirken bir hata oluştu!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Lütfen silmek için bir müşteri seçin!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void dgMusteri_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (dgMusteri.SelectedItem is Model.Customer selectedCustomer)
+            {
+                MessageBox.Show($"Seçilen Müşteri: {selectedCustomer.CustomerName}", "Seçildi", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         #endregion

@@ -58,7 +58,7 @@ public partial class MainWindow : Window
         MessageBox.Show("Müşteri Listesi Açılıyor...");
         e.Handled = true;
 
-        Customer c = new Customer();
+        CustomerList c = new CustomerList();
         c.Show();
     }
 }

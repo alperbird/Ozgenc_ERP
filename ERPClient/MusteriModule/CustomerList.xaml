@@ -1,4 +1,4 @@
-﻿<Window x:Class="ERPClient.MusteriModule.Customer"
+﻿<Window x:Class="ERPClient.MusteriModule.CustomerList"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -62,30 +62,38 @@
                       BorderBrush="#003366" BorderThickness="1" RowHeight="63" SelectionChanged="dgMusteri_SelectionChanged">
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="30"/>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="40"/>
                         <!--<DataGridTextColumn Header="Resim" Binding="{Binding CustomerPhoto}" Width="100"/>-->
                         <DataGridTextColumn Header="Müşteri" Binding="{Binding CustomerName}" Width="90"/>
 
-                        <DataGridTextColumn Header="Adres" Binding="{Binding Address}" Width="100">
+                        <DataGridTextColumn Header="Adres" Binding="{Binding Address}" Width="120">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
                                     <Setter Property="VerticalAlignment" Value="Top"/>
                                     <Setter Property="FontSize" Value="10"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="Teslimat Adresi" Binding="{Binding DeliveryAddress}" Width="100">
+                        <DataGridTextColumn Header="Teslimat Adresi" Binding="{Binding DeliveryAddress}" Width="120">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
                                     <Setter Property="VerticalAlignment" Value="Top"/>
                                     <Setter Property="FontSize" Value="10"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="İletişim" Binding="{Binding Contact}" Width="*"/>
-                        <DataGridTextColumn Header="Mail" Binding="{Binding Email}" Width="*"/>
+                        <DataGridTextColumn Header="Mail" Binding="{Binding Email}" Width="149">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                    <Setter Property="FontSize" Value="10"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                         <DataGridTextColumn Header="GSM" Binding="{Binding PhoneNumber}" Width="*"/>
                         <DataGridTextColumn Header="VatNumber" Binding="{Binding TaxNo}" Width="*"/>
                         <DataGridTextColumn Header="Eklenme Tarihi" Binding="{Binding Date}" Width="*"/>
@@ -135,11 +143,11 @@
 
                     <!-- Müşteri Adres -->
                     <TextBlock Text="Adres:" FontWeight="Bold"/>
-                    <TextBox x:Name="txtAddress" Width="250" Margin="0,2,0,5"/>
+                    <TextBox x:Name="txtAddress" Width="250" Margin="0,2,0,5" AcceptsReturn="True"/>
 
                     <!-- Müşteri Teslimat Adresi -->
                     <TextBlock Text="Müşteri Teslimat Adresi:" FontWeight="Bold"/>
-                    <TextBox x:Name="txtDeliveryAddress" Width="250" Margin="0,2,0,5"/>
+                    <TextBox x:Name="txtDeliveryAddress" Width="250" Margin="0,2,0,5" AcceptsReturn="True"/>
 
                     <!-- Müşteri Telefon -->
                     <TextBlock Text="İletişim:" FontWeight="Bold"/>
