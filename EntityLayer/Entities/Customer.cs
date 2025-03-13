@@ -36,5 +36,6 @@ namespace EntityLayer.Entities
         public DateTime Date { get; set; }
 
         public string? TaxNo { get; set; }
+        public DateTime LastUpdated { get; set; } = DateTime.Now;
     }
 }

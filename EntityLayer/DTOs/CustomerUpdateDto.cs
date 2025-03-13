@@ -19,5 +19,6 @@ namespace EntityLayer.DTOs
         public string PhoneNumber { get; set; } = string.Empty;
         public string? TaxNo { get; set; }
         public DateTime Date { get; set; }
+        public DateTime LastUpdated { get; set; } = DateTime.Now;
     }
 }

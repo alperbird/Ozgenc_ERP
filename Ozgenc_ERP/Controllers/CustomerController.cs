@@ -30,7 +30,8 @@ namespace ApiLayer.Controllers
                 Email = c.Email,
                 PhoneNumber = c.PhoneNumber,
                 TaxNo = c.TaxNo,
-                Date = c.Date
+                Date = c.Date,
+                LastUpdated = c.LastUpdated
             }).ToList();
 
             return new JsonResult(dto, new JsonSerializerOptions { PropertyNamingPolicy = null});
@@ -59,7 +60,8 @@ namespace ApiLayer.Controllers
                 Email = c.Email,
                 PhoneNumber = c.PhoneNumber,
                 TaxNo = c.TaxNo,
-                Date = c.Date
+                Date = c.Date,
+                LastUpdated = DateTime.Now
             };
             
             await _service.AddAsync(newCustomer);
@@ -82,6 +84,8 @@ namespace ApiLayer.Controllers
             existingCustomer.Email = c.Email;
             existingCustomer.PhoneNumber = c.PhoneNumber;
             existingCustomer.TaxNo = c.TaxNo;
+            existingCustomer.Date = c.Date;
+            existingCustomer.LastUpdated = DateTime.Now;
 
             await _service.UpdateAsync(existingCustomer);
             return NoContent();

@@ -94,9 +94,34 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="GSM" Binding="{Binding PhoneNumber}" Width="*"/>
+                        <DataGridTextColumn Header="GSM" Binding="{Binding PhoneNumber}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                    <Setter Property="FontSize" Value="13"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                         <DataGridTextColumn Header="VatNumber" Binding="{Binding TaxNo}" Width="*"/>
-                        <DataGridTextColumn Header="Eklenme Tarihi" Binding="{Binding Date}" Width="*"/>
+                        <DataGridTextColumn Header="Eklenme Tarihi" Binding="{Binding Date}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                    <Setter Property="FontSize" Value="10"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Güncelleme Tarihi" Binding="{Binding LastUpdated}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                    <Setter Property="FontSize" Value="10"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
                         <!-- Güncelle Butonu -->
                         <DataGridTemplateColumn Header="Güncelle" Width="80">

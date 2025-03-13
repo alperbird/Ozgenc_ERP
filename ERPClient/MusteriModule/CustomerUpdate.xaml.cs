@@ -57,7 +57,8 @@ namespace ERPClient.MusteriModule
                 Email = txtEmail.Text,
                 PhoneNumber = txtPhoneNumber.Text,
                 TaxNo = txtTaxNo.Text,
-                Date = DateTime.Now
+                Date = _selectedCustomer.Date,
+                LastUpdated = DateTime.Now
             };
 
 
@@ -77,6 +78,7 @@ namespace ERPClient.MusteriModule
                 MessageBox.Show("Müşteri başarılı bir şekilde güncellendi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 Window.GetWindow(this)?.Close();
+                
             }
             else
             {
