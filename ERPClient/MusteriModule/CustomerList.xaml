@@ -64,7 +64,15 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="40"/>
                         <!--<DataGridTextColumn Header="Resim" Binding="{Binding CustomerPhoto}" Width="100"/>-->
-                        <DataGridTextColumn Header="Müşteri" Binding="{Binding CustomerName}" Width="90"/>
+                        <DataGridTextColumn Header="Müşteri" Binding="{Binding CustomerName}" Width="90">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                    <Setter Property="FontSize" Value="11"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
                         <DataGridTextColumn Header="Adres" Binding="{Binding Address}" Width="120">
                             <DataGridTextColumn.ElementStyle>

@@ -22,6 +22,9 @@ using EntityLayer.DTOs;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json.Linq;
+using Path = System.IO.Path;
+using Microsoft.Win32;
+using System.Net.Http.Headers;
 
 namespace ERPClient
 {
@@ -35,6 +38,7 @@ namespace ERPClient
         private const string apiUrlMachine = "http://192.168.5.81:5001/api/Machine";
         private List<Product> tumParcalar = new List<Product>(); // Tüm verileri saklamak için
         private Product? _selectedProduct;
+        private string? selectedImagePath = null;
 
         private ObservableCollection<Product> allProducts = new ObservableCollection<Product>(); // Tüm veriler burada tutulacak
         private ObservableCollection<Product> paginatedProducts = new ObservableCollection<Product>(); // DataGrid'e bağlanacak veri
@@ -159,6 +163,7 @@ namespace ERPClient
                     ParcaAdi = txtParcaAdi.Text,
                     FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
                     FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
+                    ResimYolu = selectedImagePath,
                     MakineIdleri = selectedMachineIds
                 };
 
@@ -403,6 +408,99 @@ namespace ERPClient
             };
             cmbSinif.ItemsSource = Sinif;
         }
+
+
+        #region Datagrid içinde bulunan yedek parça fotoğraf gösterme işlemleri
+        private void Photo_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Image img && img.DataContext is Product selectedProduct)
+            {
+                if (string.IsNullOrEmpty(selectedProduct.ResimYolu))
+                {
+                    MessageBox.Show("Bu ürüne ait fotoğraf bulunmamaktadır.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), selectedProduct.ResimYolu);
+
+                if (!File.Exists(fullPath))
+                {
+                    MessageBox.Show("Fotoğraf dosyası bulunamadı!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Yeni bir pencere aç ve fotoğrafı göster
+                ShowImageWindow(fullPath);
+            }
+        }
+
+        private void ShowImageWindow(string imagePath)
+        {
+            Window imageWindow = new Window
+            {
+                Title = "Ürün Fotoğrafı",
+                Width = 600,
+                Height = 600,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
+
+            Image img = new Image
+            {
+                Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute)),
+                Stretch = Stretch.Uniform
+            };
+
+            imageWindow.Content = img;
+            imageWindow.ShowDialog();
+        }
+
+        #endregion
+
+        #region Fotoğraf Yükleme işlemleri
+        private async void btnSelectPhoto_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Resim Dosyaları|*.jpg;*.jpeg;*.png;*.bmp",
+                Title = "Bir Fotoğraf Seçin"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                selectedImagePath = openFileDialog.FileName;
+
+                // Sadece dosya adını göster
+                txtFileName.Text = Path.GetFileName(selectedImagePath);
+
+                // Fotoğrafı API'ye yükle ve kaydet
+                selectedImagePath = await UploadImage(selectedImagePath);
+            }
+        }
+
+        private async Task<string> UploadImage(string filePath)
+        {
+            using (var client = new HttpClient())
+            {
+                var form = new MultipartFormDataContent();
+                var stream = File.OpenRead(filePath);
+                var fileContent = new StreamContent(stream);
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+
+                form.Add(fileContent, "file", Path.GetFileName(filePath));
+
+                var response = await client.PostAsync("http://192.168.5.81:5001/api/Product/upload-photo", form);
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsAsync<dynamic>();
+                    return result.photoPath; // API'den dönen fotoğraf yolu
+                }
+                return null;
+            }
+        }
+
+        #endregion
     }
 
+
 }
+

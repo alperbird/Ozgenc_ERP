@@ -1,9 +1,12 @@
 ﻿using EntityLayer.DTOs;
 using ERPClient.Model;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace ERPClient.YedekParcaModule
 {
@@ -28,6 +32,7 @@ namespace ERPClient.YedekParcaModule
         private readonly HttpClient _client;
         private readonly string apiUrl = "http://192.168.5.81:5001/api/Product";
         private readonly string apiMachineUrl = "http://192.168.5.81:5001/api/Machine";
+        private string? selectedImagePathUpdate = null;
 
         public YedekParcaUpdate(Product product, HttpClient client)
         {
@@ -82,6 +87,17 @@ namespace ERPClient.YedekParcaModule
             txtParcaAdi.Text = _selectedProduct.ParcaAdi;
             txtTL.Text = _selectedProduct.FiyatTL.ToString();
             txtEUR.Text = _selectedProduct.FiyatEUR.ToString();
+
+            if (!string.IsNullOrEmpty(_selectedProduct.ResimYolu))
+            {
+                txtPhotoNameUpdate.Text = Path.GetFileName(_selectedProduct.ResimYolu);
+                selectedImagePathUpdate = _selectedProduct.ResimYolu;
+            }
+            else
+            {
+                txtPhotoNameUpdate.Text = "Seçili Fotoğraf Yok";
+                selectedImagePathUpdate = null;
+            }
         }
 
         // Ürün Güncelleme
@@ -98,6 +114,7 @@ namespace ERPClient.YedekParcaModule
                     ParcaAdi = txtParcaAdi.Text,
                     FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
                     FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
+                    ResimYolu = selectedImagePathUpdate,
                     MakineIdleri = selectedMachineIds
                 };
 
@@ -162,5 +179,59 @@ namespace ERPClient.YedekParcaModule
             cmbSinif.ItemsSource = Sinif;
         }
 
+
+        #region Fotoğraf güncellme işlemleri
+        private async void btnSelectPhotoUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Resim Dosyaları|*.jpg;*.jpeg;*.png;*.bmp",
+                Title = "Bir Fotoğraf Seçin"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                selectedImagePathUpdate = openFileDialog.FileName;
+
+                // Seçilen fotoğrafın adını göster
+                txtPhotoNameUpdate.Text = Path.GetFileName(selectedImagePathUpdate);
+
+                // Fotoğrafı API'ye yükle ve yeni yolu al
+                selectedImagePathUpdate = await UploadImage(selectedImagePathUpdate);
+            }
+        }
+
+        private async Task<string> UploadImage(string filePath)
+        {
+            using (var client = new HttpClient())
+            {
+                var form = new MultipartFormDataContent();
+                var stream = File.OpenRead(filePath);
+                var fileContent = new StreamContent(stream);
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+
+                form.Add(fileContent, "file", System.IO.Path.GetFileName(filePath)); // Hata olan kısım düzeltildi!
+
+                var response = await client.PostAsync("http://192.168.5.81:5001/api/Product/upload-photo", form);
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsAsync<dynamic>();
+                    return result.photoPath; // API'den dönen fotoğraf yolu
+                }
+                return null;
+            }
+        }
+
+        private async Task UpdateProduct(ProductCreateDto product)
+        {
+            using (var client = new HttpClient())
+            {
+                var jsonContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(product), System.Text.Encoding.UTF8, "application/json");
+
+                var response = await client.PutAsync($"http://192.168.5.81:5001/api/Product/{product.Id}", jsonContent);
+                response.EnsureSuccessStatusCode();
+            }
+        }
+        #endregion
     }
 }

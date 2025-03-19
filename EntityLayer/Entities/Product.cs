@@ -10,6 +10,7 @@ namespace EntityLayer.Entities
     public class Product
     {
             public int Id { get; set; }
+            public string? ResimYolu { get; set; }
 
             [NotMapped]
             public string MakineAdi { get; set; } = string.Empty;
@@ -19,5 +20,5 @@ namespace EntityLayer.Entities
             public decimal FiyatEUR { get; set; }
 
             public List<ProductMachine> ProductMachines { get; set; } = new List<ProductMachine>(); // Many-to-Many ilişki
-        }
     }
+}

@@ -9,11 +9,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="YedekParcaAssets\**" />
+    <EmbeddedResource Remove="YedekParcaAssets\**" />
+    <None Remove="YedekParcaAssets\**" />
+    <Page Remove="YedekParcaAssets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Assets\add.png" />
     <None Remove="Assets\addcustomer.png" />
     <None Remove="Assets\customer.png" />
     <None Remove="Assets\delete.png" />
     <None Remove="Assets\exit.png" />
+    <None Remove="Assets\image.png" />
     <None Remove="Assets\list.png" />
     <None Remove="Assets\listcustomer.png" />
     <None Remove="Assets\magnifying.png" />
@@ -39,6 +47,7 @@
     <Resource Include="Assets\customer.png" />
     <Resource Include="Assets\delete.png" />
     <Resource Include="Assets\exit.png" />
+    <Resource Include="Assets\image.png" />
     <Resource Include="Assets\list.png" />
     <Resource Include="Assets\listcustomer.png" />
     <Resource Include="Assets\magnifying.png" />

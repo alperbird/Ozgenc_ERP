@@ -16,6 +16,7 @@ namespace ERPClient.Model
         [NotMapped]
         public string MakineAdi { get; set; } = string.Empty;
         public string? Sinif { get; set; }
+        public string? ResimYolu { get; set; }
         public string? ParcaAdi { get; set; }
         public decimal FiyatTL { get; set; }
         public decimal FiyatEUR { get; set; }

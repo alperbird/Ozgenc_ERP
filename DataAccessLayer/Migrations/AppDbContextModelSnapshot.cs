@@ -101,6 +101,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("ParcaAdi")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ResimYolu")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Sinif")
                         .HasColumnType("nvarchar(max)");
 

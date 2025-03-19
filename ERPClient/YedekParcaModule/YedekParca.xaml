@@ -60,7 +60,7 @@
                 <DataGrid Name="dgYedekParca" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Visibility="Visible"
                           Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Single" SelectionUnit="FullRow"
                           BorderBrush="#003366" BorderThickness="1" RowHeight="63" SelectionChanged="dgYedekParca_SelectionChanged">
-                    
+
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                         <DataGridTextColumn Header="Makineler" Binding="{Binding MakineAdi}" Width="150">
@@ -73,6 +73,16 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Sınıf" Binding="{Binding Sinif}" Width="150"/>
+                        <DataGridTemplateColumn Header="Fotoğraf" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="/Assets/image.png" 
+                           Width="30" Height="30" 
+                           Cursor="Hand"
+                           PreviewMouseDown="Photo_PreviewMouseDown"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Parça Adı" Binding="{Binding ParcaAdi}" Width="*"/>
                         <DataGridTextColumn Header="Fiyat (TL)" Binding="{Binding FiyatTL}" Width="100"/>
                         <DataGridTextColumn Header="Fiyat (EUR)" Binding="{Binding FiyatEUR}" Width="100"/>
@@ -108,7 +118,7 @@
                 </StackPanel>
 
             </StackPanel>
-            
+
             <!-- Sağ Taraf: Yeni Yedek Parça Ekleme -->
             <Border Grid.Column="1" Padding="20" Margin="20" Background="#F4F4F4" BorderBrush="#CCC" BorderThickness="1" CornerRadius="10">
                 <StackPanel>
@@ -142,6 +152,13 @@
                     <!-- Fiyat EUR -->
                     <TextBlock Text="Fiyat (EUR):" FontWeight="Bold"/>
                     <TextBox Name="txtEUR" Width="250" Margin="0,5,0,10"/>
+
+                    <TextBlock Name="txtFileName" Text="Dosya seçilmedi" FontWeight="Bold" TextAlignment="Center" Margin="5"/>
+
+                    <!-- Fotoğraf Seçme Butonu -->
+                    <Button Content="📷 Fotoğraf Seç" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                            Background="#007BFF" Foreground="White" Padding="5,2" Cursor="Hand"
+                            Click="btnSelectPhoto_Click"/>
 
                     <!-- Ekle Butonu -->
                     <Button Content="➕ Ekle" Width="150" Height="40" Background="#28A745" Foreground="White"

@@ -34,6 +34,7 @@ namespace ApiLayer.Controllers
                 ParcaAdi = p.ParcaAdi,
                 FiyatTL = p.FiyatTL,
                 FiyatEUR = p.FiyatEUR,
+                ResimYolu = p.ResimYolu,
                 MakineAdi = p.ProductMachines != null && p.ProductMachines.Any()
             ? string.Join(", ", p.ProductMachines.Select(pm => pm.Machine.MakineAdi))
             : "Makine Yok",
@@ -86,12 +87,57 @@ namespace ApiLayer.Controllers
                 Sinif = productDto.Sinif,
                 ParcaAdi = productDto.ParcaAdi,
                 FiyatTL = productDto.FiyatTL,
-                FiyatEUR = productDto.FiyatEUR
+                FiyatEUR = productDto.FiyatEUR,
+                ResimYolu = productDto.ResimYolu
             };
 
             await _service.AddProductAsync(product, productDto.MakineIdleri);
 
             return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
+        }
+
+        [HttpPost("upload-photo")]
+        public async Task<IActionResult> ResimYukle(IFormFile file)
+        {
+            if(file == null || file.Length == 0)
+            {
+                Console.WriteLine("FOTOĞRAF YOK AMK!");
+                return BadRequest("Fotoğraf yok veya yüklenemedi.");
+            }
+
+            var imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "YedekParcaAssets");
+
+            if (!Directory.Exists(imageFolder)) //eğer klasör yoksa, bu klasörü oluştur.
+            {
+                Directory.CreateDirectory(imageFolder);
+            }
+
+            //orijinal dosya adını al ve klasörün içine kaydet
+            var fileName = Path.GetFileName(file.FileName);
+            var filePath = Path.Combine(imageFolder, fileName);
+
+            //aynı isimde dosya varsa, dosya adının sonuna sayı ekle
+            int count = 1;
+            string finalPath = filePath;
+            while(System.IO.File.Exists(finalPath))
+            {
+                string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                string ext = Path.GetExtension(fileName);
+                finalPath = Path.Combine(imageFolder, $"{fileNameWithoutExt}_{count}{ext}");
+                count++;
+            }
+
+            //dosyayı klasöre kaydet
+            using (var stream = new FileStream(finalPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            Console.WriteLine($"Fotoğraf başarıyla kaydedildi: {finalPath}");
+
+            //resim yolu olarak kaydedilecek olan dosyanın adını al (veritabanına kaydedilecek format)
+            var relativePath = Path.Combine("YedekParcaAssets", Path.GetFileName(finalPath)).Replace("\\","/");
+
+            return Ok(new {photoPath = relativePath});
         }
 
 

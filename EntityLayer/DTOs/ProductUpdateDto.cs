@@ -10,6 +10,7 @@ namespace EntityLayer.DTOs
     {
         public int Id { get; set; }
         public string Sinif { get; set; }
+        public string? ResimYolu { get; set; }
         public string ParcaAdi { get; set; }
         public decimal FiyatTL { get; set; }
         public decimal FiyatEUR { get; set; }
