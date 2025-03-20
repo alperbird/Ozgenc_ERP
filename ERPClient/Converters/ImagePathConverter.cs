@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace ERPClient.Converters
 {
-    // resim yolunu buluyor öyle işte
+    // Sadece sunucu bilgisayarının içindeki resimlere erişebiliyor. Bunun için kendi resim pathimizi ayarlamamız gerekebilir. Araştırıp güncelleyemeye çalışacağım.
     public class ImagePathConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -26,7 +26,7 @@ namespace ERPClient.Converters
                 }
 
                 // Mutlak yol oluştur
-                string basePath = @"C:\Ozgenc_ERP\Debug\net8.0\"; // 📌 Sunucu bilgisayarındaki ana dizin
+                string basePath = @"C:\Ozgenc_ERP\Debug\net8.0\"; //Sunucu bilgisayarındaki ana dizin
                 string fullPath = Path.Combine(basePath, imagePath);
 
                 return File.Exists(fullPath) ? new BitmapImage(new Uri(fullPath, UriKind.Absolute)) : new BitmapImage(new Uri(defaultImagePath, UriKind.Relative));
