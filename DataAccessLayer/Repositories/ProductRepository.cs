@@ -80,6 +80,7 @@ namespace DataAccessLayer.Repositories
                 existingProduct.ParcaAdi = p.ParcaAdi;
                 existingProduct.FiyatTL = p.FiyatTL;
                 existingProduct.FiyatEUR = p.FiyatEUR;
+                existingProduct.ResimYolu = p.ResimYolu;
 
                 // **ProductMachines Güncelle**
                 if (p.ProductMachines != null)

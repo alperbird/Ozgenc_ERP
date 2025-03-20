@@ -76,6 +76,8 @@ namespace ApiLayer.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Create([FromBody] ProductCreateDto productDto)
         {
+            Console.WriteLine($"Gelen Resim Yolu: {productDto.ResimYolu}");
+
             if (productDto == null)
                 return BadRequest(new { message = "Ürün bilgisi boş olamaz!" });
 
@@ -145,6 +147,7 @@ namespace ApiLayer.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Update(int id, [FromBody] ProductUpdateDto productDto)
         {
+
             if (productDto == null || id != productDto.Id)
             {
                 return BadRequest(new { message = "Güncellenecek ürün geçersiz!" });
@@ -153,6 +156,7 @@ namespace ApiLayer.Controllers
             try
             {
                 await _service.UpdateProductAsync(productDto);
+                Console.WriteLine($"Gelen Resim Yolu: {productDto.ResimYolu}");
 
                 return Ok(new
                 {

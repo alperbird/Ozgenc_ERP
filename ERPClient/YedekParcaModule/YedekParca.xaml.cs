@@ -25,6 +25,7 @@ using Newtonsoft.Json.Linq;
 using Path = System.IO.Path;
 using Microsoft.Win32;
 using System.Net.Http.Headers;
+using System.Globalization;
 
 namespace ERPClient
 {
@@ -81,6 +82,7 @@ namespace ERPClient
                 {
                     Id = dto.Id,
                     Sinif = dto.Sinif,
+                    ResimYolu = dto.ResimYolu,
                     ParcaAdi = dto.ParcaAdi,
                     FiyatTL = dto.FiyatTL,
                     FiyatEUR = dto.FiyatEUR,
@@ -454,10 +456,10 @@ namespace ERPClient
             imageWindow.ShowDialog();
         }
 
-        #endregion
+            #endregion
 
-        #region Fotoğraf Yükleme işlemleri
-        private async void btnSelectPhoto_Click(object sender, RoutedEventArgs e)
+            #region Fotoğraf Yükleme işlemleri
+            private async void btnSelectPhoto_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {

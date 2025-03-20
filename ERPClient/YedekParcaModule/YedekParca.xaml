@@ -76,10 +76,10 @@
                         <DataGridTemplateColumn Header="Fotoğraf" Width="50">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image Source="/Assets/image.png" 
-                           Width="30" Height="30" 
-                           Cursor="Hand"
-                           PreviewMouseDown="Photo_PreviewMouseDown"/>
+                                    <Image Width="50" Height="50"
+                                    Cursor="Hand"
+                                    Source="{Binding ResimYolu, Converter={StaticResource ImagePathConverter}}"
+                                    PreviewMouseDown="Photo_PreviewMouseDown"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

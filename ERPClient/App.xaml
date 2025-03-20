@@ -1,9 +1,9 @@
 ﻿<Application x:Class="ERPClient.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ERPClient"
+             xmlns:local="clr-namespace:ERPClient" xmlns:conv="clr-namespace:ERPClient.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <conv:ImagePathConverter x:Key="ImagePathConverter"/>
     </Application.Resources>
 </Application>

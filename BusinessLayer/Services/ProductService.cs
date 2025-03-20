@@ -40,6 +40,7 @@ namespace BusinessLayer.Services
                 existingProduct.ParcaAdi = productDto.ParcaAdi;
                 existingProduct.FiyatTL = productDto.FiyatTL;
                 existingProduct.FiyatEUR = productDto.FiyatEUR;
+                existingProduct.ResimYolu = productDto.ResimYolu;
 
                 Console.WriteLine("[LOG] Güncelleme Başladı -> Ürün ID: " + productDto.Id);
                 Console.WriteLine("[LOG] Eski ilişkili makineler: " + string.Join(", ", existingProduct.ProductMachines.Select(pm => pm.MakineId)));

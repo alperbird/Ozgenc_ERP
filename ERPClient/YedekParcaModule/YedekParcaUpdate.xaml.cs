@@ -42,6 +42,7 @@ namespace ERPClient.YedekParcaModule
             LoadMachines();
             LoadSinif();
             LoadProductData(); // Seçili ürünü yükle
+            
         }
 
         //Makine listele
@@ -117,7 +118,7 @@ namespace ERPClient.YedekParcaModule
                     ResimYolu = selectedImagePathUpdate,
                     MakineIdleri = selectedMachineIds
                 };
-
+                await UpdateProduct(updatedProduct);
                 string jsonContent = System.Text.Json.JsonSerializer.Serialize(updatedProduct, new JsonSerializerOptions
                 {
                     WriteIndented = true
@@ -127,6 +128,7 @@ namespace ERPClient.YedekParcaModule
 
                 var productContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                 HttpResponseMessage productResponse = await _client.PutAsync($"{apiUrl}/{_selectedProduct.Id}", productContent);
+                
 
                 string responseContent = await productResponse.Content.ReadAsStringAsync();
 
@@ -222,8 +224,10 @@ namespace ERPClient.YedekParcaModule
             }
         }
 
-        private async Task UpdateProduct(ProductCreateDto product)
+        private async Task UpdateProduct(ProductUpdateDto product)
         {
+            Console.WriteLine($"📷 Güncellenen Resim Yolu: {product.ResimYolu}");
+
             using (var client = new HttpClient())
             {
                 var jsonContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(product), System.Text.Encoding.UTF8, "application/json");
