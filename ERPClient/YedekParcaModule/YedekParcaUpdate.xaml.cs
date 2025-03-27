@@ -134,7 +134,7 @@ namespace ERPClient.YedekParcaModule
 
                 if (productResponse.IsSuccessStatusCode)
                 {
-                    MessageBox.Show("Ürün başarıyla güncellendi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Yedek parça başarıyla güncellendi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                     var mainWindow = Application.Current.Windows.OfType<YedekParca>().FirstOrDefault();
                     if (mainWindow != null)
                     {

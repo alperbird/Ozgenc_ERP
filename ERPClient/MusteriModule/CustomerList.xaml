@@ -63,6 +63,7 @@
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="40"/>
+                        
                         <!--<DataGridTextColumn Header="Resim" Binding="{Binding CustomerPhoto}" Width="100"/>-->
                         <DataGridTextColumn Header="Müşteri" Binding="{Binding CustomerName}" Width="90">
                             <DataGridTextColumn.ElementStyle>
@@ -73,7 +74,9 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-
+                        
+                        <DataGridTextColumn Header="Ülke" Binding="{Binding Country}" Width="40"/>
+                        
                         <DataGridTextColumn Header="Adres" Binding="{Binding Address}" Width="120">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -83,6 +86,7 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
+                        
                         <DataGridTextColumn Header="Teslimat Adresi" Binding="{Binding DeliveryAddress}" Width="120">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -92,7 +96,9 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
+                        
                         <DataGridTextColumn Header="İletişim" Binding="{Binding Contact}" Width="*"/>
+                        
                         <DataGridTextColumn Header="Mail" Binding="{Binding Email}" Width="149">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -102,6 +108,7 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
+                        
                         <DataGridTextColumn Header="GSM" Binding="{Binding PhoneNumber}" Width="*">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -111,7 +118,9 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
+                        
                         <DataGridTextColumn Header="VatNumber" Binding="{Binding TaxNo}" Width="*"/>
+                        
                         <DataGridTextColumn Header="Eklenme Tarihi" Binding="{Binding Date}" Width="*">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -121,6 +130,7 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
+                        
                         <DataGridTextColumn Header="Güncelleme Tarihi" Binding="{Binding LastUpdated}" Width="*">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -173,6 +183,10 @@
                     <!-- Müşteri Adı -->
                     <TextBlock Text="Müşteri:" FontWeight="Bold"/>
                     <TextBox x:Name="txtCustomer" Width="250" Margin="0,2,0,5"/>
+
+                    <!-- Müşteri Ülke -->
+                    <TextBlock Text="Ülke:" FontWeight="Bold"/>
+                    <ComboBox Name="cmbCountry" Width="250" Margin="0,5,0,10" SelectionChanged="cmbCountry_SelectionChanged"/>
 
                     <!-- Müşteri Adres -->
                     <TextBlock Text="Adres:" FontWeight="Bold"/>

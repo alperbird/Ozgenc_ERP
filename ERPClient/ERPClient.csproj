@@ -21,6 +21,7 @@
     <None Remove="Assets\customer.png" />
     <None Remove="Assets\delete.png" />
     <None Remove="Assets\exit.png" />
+    <None Remove="Assets\filter.png" />
     <None Remove="Assets\image.png" />
     <None Remove="Assets\list.png" />
     <None Remove="Assets\listcustomer.png" />
@@ -35,6 +36,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +49,7 @@
     <Resource Include="Assets\customer.png" />
     <Resource Include="Assets\delete.png" />
     <Resource Include="Assets\exit.png" />
+    <Resource Include="Assets\filter.png" />
     <Resource Include="Assets\image.png" />
     <Resource Include="Assets\list.png" />
     <Resource Include="Assets\listcustomer.png" />

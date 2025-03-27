@@ -1,0 +1,65 @@
+﻿<Window x:Class="ERPClient.SiparisModule.SiparisGecmisi"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ERPClient.SiparisModule"
+        mc:Ignorable="d"
+        Title="SiparisGecmisi" Height="600" Width="1000"  Background="#F4F4F4"
+        WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" Background="#003366" Height="50">
+            <TextBlock Text="Sipariş Geçmişi" Foreground="White" FontSize="20" FontWeight="Bold"
+       VerticalAlignment="Center" Margin="20,0,0,0"/>
+            <Button Background="DarkRed" BorderThickness="0" Cursor="Hand" Click="btnBack_Click" HorizontalAlignment="Right" Margin="0,0,20,0" Width="100">
+                <Image Source="/Assets/exit.png" Width="75" Height="44"/>
+            </Button>
+        </DockPanel>
+
+        <!-- ANA İÇERİK -->
+        <StackPanel Grid.Row="1" Margin="20">
+            <!-- FİLTRELER -->
+            <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+                <ComboBox x:Name="cmbDateFilter" Width="150" Margin="0 0 10 0" SelectionChanged="cmbDateFilter_SelectionChanged">
+                    <ComboBoxItem Content="Bu Hafta" Tag="Weekly"/>
+                    <ComboBoxItem Content="Bu Ay" Tag="Monthly"/>
+                    <ComboBoxItem Content="Tarih Aralığı" Tag="Custom"/>
+                </ComboBox>
+                <DatePicker x:Name="dpStartDate" Width="150" Margin="0 0 10 0" Visibility="Collapsed"/>
+                <DatePicker x:Name="dpEndDate" Width="150" Visibility="Collapsed"/>
+                <Button Width="130" Height="35" Background="#FF003366" Cursor="Hand"
+                    Click="BtnFiltrele_Click" Margin="10 0" BorderThickness="0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Image Source="/Assets/filter.png" Width="20" Height="20" Margin="0,0,5,0"/>
+                        <TextBlock Text="Filtrele" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!-- DATAGRID -->
+            <DataGrid x:Name="dgOrders" AutoGenerateColumns="False" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Sipariş No" Binding="{Binding Id}" Width="*"/>
+                    <DataGridTextColumn Header="Müşteri" Binding="{Binding Customer.CustomerName}" Width="*"/>
+                    <DataGridTextColumn Header="Tarih" Binding="{Binding OrderDate}" Width="*"/>
+                    <DataGridTextColumn Header="Toplam Tutar" Binding="{Binding TotalPrice}" Width="*"/>
+                    <DataGridTemplateColumn Header="Sipariş Detayları" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button  Width="Auto" Height="Auto" Background="LightSkyBlue" Foreground="White"
+                                    BorderThickness="0" Cursor="Hand" Click="btnList_Click">
+                                    <Image Source="/Assets/list.png" Width="30" Height="30"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+
+    </Grid>
+</Window>

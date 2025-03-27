@@ -180,7 +180,7 @@ namespace ERPClient
                 HttpResponseMessage productResponse = await _client.PostAsync(apiUrl, productContent);
                 productResponse.EnsureSuccessStatusCode();
 
-                MessageBox.Show("Ürün ve makineler başarıyla kaydedildi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Yedek parça başarıyla kaydedildi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                 LoadTable();
                 CleanForm();
             }
@@ -213,7 +213,7 @@ namespace ERPClient
                 if (btn.Tag is Product selectedProduct) // DTO yerine Product modeli kullanıyoruz
                 {
                     var result = MessageBox.Show(
-                        $"Ürün '{selectedProduct.ParcaAdi}' ve ilişkili makineler silinecek! Emin misin?",
+                        $"'{selectedProduct.ParcaAdi}' adlı yedek parça silinecek! Emin misin?",
                         "Silme Onayı",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Warning);
@@ -224,7 +224,7 @@ namespace ERPClient
 
                         if (response.IsSuccessStatusCode)
                         {
-                            MessageBox.Show("Ürün başarıyla silindi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                            MessageBox.Show("Yedek parça başarıyla silindi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                             LoadTable(); // Tabloyu güncelle
                         }
                         else
@@ -236,7 +236,7 @@ namespace ERPClient
                 }
                 else
                 {
-                    MessageBox.Show("Tag içerisinde Product nesnesi yok, DataGrid’e atanmış mı kontrol et!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Böyle bir yedek parça yok!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
@@ -430,6 +430,7 @@ namespace ERPClient
                     MessageBox.Show("Fotoğraf dosyası bulunamadı!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
+
 
                 // Yeni bir pencere aç ve fotoğrafı göster
                 ShowImageWindow(fullPath);

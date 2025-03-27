@@ -1,4 +1,5 @@
 ﻿using ERPClient.MusteriModule;
+using ERPClient.SiparisModule;
 using System.Net.Http;
 using System.Text;
 using System.Windows;
@@ -60,5 +61,26 @@ public partial class MainWindow : Window
 
         CustomerList c = new CustomerList();
         c.Show();
+    }
+
+    private void Yurtİci_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+
+    }
+
+    private void YurtDisi_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        e.Handled = true;
+
+        YurtDisi yd = new YurtDisi();
+        yd.Show();
+    }
+
+    private void SiparisGecmisi_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        e.Handled = true;
+
+        SiparisGecmisi sg = new SiparisGecmisi();
+        sg.Show();
     }
 }

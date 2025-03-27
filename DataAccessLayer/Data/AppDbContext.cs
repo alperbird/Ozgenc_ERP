@@ -5,16 +5,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EntityLayer.Entities.Enums;
 
 namespace DataAccessLayer.Data
 {
     public class AppDbContext: DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options){}
+
         public DbSet<Product> Products { get; set; }
+
         public DbSet<Machine> Machines { get; set; }
+
         public DbSet<ProductMachine> ProductMachines { get; set; }
+
         public DbSet<Customer> Customers { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

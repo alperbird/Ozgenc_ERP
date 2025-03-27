@@ -59,18 +59,28 @@
                     <TreeViewItem Header="Satın Alma">
                         <TreeViewItem>
                             <TreeViewItem.Header>
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" PreviewMouseDown="Yurtİci_PreviewMouseDown">
                                     <Image Source="/Assets/order.png" Width="30" Height="30" Margin="0,0,5,0"/>
-                                    <TextBlock Text="Yeni Sipariş"/>
+                                    <TextBlock Text="Yurt İçi Sipariş" Foreground="Black" Cursor="Hand"/>
                                 </StackPanel>
                             </TreeViewItem.Header>
                         </TreeViewItem>
 
                         <TreeViewItem>
                             <TreeViewItem.Header>
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" PreviewMouseDown="YurtDisi_PreviewMouseDown">
+                                    <Image Source="/Assets/order.png" Width="30" Height="30" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Yurt Dışı Sipariş" Foreground="Black" Cursor="Hand"/>
+                                </StackPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+
+
+                        <TreeViewItem>
+                            <TreeViewItem.Header>
+                                <StackPanel Orientation="Horizontal" PreviewMouseDown="SiparisGecmisi_PreviewMouseDown">
                                     <Image Source="/Assets/orderhistory.png" Width="30" Height="30" Margin="0,0,5,0"/>
-                                    <TextBlock Text="Sipariş Geçmişi"/>
+                                    <TextBlock Text="Sipariş Geçmişi" Foreground="Black" Cursor="Hand"/>
                                 </StackPanel>
                             </TreeViewItem.Header>
                         </TreeViewItem>

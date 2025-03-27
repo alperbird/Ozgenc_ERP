@@ -24,6 +24,7 @@ namespace ApiLayer.Controllers
             {
                 Id = c.Id,
                 CustomerName = c.CustomerName,
+                Country = c.Country,
                 Address = c.Address,
                 DeliveryAddress = c.DeliveryAddress,
                 Contact = c.Contact,
@@ -54,6 +55,7 @@ namespace ApiLayer.Controllers
             var newCustomer = new Customer
             {
                 CustomerName = c.CustomerName,
+                Country = c.Country,
                 Address = c.Address,
                 DeliveryAddress = c.DeliveryAddress,
                 Contact = c.Contact,
@@ -78,6 +80,7 @@ namespace ApiLayer.Controllers
             }
 
             existingCustomer.CustomerName = c.CustomerName;
+            existingCustomer.Country = c.Country;
             existingCustomer.Address = c.Address;
             existingCustomer.DeliveryAddress = c.DeliveryAddress;
             existingCustomer.Contact = c.Contact;

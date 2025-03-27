@@ -17,6 +17,7 @@ namespace EntityLayer.Entities
 
         public string CustomerName { get; set; } = string.Empty;
 
+        public string Country { get; set; }
 
         public string Address { get; set; } = string.Empty;
 

@@ -39,6 +39,7 @@ namespace ERPClient.MusteriModule
             InitializeComponent();
             //dgMusteri.ItemsSource = _customer;
             LoadTable();
+            LoadCountries();
         }
 
         private async void LoadTable()
@@ -56,10 +57,10 @@ namespace ERPClient.MusteriModule
                 {
                     if (dgMusteri.ItemsSource != null)
                     {
-                        dgMusteri.ItemsSource = null; // 🔥 Önce null yap, veri değişimini UI'ye bildir
+                        dgMusteri.ItemsSource = null; //Önce null yap, veri değişimini UI'ye bildir
                     }
 
-                    dgMusteri.ItemsSource = customers; // 🔥 Veri değişimi artık tekrar çağrı tetiklemeyecek
+                    dgMusteri.ItemsSource = customers; //Veri değişimi artık tekrar çağrı tetiklemeyecek
                 });
             }
             catch (Exception) { }
@@ -71,6 +72,7 @@ namespace ERPClient.MusteriModule
             var newCustomer = new CustomerCreateDto
             {
                 CustomerName = txtCustomer.Text,
+                Country = cmbCountry.SelectedItem.ToString(),
                 Address = txtAddress.Text,
                 DeliveryAddress = txtDeliveryAddress.Text,
                 Contact = txtContact.Text,
@@ -121,6 +123,7 @@ namespace ERPClient.MusteriModule
                 {
                     Id = dto.Id,
                     CustomerName = dto.CustomerName,
+                    Country = dto.Country,
                     Address = dto.Address,
                     DeliveryAddress = dto.DeliveryAddress,
                     Contact = dto.Contact,
@@ -199,6 +202,7 @@ namespace ERPClient.MusteriModule
         private void CleanForm()
         {
             txtCustomer.Text = "";
+            cmbCountry.SelectedItem = null;
             txtAddress.Text = "";
             txtDeliveryAddress.Text = "";
             txtContact.Text = "";
@@ -207,5 +211,30 @@ namespace ERPClient.MusteriModule
             txtTaxNo.Text = "";
         }
 
+        // Ülke seçtirioz
+        private void cmbCountry_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void LoadCountries()
+        {
+            List<string> Ulke = new List<string>{
+                "Türkiye",
+                "İtalya",
+                "Sırbistan",
+                "Hırvatistan",
+                "Bosna Hersek",
+                "Kosova",
+                "Avustralya",
+                "Hindistan",
+                "Polonya",
+                "Rusya",
+                "İngiltere",
+                "Kanada",
+                "Nijerya"
+            };
+            cmbCountry.ItemsSource = Ulke;
+        }
     }
 }

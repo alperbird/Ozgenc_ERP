@@ -1,5 +1,7 @@
-﻿using BusinessLayer.Services;
+﻿using BusinessLayer.Interfaces;
+using BusinessLayer.Services;
 using DataAccessLayer.Data;
+using DataAccessLayer.Interfaces;
 using DataAccessLayer.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -36,6 +38,10 @@ namespace ApiLayer
 
             builder.Services.AddScoped<CustomerRepository>();
             builder.Services.AddScoped<CustomerService>();
+
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -30,6 +30,9 @@
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Müşteri:" FontWeight="Bold"/>
             <TextBox x:Name="txtCustomerName" Width="250" Margin="0,2,0,5" AcceptsReturn="True"/>
 
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Ülke:" FontWeight="Bold"/>
+            <ComboBox Name="cmbCountry" Width="250" Margin="0,5,0,10" SelectionChanged="cmbCountry_SelectionChanged"/>
+
             <!-- Müşteri Adres -->
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Adres:" FontWeight="Bold"/>
             <TextBox x:Name="txtAddress" Width="250" Margin="0,2,0,5" AcceptsReturn="True"/>

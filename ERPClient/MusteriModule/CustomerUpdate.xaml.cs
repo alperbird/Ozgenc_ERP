@@ -32,10 +32,12 @@ namespace ERPClient.MusteriModule
         public CustomerUpdate(Model.Customer customer, HttpClient client)
         {
             InitializeComponent();
+            LoadCountries();
             _selectedCustomer = customer;
             _client = client;
 
             txtCustomerName.Text = _selectedCustomer.CustomerName;
+            cmbCountry.Text = _selectedCustomer.Country;
             txtAddress.Text = _selectedCustomer.Address;
             txtDeliveryAddress.Text = _selectedCustomer.DeliveryAddress;
             txtContact.Text = _selectedCustomer.Contact;
@@ -51,6 +53,7 @@ namespace ERPClient.MusteriModule
             {
                 Id = _selectedCustomer.Id,
                 CustomerName = txtCustomerName.Text,
+                Country = cmbCountry.SelectedItem.ToString(),
                 Address = txtAddress.Text,
                 DeliveryAddress = txtDeliveryAddress.Text,
                 Contact = txtContact.Text,
@@ -89,6 +92,32 @@ namespace ERPClient.MusteriModule
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
             Window.GetWindow(this)?.Close();
+        }
+
+        // ülke seçioz
+        private void cmbCountry_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void LoadCountries()
+        {
+            List<string> Ulke = new List<string>{
+                "Türkiye",
+                "İtalya",
+                "Sırbistan",
+                "Hırvatistan",
+                "Bosna Hersek",
+                "Kosova",
+                "Avustralya",
+                "Hindistan",
+                "Polonya",
+                "Rusya",
+                "İngiltere",
+                "Kanada",
+                "Nijerya"
+            };
+            cmbCountry.ItemsSource = Ulke;
         }
     }
 }
