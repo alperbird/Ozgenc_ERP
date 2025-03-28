@@ -20,5 +20,6 @@ public partial class App : Application
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
             );
     }
+
 }
 

@@ -12,10 +12,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.IO;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using Path = System.IO.Path;
 using EntityLayer.Entities.Enums;
 
@@ -86,19 +84,19 @@ namespace ERPClient.SiparisModule
         {
             try
             {
-                // 🟢 UI'dan tüm verileri önce çekiyoruz
+                // UI'dan verileri çekiyoruz
                 string customerName = txtCustomerName.Text;
                 string address = txtAddress.Text;
                 string deliveryAddress = txtDeliveryAddress.Text;
                 string contact = txtContact.Text;
                 string email = txtEmail.Text;
-                string orderDate = txtOrderDate.Text;
                 string phone = txtPhone.Text;
-                string adjustmentText = txtAdjustmentPercentage.Text;
+                string country = txtCountry.Text.Trim();
+                string adjustment = txtAdjustmentPercentage.Text;
                 string shippingFee = txtShippingFee.Text;
                 string total = txtTotal.Text;
-                string country = txtCountry.Text.Trim().ToLower();
 
+                // Ürünleri JSON'a çeviriyoruz
                 var items = dgOrderItems.Items
                     .OfType<dynamic>()
                     .Select(x => new PdfOrderItemDto
@@ -109,62 +107,29 @@ namespace ERPClient.SiparisModule
                         Total = x.Total
                     }).ToList();
 
+                string jsonItems = System.Text.Json.JsonSerializer.Serialize(items);
+
+                // exe yolu
+                string exePath = @"C:\Users\root\source\repos\Ozgenc_ERP\GeneratePdf\bin\Debug\GeneratePdf.exe";
+
+                // JSON içindeki çift tırnakları escape et
+                string escapedJson = jsonItems.Replace("\"", "\\\"");
+
+                // Argümanları hazırla
+                string arguments = $"\"{customerName}\" \"{address}\" \"{deliveryAddress}\" \"{contact}\" \"{email}\" \"{phone}\" \"{country}\" \"{adjustment}\" \"{shippingFee}\" \"{total}\" \"{escapedJson}\"";
+
                 await Task.Run(() =>
                 {
-                    var excelApp = new Excel.Application();
-
-                    // ŞABLON
-                    string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                    string invoiceFolder = Path.Combine(desktopPath, "Invoice");
-                    Directory.CreateDirectory(invoiceFolder);
-                    string templateName = country == "Türkiye" ? "yurticisablon.xlsx" : "yurtdisisablon.xlsx";
-                    string templatePath = Path.Combine(invoiceFolder, templateName);
-
-                    // DOSYA ADI
-                    string baseFileName = $"{customerName}_{DateTime.Now:ddMMyyyy}";
-                    string outputPath = Path.Combine(invoiceFolder, baseFileName + ".pdf");
-                    int i = 1;
-                    while (File.Exists(outputPath))
-                        outputPath = Path.Combine(invoiceFolder, $"{baseFileName}_{i++}.pdf");
-
-                    var workbook = excelApp.Workbooks.Open(templatePath);
-                    Excel.Worksheet sheet = workbook.Sheets[1];
-
-                    // HÜCRE DOLDUR
-                    sheet.Cells[7, 4].Value = customerName;
-                    sheet.Cells[8, 4].Value = address;
-                    sheet.Cells[9, 4].Value = deliveryAddress;
-                    sheet.Cells[10, 4].Value = contact;
-                    sheet.Cells[11, 4].Value = email;
-                    sheet.Cells[7, 11].Value = orderDate;
-                    sheet.Cells[8, 11].Value = phone;
-
-                    int row = 16;
-                    foreach (var item in items)
+                    var psi = new ProcessStartInfo
                     {
-                        sheet.Cells[row, 2].Value = item.ParcaAdi;
-                        sheet.Cells[row, 10].Value = item.Quantity;
-                        sheet.Cells[row, 12].Value = item.UnitPrice;
-                        sheet.Cells[row, 17].Value = item.Total;
-                        row++;
-                    }
+                        FileName = exePath,
+                        Arguments = arguments,
+                        UseShellExecute = false, // Shell'e ihtiyaç yok
+                        CreateNoWindow = true,   // 🧙‍♂️ CMD ekranını sakla
+                        WindowStyle = ProcessWindowStyle.Hidden // Garanti olsun
+                    };
 
-                    sheet.Cells[25, 17].Value = adjustmentText;
-                    sheet.Cells[27, 17].Value = shippingFee;
-                    sheet.Cells[28, 17].Value = total;
-
-                    sheet.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, outputPath,
-                        Excel.XlFixedFormatQuality.xlQualityStandard, true, false, 1, 1);
-
-                    workbook.Close(false);
-                    excelApp.Quit();
-
-                    Marshal.ReleaseComObject(sheet);
-                    Marshal.ReleaseComObject(workbook);
-                    Marshal.ReleaseComObject(excelApp);
-
-                    // Aç
-                    Process.Start("explorer.exe", outputPath);
+                    Process.Start(psi);
                 });
             }
             catch (Exception ex)
@@ -172,8 +137,6 @@ namespace ERPClient.SiparisModule
                 MessageBox.Show("PDF oluşturulurken hata oluştu:\n" + ex.Message);
             }
         }
-
-
 
     }
 }
