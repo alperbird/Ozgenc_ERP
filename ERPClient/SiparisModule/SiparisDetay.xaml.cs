@@ -57,7 +57,7 @@ namespace ERPClient.SiparisModule
 
             // İNDİRİM/ZAM TUTARI HESAPLAMA
             decimal rawTotal = _detail.OrderItems.Sum(x => x.UnitPrice * x.Quantity);
-            decimal adjustmentValue = 0;
+            //decimal adjustmentValue = 0;
             var percentage = Math.Abs(_detail.AdjustmentPercentage ?? 0);
             txtAdjustmentPercentage.Text = $"{percentage:0}%";
 
@@ -109,8 +109,11 @@ namespace ERPClient.SiparisModule
 
                 string jsonItems = System.Text.Json.JsonSerializer.Serialize(items);
 
-                // exe yolu
+                // exe yolu (benim pc için. Siz de kendi dosya yolunuza göre burayı düzenlemelisiniz...)
                 string exePath = @"C:\Users\root\source\repos\Ozgenc_ERP\GeneratePdf\bin\Debug\GeneratePdf.exe";
+
+                // exe yolu (server pc için: Server'da değişiklik yapıldığında burası açılacak)
+                //string exePath = @"C:\Ozgenc_ERP\Tools\GeneratePdf.exe";
 
                 // JSON içindeki çift tırnakları escape et
                 string escapedJson = jsonItems.Replace("\"", "\\\"");
@@ -125,15 +128,19 @@ namespace ERPClient.SiparisModule
                         FileName = exePath,
                         Arguments = arguments,
                         UseShellExecute = false, // Shell'e ihtiyaç yok
-                        CreateNoWindow = true,   // 🧙‍♂️ CMD ekranını sakla
+                        CreateNoWindow = true,   // CMD ekranını sakla
                         WindowStyle = ProcessWindowStyle.Hidden // Garanti olsun
+                        //WorkingDirectory = @"C:\Ozgenc_ERP\Tools" // exe'nin bulunduğu klasör! Burası da server kısmında değişiklik olursa açılacak
                     };
 
                     Process.Start(psi);
+
                 });
             }
             catch (Exception ex)
             {
+                string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Invoice", "status.txt");
+                File.WriteAllText(logPath, $"PDF OLUŞTURULAMADI ❌ -> {DateTime.Now:dd.MM.yyyy HH:mm:ss}\nHATA: {ex.Message}");
                 MessageBox.Show("PDF oluşturulurken hata oluştu:\n" + ex.Message);
             }
         }
