@@ -217,6 +217,7 @@ namespace ERPClient.MusteriModule
 
         }
 
+        // Gerekli ülkeleri ekleyin pls
         private void LoadCountries()
         {
             List<string> Ulke = new List<string>{
@@ -232,7 +233,8 @@ namespace ERPClient.MusteriModule
                 "Rusya",
                 "İngiltere",
                 "Kanada",
-                "Nijerya"
+                "Nijerya",
+                "Brezilya"
             };
             cmbCountry.ItemsSource = Ulke;
         }
