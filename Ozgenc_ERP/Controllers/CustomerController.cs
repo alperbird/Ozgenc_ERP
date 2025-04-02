@@ -20,11 +20,12 @@ namespace ApiLayer.Controllers
         public async Task<ActionResult<List<Customer>>> GetAll() // Listeleme
         {
             var customer = await _service.GetAllAsync();
-            var dto = customer.Select(c => new CustomerCreateDto
+            var dto = customer.Select(c => new CustomerDto
             {
                 Id = c.Id,
                 CustomerName = c.CustomerName,
-                Country = c.Country,
+                CountryId = c.CountryId,
+                CountryName = c.Country.CountryName,
                 Address = c.Address,
                 DeliveryAddress = c.DeliveryAddress,
                 Contact = c.Contact,
@@ -55,7 +56,7 @@ namespace ApiLayer.Controllers
             var newCustomer = new Customer
             {
                 CustomerName = c.CustomerName,
-                Country = c.Country,
+                CountryId = c.CountryId,
                 Address = c.Address,
                 DeliveryAddress = c.DeliveryAddress,
                 Contact = c.Contact,
@@ -80,7 +81,7 @@ namespace ApiLayer.Controllers
             }
 
             existingCustomer.CustomerName = c.CustomerName;
-            existingCustomer.Country = c.Country;
+            existingCustomer.CountryId = c.CountryId;
             existingCustomer.Address = c.Address;
             existingCustomer.DeliveryAddress = c.DeliveryAddress;
             existingCustomer.Contact = c.Contact;

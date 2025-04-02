@@ -19,6 +19,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Country = ERPClient.Model.Country;
 
 namespace ERPClient.MusteriModule
 {
@@ -69,10 +70,15 @@ namespace ERPClient.MusteriModule
         #region CRUD İşlemleri
         private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
+            Country? selectedCountry = cmbCountry.SelectedItem as Country;
+            if (selectedCountry == null)
+            {
+                MessageBox.Show("ÜLKE SEÇİMİ YAP!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
             var newCustomer = new CustomerCreateDto
             {
                 CustomerName = txtCustomer.Text,
-                Country = cmbCountry.SelectedItem.ToString(),
+                CountryId = selectedCountry.Id,
                 Address = txtAddress.Text,
                 DeliveryAddress = txtDeliveryAddress.Text,
                 Contact = txtContact.Text,
@@ -123,7 +129,7 @@ namespace ERPClient.MusteriModule
                 {
                     Id = dto.Id,
                     CustomerName = dto.CustomerName,
-                    Country = dto.Country,
+                    //Country = dto.CountryId,
                     Address = dto.Address,
                     DeliveryAddress = dto.DeliveryAddress,
                     Contact = dto.Contact,
@@ -218,25 +224,32 @@ namespace ERPClient.MusteriModule
         }
 
         // Gerekli ülkeleri ekleyin pls
-        private void LoadCountries()
+        private async void LoadCountries()
         {
-            List<string> Ulke = new List<string>{
-                "Türkiye",
-                "İtalya",
-                "Sırbistan",
-                "Hırvatistan",
-                "Bosna Hersek",
-                "Kosova",
-                "Avustralya",
-                "Hindistan",
-                "Polonya",
-                "Rusya",
-                "İngiltere",
-                "Kanada",
-                "Nijerya",
-                "Brezilya"
-            };
-            cmbCountry.ItemsSource = Ulke;
+            try
+            {
+                HttpResponseMessage response = await _client.GetAsync("http://192.168.5.81:5001/api/Country");
+                response.EnsureSuccessStatusCode();
+
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                var countries = JsonConvert.DeserializeObject<List<Country>>(jsonResponse) ?? new List<Country>();
+
+                cmbCountry.ItemsSource = countries;
+                cmbCountry.DisplayMemberPath = "CountryName";
+                cmbCountry.SelectedValuePath = "Id";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ülke listesi çekilirken bir hata oluştu! " + ex.Message, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void btnAddCountry_Click(object sender, RoutedEventArgs e)
+        {
+            var country = new CountryCRUDWindow(_client);
+            country.ShowDialog();
+
+            LoadCountries();
         }
     }
 }

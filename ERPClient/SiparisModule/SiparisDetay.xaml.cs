@@ -39,7 +39,7 @@ namespace ERPClient.SiparisModule
         private void LoadDetails()
         {
             txtCustomerName.Text = _detail.Customer.CustomerName;
-            txtCountry.Text = _detail.Customer.Country;
+            txtCountry.Text = _detail.Customer.Country?.CountryName ?? "";
             txtTaxNo.Text = _detail.Customer.TaxNo;
             txtAddress.Text = _detail.Customer.Address;
             txtDeliveryAddress.Text = _detail.Customer.DeliveryAddress;
@@ -49,7 +49,7 @@ namespace ERPClient.SiparisModule
 
             txtOrderDate.Text = _detail.OrderDate.ToShortDateString();
 
-            var YurtIci = _detail.Customer.Country?.ToLower() == "Türkiye";
+            var YurtIci = _detail.Customer.Country?.CountryName?.ToLower() == "Türkiye";
             var currencySymbol = YurtIci ? "₺" : "€";
 
             txtShippingFee.Text = currencySymbol + (_detail.ShippingFee ?? 0).ToString("N2");

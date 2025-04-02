@@ -17,7 +17,10 @@ namespace EntityLayer.Entities
 
         public string CustomerName { get; set; } = string.Empty;
 
-        public string Country { get; set; }
+        public int CountryId { get; set; }
+
+        [ForeignKey("CountryId")]
+        public Country Country { get; set; }
 
         public string Address { get; set; } = string.Empty;
 

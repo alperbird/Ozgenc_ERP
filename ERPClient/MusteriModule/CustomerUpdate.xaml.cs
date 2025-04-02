@@ -1,59 +1,78 @@
 ﻿using EntityLayer.DTOs;
-using EntityLayer.Entities;
 using ERPClient.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Country = ERPClient.Model.Country;
 
 namespace ERPClient.MusteriModule
 {
-    /// <summary>
-    /// Interaction logic for CustomerUpdate.xaml
-    /// </summary>
     public partial class CustomerUpdate : Page
     {
-        private Model.Customer _selectedCustomer;
+        private readonly Model.Customer _selectedCustomer;
         private readonly HttpClient _client;
-
         private readonly string apiUrl = "http://192.168.5.81:5001/api/Customer";
+
         public CustomerUpdate(Model.Customer customer, HttpClient client)
         {
             InitializeComponent();
-            LoadCountries();
             _selectedCustomer = customer;
             _client = client;
+            LoadCountries();
 
+            // Alanları doldur
             txtCustomerName.Text = _selectedCustomer.CustomerName;
-            cmbCountry.Text = _selectedCustomer.Country;
             txtAddress.Text = _selectedCustomer.Address;
             txtDeliveryAddress.Text = _selectedCustomer.DeliveryAddress;
             txtContact.Text = _selectedCustomer.Contact;
             txtEmail.Text = _selectedCustomer.Email;
             txtPhoneNumber.Text = _selectedCustomer.PhoneNumber;
             txtTaxNo.Text = _selectedCustomer.TaxNo;
+        }
 
+        private async void LoadCountries()
+        {
+            try
+            {
+                HttpResponseMessage response = await _client.GetAsync("http://192.168.5.81:5001/api/Country");
+                response.EnsureSuccessStatusCode();
+
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                var countries = JsonConvert.DeserializeObject<List<Country>>(jsonResponse) ?? new List<Country>();
+
+                cmbCountry.ItemsSource = countries;
+                cmbCountry.DisplayMemberPath = "CountryName";
+                cmbCountry.SelectedValuePath = "Id";
+
+                // Mevcut müşterinin ülkesini seçili hale getir
+                cmbCountry.SelectedValue = _selectedCustomer.Id;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ülke listesi çekilirken bir hata oluştu! " + ex.Message, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private async void btnUpdateSave_Click(object sender, RoutedEventArgs e)
         {
+            // Seçilen ülkeyi yakala
+            if (cmbCountry.SelectedValue is null)
+            {
+                MessageBox.Show("Lütfen bir ülke seçin.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            int selectedCountryId = (int)cmbCountry.SelectedValue;
+
             var updateCustomer = new CustomerUpdateDto
             {
                 Id = _selectedCustomer.Id,
                 CustomerName = txtCustomerName.Text,
-                Country = cmbCountry.SelectedItem.ToString(),
+                CountryId = selectedCountryId,
                 Address = txtAddress.Text,
                 DeliveryAddress = txtDeliveryAddress.Text,
                 Contact = txtContact.Text,
@@ -64,9 +83,7 @@ namespace ERPClient.MusteriModule
                 LastUpdated = DateTime.Now
             };
 
-
-
-            string jsonContent = System.Text.Json.JsonSerializer.Serialize(updateCustomer, new JsonSerializerOptions
+            string jsonContent = System.Text.Json.JsonSerializer.Serialize(updateCustomer, new System.Text.Json.JsonSerializerOptions
             {
                 WriteIndented = true
             });
@@ -74,14 +91,10 @@ namespace ERPClient.MusteriModule
             var customerContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             HttpResponseMessage customerResponse = await _client.PutAsync($"{apiUrl}/{_selectedCustomer.Id}", customerContent);
 
-            string responseContent = await customerResponse.Content.ReadAsStringAsync();
-
             if (customerResponse.IsSuccessStatusCode)
             {
                 MessageBox.Show("Müşteri başarılı bir şekilde güncellendi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
-
                 Window.GetWindow(this)?.Close();
-                
             }
             else
             {
@@ -94,32 +107,9 @@ namespace ERPClient.MusteriModule
             Window.GetWindow(this)?.Close();
         }
 
-        // ülke seçioz
         private void cmbCountry_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
-        }
-
-        // Gerekli ülkeleri ekleyin pls
-        private void LoadCountries()
-        {
-            List<string> Ulke = new List<string>{
-                "Türkiye",
-                "İtalya",
-                "Sırbistan",
-                "Hırvatistan",
-                "Bosna Hersek",
-                "Kosova",
-                "Avustralya",
-                "Hindistan",
-                "Polonya",
-                "Rusya",
-                "İngiltere",
-                "Kanada",
-                "Nijerya",
-                "Brezilya"
-            };
-            cmbCountry.ItemsSource = Ulke;
+            
         }
     }
 }

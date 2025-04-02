@@ -1,0 +1,22 @@
+﻿using EntityLayer.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLayer.Interfaces
+{
+    public interface ICountryService
+    {
+        Task<List<Country>> GetAllAsync();
+
+        Task<Country> GetByIdAsync(int id);
+
+        Task AddCountryAsync(Country c);
+
+        Task UpdateCountryAsync(Country c);
+
+        Task DeleteCountryAsync(int id);
+    }
+}

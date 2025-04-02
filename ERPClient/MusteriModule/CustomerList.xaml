@@ -75,7 +75,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         
-                        <DataGridTextColumn Header="Ülke" Binding="{Binding Country}" Width="40"/>
+                        <DataGridTextColumn Header="Ülke" Binding="{Binding CountryName}" Width="40"/>
                         
                         <DataGridTextColumn Header="Adres" Binding="{Binding Address}" Width="120">
                             <DataGridTextColumn.ElementStyle>
@@ -185,8 +185,15 @@
                     <TextBox x:Name="txtCustomer" Width="250" Margin="0,2,0,5"/>
 
                     <!-- Müşteri Ülke -->
-                    <TextBlock Text="Ülke:" FontWeight="Bold"/>
-                    <ComboBox Name="cmbCountry" Width="250" Margin="0,5,0,10" SelectionChanged="cmbCountry_SelectionChanged"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,10">
+                        <ComboBox x:Name="cmbCountry"
+              Width="200"
+              Height="30"
+              DisplayMemberPath="CountryName"
+              SelectedValuePath="Id" />
+
+                        <Button Content="+" Width="30" Height="30" Margin="5,0,0,0" Click="btnAddCountry_Click"/>
+                    </StackPanel>
 
                     <!-- Müşteri Adres -->
                     <TextBlock Text="Adres:" FontWeight="Bold"/>

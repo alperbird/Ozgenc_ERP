@@ -12,7 +12,7 @@ namespace EntityLayer.DTOs
         [JsonPropertyName("Id")]
         public int Id { get; set; }
         public string CustomerName { get; set; } = string.Empty;
-        public string Country { get; set; }
+        public int CountryId { get; set; }
         public string Address { get; set; } = string.Empty;
         public string DeliveryAddress { get; set; } = string.Empty;
         public string Contact { get; set; } = string.Empty;

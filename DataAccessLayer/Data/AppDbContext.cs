@@ -25,6 +25,8 @@ namespace DataAccessLayer.Data
 
         public DbSet<OrderItem> OrderItems { get; set; }
 
+        public DbSet<Country> Countries { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProductMachine>()
