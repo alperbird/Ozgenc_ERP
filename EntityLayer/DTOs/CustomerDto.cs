@@ -10,7 +10,7 @@ namespace EntityLayer.DTOs
     {
         public int Id { get; set; }
         public string CustomerName { get; set; }
-        public string CountryName { get; set; }
+        public string CountryName { get; set; } = string.Empty;
         public int CountryId { get; set; }
         public string Address { get; set; }
         public string DeliveryAddress { get; set; }

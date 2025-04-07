@@ -145,5 +145,13 @@ namespace ERPClient.MusteriModule
         {
             this.Close();
         }
+
+        private void txtCountryName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnAdd_Click(sender, e);
+            }
+        }
     }
 }

@@ -53,7 +53,7 @@ namespace ERPClient.SiparisModule
         {
             if (cmbCustomer.SelectedItem is Customer selectedCustomer)
             {
-                txtCountry.Text = selectedCustomer.Country;
+                txtCountry.Text = selectedCustomer.CountryName;
                 txtTaxNo.Text = selectedCustomer.TaxNo;
                 txtAddress.Text = selectedCustomer.Address;
                 txtDeliveryAddress.Text = selectedCustomer.DeliveryAddress;
@@ -215,7 +215,7 @@ namespace ERPClient.SiparisModule
                 var allCustomers = JsonConvert.DeserializeObject<List<Customer>>(json) ?? new();
 
                 customers = allCustomers
-                .Where(c => !string.Equals(c.Country?.Trim(), "Türkiye", StringComparison.OrdinalIgnoreCase))
+                .Where(c => !string.Equals(c.CountryName?.Trim(), "Türkiye", StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
                 cmbCustomer.ItemsSource = customers;

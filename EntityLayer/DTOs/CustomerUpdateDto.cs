@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EntityLayer.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace EntityLayer.DTOs
         public int Id { get; set; }
         public string CustomerName { get; set; } = string.Empty;
         public int CountryId { get; set; }
+        public Country Country { get; set; } = new();
         public string Address { get; set; } = string.Empty;
         public string DeliveryAddress { get; set; } = string.Empty;
         public string Contact { get; set; } = string.Empty;

@@ -81,7 +81,7 @@ namespace GeneratePdf
             {
                 if (country.Trim().ToLower() == "türkiye")
                 {
-                    // 🇹🇷 Yurt İçi
+                    //Yurt İçi
                     sheet.Cells[11, 4].Value = customerName;
                     sheet.Cells[12, 4].Value = contact;
                     sheet.Cells[13, 4].Value = address;

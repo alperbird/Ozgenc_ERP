@@ -22,19 +22,11 @@ namespace ERPClient.MusteriModule
             InitializeComponent();
             _selectedCustomer = customer;
             _client = client;
-            LoadCountries();
+            _ = InitForm();            
 
-            // Alanları doldur
-            txtCustomerName.Text = _selectedCustomer.CustomerName;
-            txtAddress.Text = _selectedCustomer.Address;
-            txtDeliveryAddress.Text = _selectedCustomer.DeliveryAddress;
-            txtContact.Text = _selectedCustomer.Contact;
-            txtEmail.Text = _selectedCustomer.Email;
-            txtPhoneNumber.Text = _selectedCustomer.PhoneNumber;
-            txtTaxNo.Text = _selectedCustomer.TaxNo;
         }
 
-        private async void LoadCountries()
+        private async Task LoadCountries()
         {
             try
             {
@@ -49,12 +41,30 @@ namespace ERPClient.MusteriModule
                 cmbCountry.SelectedValuePath = "Id";
 
                 // Mevcut müşterinin ülkesini seçili hale getir
-                cmbCountry.SelectedValue = _selectedCustomer.Id;
+                cmbCountry.SelectedValue = _selectedCustomer.CountryId; 
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Ülke listesi çekilirken bir hata oluştu! " + ex.Message, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private async Task InitForm()
+        {
+            await LoadCountries();
+
+            //Atamaları deneme amaçlı buraya taşıdım
+            txtCustomerName.Text = _selectedCustomer.CustomerName;
+            cmbCountry.Text = _selectedCustomer.CountryName;
+            txtAddress.Text = _selectedCustomer.Address;
+            txtDeliveryAddress.Text = _selectedCustomer.DeliveryAddress;
+            txtContact.Text = _selectedCustomer.Contact;
+            txtEmail.Text = _selectedCustomer.Email;
+            txtPhoneNumber.Text = _selectedCustomer.PhoneNumber;
+            txtTaxNo.Text = _selectedCustomer.TaxNo;
+
+            cmbCountry.SelectedValue = _selectedCustomer.CountryId;
         }
 
         private async void btnUpdateSave_Click(object sender, RoutedEventArgs e)
@@ -67,6 +77,7 @@ namespace ERPClient.MusteriModule
             }
 
             int selectedCountryId = (int)cmbCountry.SelectedValue;
+            var selectedCountry = cmbCountry.SelectedItem as Country;
 
             var updateCustomer = new CustomerUpdateDto
             {
@@ -80,7 +91,14 @@ namespace ERPClient.MusteriModule
                 PhoneNumber = txtPhoneNumber.Text,
                 TaxNo = txtTaxNo.Text,
                 Date = _selectedCustomer.Date,
-                LastUpdated = DateTime.Now
+                LastUpdated = DateTime.Now,
+
+                Country = new EntityLayer.Entities.Country
+                {
+                    Id = selectedCountry.Id,
+                    CountryName = selectedCountry.CountryName
+                }
+
             };
 
             string jsonContent = System.Text.Json.JsonSerializer.Serialize(updateCustomer, new System.Text.Json.JsonSerializerOptions

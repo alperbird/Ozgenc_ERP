@@ -16,6 +16,7 @@ namespace ApiLayer.Controllers
         {
             _service = service;
         }
+
         [HttpGet]
         public async Task<ActionResult<List<Customer>>> GetAll() // Listeleme
         {
@@ -25,7 +26,7 @@ namespace ApiLayer.Controllers
                 Id = c.Id,
                 CustomerName = c.CustomerName,
                 CountryId = c.CountryId,
-                CountryName = c.Country.CountryName,
+                CountryName = c.CountryName,
                 Address = c.Address,
                 DeliveryAddress = c.DeliveryAddress,
                 Contact = c.Contact,

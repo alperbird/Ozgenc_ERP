@@ -187,7 +187,7 @@ namespace ERPClient.YedekParcaModule
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "Resim Dosyaları|*.jpg;*.jpeg;*.png;*.bmp",
+                Filter = "Resim Dosyaları|*.jpg;*.jpeg;*.png;*.bmp;*.svg",
                 Title = "Bir Fotoğraf Seçin"
             };
 

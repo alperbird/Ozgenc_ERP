@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ERPClient.MusteriModule"
         mc:Ignorable="d"
-        Title="Müşteri Güncelleme" Height="470" Width="450" WindowStartupLocation="CenterScreen" WindowStyle="None">
+        Title="Müşteri Güncelleme" Height="520" Width="450" WindowStartupLocation="CenterScreen" WindowStyle="None">
     <Grid>
         <Frame x:Name="contentFrame" NavigationUIVisibility="Hidden"/>
     </Grid>

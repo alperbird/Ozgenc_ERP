@@ -22,6 +22,7 @@ namespace DataAccessLayer.Repositories
         {
             return await _context.Orders.
                 Include(o => o.Customer).
+                ThenInclude(s => s.Country).
                 Include(o => o.OrderItems).
                 ThenInclude(oi => oi.Product).
                 OrderByDescending(o => o.OrderDate).ToListAsync();
@@ -31,6 +32,7 @@ namespace DataAccessLayer.Repositories
         {
             return await _context.Orders.
                 Include(o => o.Customer).
+                ThenInclude(s => s.Country).
                 Include(o => o.OrderItems).
                 ThenInclude(oi => oi.Product).
                 FirstOrDefaultAsync(o => o.Id == id);
@@ -44,32 +46,28 @@ namespace DataAccessLayer.Repositories
 
         public async Task UpdateAsync(Order o)
         {
-
-            // Eski siparişleri çekiyoruz...
             var existingOrder = await _context.Orders
                 .Include(oi => oi.OrderItems)
                 .FirstOrDefaultAsync(oi => oi.Id == o.Id);
 
             if (existingOrder == null)
-            {
                 throw new Exception("Sipariş bulunamadı!");
-            }
 
-            // Eski sipariş bilgileri...
+            //Alanları güncelle
             existingOrder.CustomerId = o.CustomerId;
             existingOrder.OrderDate = o.OrderDate;
             existingOrder.ShippingFee = o.ShippingFee;
             existingOrder.AdjustmentPercentage = o.AdjustmentPercentage;
             existingOrder.AdjustmentType = o.AdjustmentType;
 
-            // Eski orderitemleri sil...
+            // OrderItem'ları sıfırla ve yeni gelenlerle doldur
             _context.OrderItems.RemoveRange(existingOrder.OrderItems);
-
-            //Yeni orderitemleri ekle...
             existingOrder.OrderItems = o.OrderItems;
 
-            _context.Orders.Update(o);
+            _context.Orders.Update(existingOrder);
+
             await _context.SaveChangesAsync();
         }
+
     }
 }
