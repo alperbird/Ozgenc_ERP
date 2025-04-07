@@ -1,7 +1,7 @@
 # Ozgenc_ERP
 
 build.bat dosyası proje içerisinde bulunan projeleri çıkartmayı sağlar. Sırasıyla:
-EntityLayer-DAL-BusinessLayer-ApiLayer-ERPClient projelerini Release eder.
+EntityLayer-DAL-BusinessLayer-ApiLayer-ERPClient projelerini Debug klasörünün içine çıkartır.
 
 Dipnot: GeneratePdf projesi .Net Framework ile çalıştığı için onu proje dışına çıkartma yöntemi farklıdır. Bunun için:
 1)Developer Command Prompt for VS komut satırını açın
