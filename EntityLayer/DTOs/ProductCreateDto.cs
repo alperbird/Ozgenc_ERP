@@ -14,7 +14,7 @@ namespace EntityLayer.DTOs
         public string ParcaAdi { get; set; }
         public decimal FiyatTL { get; set; }
         public decimal FiyatEUR { get; set; }
-
+        public string? Aciklama { get; set; }
 
         public List<int> MakineIdleri { get; set; }
     }

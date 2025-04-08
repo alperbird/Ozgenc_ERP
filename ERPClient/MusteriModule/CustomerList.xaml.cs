@@ -70,7 +70,7 @@ namespace ERPClient.MusteriModule
                     {
                         Id = dto.Id,
                         CustomerName = dto.CustomerName,
-                        CountryId = dto.CountryId,
+                        CountryId = dto.CountryId, //burayı eklemediğim için id 0 geliyordu...
                         CountryName = dto.CountryName,
                         Address = dto.Address,
                         DeliveryAddress = dto.DeliveryAddress,

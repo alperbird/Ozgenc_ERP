@@ -9,16 +9,18 @@ namespace EntityLayer.Entities
 {
     public class Product
     {
-            public int Id { get; set; }
-            public string? ResimYolu { get; set; }
+        public int Id { get; set; }
+        public string? ResimYolu { get; set; }
 
-            [NotMapped]
-            public string MakineAdi { get; set; } = string.Empty;
-            public string? Sinif { get; set; }
-            public string? ParcaAdi { get; set; }
-            public decimal FiyatTL { get; set; }
-            public decimal FiyatEUR { get; set; }
+        [NotMapped]
+        public string MakineAdi { get; set; } = string.Empty;
+        public string? Sinif { get; set; }
+        public string? ParcaAdi { get; set; }
+        public decimal FiyatTL { get; set; }
+        public decimal FiyatEUR { get; set; }
+        public string? Aciklama { get; set; }
 
-            public List<ProductMachine> ProductMachines { get; set; } = new List<ProductMachine>(); // Many-to-Many ilişki
+
+        public List<ProductMachine> ProductMachines { get; set; } = new List<ProductMachine>(); // Many-to-Many ilişki
     }
 }

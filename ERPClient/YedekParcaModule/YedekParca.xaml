@@ -86,6 +86,15 @@
                         <DataGridTextColumn Header="Parça Adı" Binding="{Binding ParcaAdi}" Width="*"/>
                         <DataGridTextColumn Header="Fiyat (TL)" Binding="{Binding FiyatTL}" Width="100"/>
                         <DataGridTextColumn Header="Fiyat (EUR)" Binding="{Binding FiyatEUR}" Width="100"/>
+                        <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="150">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="VerticalAlignment" Value="Top"/>
+                                    <Setter Property="FontSize" Value="10"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
                         <!-- Güncelle Butonu -->
                         <DataGridTemplateColumn Header="Güncelle" Width="80">
@@ -152,6 +161,9 @@
                     <!-- Fiyat EUR -->
                     <TextBlock Text="Fiyat (EUR):" FontWeight="Bold"/>
                     <TextBox Name="txtEUR" Width="250" Margin="0,5,0,10"/>
+
+                    <TextBlock Text="Parça Açıklaması:" FontWeight="Bold"/>
+                    <TextBox Name="txtAciklama" Width="250" Margin="0,5,0,10" TextWrapping="Wrap" AcceptsReturn="True"/>
 
                     <TextBlock Name="txtFileName" Text="Dosya seçilmedi" FontWeight="Bold" TextAlignment="Center" Margin="5"/>
 

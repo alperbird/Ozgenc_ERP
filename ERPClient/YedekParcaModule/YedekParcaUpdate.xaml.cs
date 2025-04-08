@@ -88,6 +88,7 @@ namespace ERPClient.YedekParcaModule
             txtParcaAdi.Text = _selectedProduct.ParcaAdi;
             txtTL.Text = _selectedProduct.FiyatTL.ToString();
             txtEUR.Text = _selectedProduct.FiyatEUR.ToString();
+            txtAciklama.Text = _selectedProduct.Aciklama;
 
             if (!string.IsNullOrEmpty(_selectedProduct.ResimYolu))
             {
@@ -115,6 +116,7 @@ namespace ERPClient.YedekParcaModule
                     ParcaAdi = txtParcaAdi.Text,
                     FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
                     FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
+                    Aciklama = txtAciklama.Text,
                     ResimYolu = selectedImagePathUpdate,
                     MakineIdleri = selectedMachineIds
                 };
@@ -153,7 +155,6 @@ namespace ERPClient.YedekParcaModule
                 MessageBox.Show($"Güncelleme işlemi başarısız: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
 
         // Geri butonu (Kapat)

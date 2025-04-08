@@ -20,6 +20,7 @@ namespace ERPClient.Model
         public string? ParcaAdi { get; set; }
         public decimal FiyatTL { get; set; }
         public decimal FiyatEUR { get; set; }
+        public string? Aciklama { get; set; }
         [JsonIgnore]
         public List<ProductMachine>? ProductMachines { get; set; }
     }

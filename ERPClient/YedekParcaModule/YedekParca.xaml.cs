@@ -86,6 +86,7 @@ namespace ERPClient
                     ParcaAdi = dto.ParcaAdi,
                     FiyatTL = dto.FiyatTL,
                     FiyatEUR = dto.FiyatEUR,
+                    Aciklama = dto.Aciklama,
                     ProductMachines = dto.ProductMachines.Select(pmDto => new ProductMachine
                     {
                         Id = pmDto.Id,
@@ -165,6 +166,7 @@ namespace ERPClient
                     ParcaAdi = txtParcaAdi.Text,
                     FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
                     FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
+                    Aciklama = txtAciklama.Text,
                     ResimYolu = selectedImagePath,
                     MakineIdleri = selectedMachineIds
                 };
@@ -256,6 +258,7 @@ namespace ERPClient
             txtParcaAdi.Clear();
             txtTL.Clear();
             txtEUR.Clear();
+            txtAciklama.Clear();
         }
 
         #region Arama Çubuğu ve Filtreleme işlemleri
@@ -317,8 +320,6 @@ namespace ERPClient
             }
         }
 
-
-
         #endregion
 
         // DataGrid Seçim Değiştiğinde
@@ -334,7 +335,6 @@ namespace ERPClient
                 }
             }
         }
-
 
 
         //Selecbox içerisinde mouse kaydırma işlemi

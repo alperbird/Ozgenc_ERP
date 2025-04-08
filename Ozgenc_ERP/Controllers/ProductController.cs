@@ -35,6 +35,7 @@ namespace ApiLayer.Controllers
                 FiyatTL = p.FiyatTL,
                 FiyatEUR = p.FiyatEUR,
                 ResimYolu = p.ResimYolu,
+                Aciklama = p.Aciklama,
                 MakineAdi = p.ProductMachines != null && p.ProductMachines.Any()
             ? string.Join(", ", p.ProductMachines.Select(pm => pm.Machine.MakineAdi))
             : "Makine Yok",
@@ -90,6 +91,7 @@ namespace ApiLayer.Controllers
                 ParcaAdi = productDto.ParcaAdi,
                 FiyatTL = productDto.FiyatTL,
                 FiyatEUR = productDto.FiyatEUR,
+                Aciklama = productDto.Aciklama,
                 ResimYolu = productDto.ResimYolu
             };
 

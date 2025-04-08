@@ -43,6 +43,9 @@
             <TextBlock Text="Fiyat (EUR):" FontWeight="Bold"/>
             <TextBox Name="txtEUR" Width="250" Margin="0,5,0,10"/>
 
+            <TextBlock Text="Parça Açıklaması:" FontWeight="Bold"/>
+            <TextBox Name="txtAciklama" Width="250" Margin="0,5,0,10"/>
+
             <Grid Width="746">
                 <!-- Dosya adı burada gösterilecek -->
                 <TextBlock Name="txtPhotoNameUpdate" Text="Seçili Fotoğraf Yok" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"/>
