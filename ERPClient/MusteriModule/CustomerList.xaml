@@ -225,8 +225,6 @@
                     <!-- Ekle Butonu -->
                     <Button Content="➕ Ekle" Width="150" Height="40" Background="#28A745" Foreground="White"
             BorderThickness="0" Cursor="Hand" Margin="10,20,0,10" Click="btnAdd_Click"/>
-                    <!-- Güncelle Butonu -->
-                    <Button Content="One Shot!" Width="150" Height="40" Background="#FFC107" Foreground="Black" Cursor="UpArrow" Click="btnTopluMusteriEkle_Click"/>
                 </StackPanel>
             </Border>
         </Grid>

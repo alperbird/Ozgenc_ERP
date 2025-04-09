@@ -115,7 +115,7 @@ namespace ERPClient.SiparisModule
 
                 if (!File.Exists(exePath))
                 {
-                    MessageBox.Show("PDF oluşturulamadı!");
+                    MessageBox.Show("GeneratorPdf uygulamasının dosya konumu yanlış!");
                     return;
                 }
 
