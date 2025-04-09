@@ -256,6 +256,36 @@ namespace ERPClient.MusteriModule
             btnPrevious.IsEnabled = currentPage > 1;
             btnNext.IsEnabled = currentPage < totalPages;
         }
+
+        private void btnSayfaGit_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(txtSayfaNumarasi.Text, out int istenenSayfa))
+            {
+                int maxSayfa = (int)Math.Ceiling((double)allCustomer.Count / pageSize);
+
+                if (istenenSayfa >= 1 && istenenSayfa <= maxSayfa)
+                {
+                    currentPage = istenenSayfa;
+                    UpdatePagination();
+                }
+                else
+                {
+                    MessageBox.Show($"Lütfen 1 ile {maxSayfa} arasında bir sayı girin.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Geçerli bir sayı girin.");
+            }
+        }
+
+        private void txtSayfaNumarasi_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnSayfaGit_Click(sender, e);
+            }
+        }
         #endregion
 
         private void Button_Click(object sender, RoutedEventArgs e) //sayfadan çıkış butonu
@@ -395,5 +425,6 @@ namespace ERPClient.MusteriModule
             return JsonConvert.DeserializeObject<List<Country>>(json) ?? new List<Country>();
         }
 
+        
     }
 }

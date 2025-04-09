@@ -110,7 +110,14 @@ namespace ERPClient.SiparisModule
                 string jsonItems = System.Text.Json.JsonSerializer.Serialize(items);
 
                 // exe yolu (benim pc için. Siz de kendi dosya yolunuza göre burayı düzenlemelisiniz...)
-                string exePath = @"C:\Users\root\source\repos\Ozgenc_ERP\GeneratePdf\bin\Debug\GeneratePdf.exe";
+                //string exePath = @"C:\Users\root\source\repos\Ozgenc_ERP\GeneratePdf\bin\Debug\GeneratePdf.exe"; --Bu kullanım artık tedavülden kaldırılmıştır!
+                string exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tools", "GeneratePdf.exe");
+
+                if (!File.Exists(exePath))
+                {
+                    MessageBox.Show("PDF oluşturulamadı!");
+                    return;
+                }
 
                 // exe yolu (server pc için: Server'da değişiklik yapıldığında burası açılacak)
                 //string exePath = @"C:\Ozgenc_ERP\Tools\GeneratePdf.exe";

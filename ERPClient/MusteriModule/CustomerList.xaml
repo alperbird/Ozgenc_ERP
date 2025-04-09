@@ -169,6 +169,10 @@
                     <Button Name="btnPrevious" Content="◀ Önceki" Click="btnPrevious_Click" Padding="5,2" Margin="5,0"/>
                     <TextBlock Name="txtPageInfo" Text="Sayfa 1" VerticalAlignment="Center" FontWeight="Bold"/>
                     <Button Name="btnNext" Content="Sonraki ▶" Click="btnNext_Click" Padding="5,2" Margin="5,0"/>
+
+                    <TextBlock Text="Sayfa:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBox Name="txtSayfaNumarasi" Width="50" Height="25" VerticalContentAlignment="Center" KeyDown="txtSayfaNumarasi_KeyDown"/>
+                    <Button Content="Git" BorderThickness="0" Cursor="Hand" Width="40" Height="25" Margin="5,0,0,0" Click="btnSayfaGit_Click"/>
                 </StackPanel>
 
             </StackPanel>
