@@ -37,7 +37,7 @@ namespace WebClient.Controllers
             };
 
             return View(model);
-        }
+        } //pagination 
 
         [HttpGet]
         public IActionResult Create()
@@ -51,7 +51,7 @@ namespace WebClient.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost] //Ekleme
         public async Task<IActionResult> Create(Product model, IFormFile foto, List<int> selectedMachines)
         {
             if (!ModelState.IsValid)
@@ -111,7 +111,77 @@ namespace WebClient.Controllers
             return View(product);
         }
 
+        [HttpGet] //güncelleme esnasında dolacak olan kısım
+        public async Task<IActionResult> Edit(int id)
+        {
+            var product = await _context.Products
+                .Include(p => p.ProductMachines)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Machines = _context.Machines.Select(m => new SelectListItem
+            {
+                Value = m.Id.ToString(),
+                Text = m.MakineAdi
+            }).ToList();
+
+            ViewBag.Sinif = GetSinif();
+            ViewBag.SelectedMachines = product.ProductMachines.Select(pm => pm.MakineId).ToList();
+
+            return View(product);
+        }
+
         [HttpPost]
+        [ValidateAntiForgeryToken] // güncelleme kısmı
+        public async Task<IActionResult> Edit(Product model, IFormFile foto, List<int> selectedMachines)
+        {
+            var product = await _context.Products
+                .Include(p => p.ProductMachines)
+                .FirstOrDefaultAsync(p => p.Id == model.Id);
+
+            if (product == null)
+                return NotFound();
+
+            // Güncelleme
+            product.Sinif = model.Sinif;
+            product.ParcaAdi = model.ParcaAdi;
+            product.FiyatTL = model.FiyatTL;
+            product.FiyatEUR = model.FiyatEUR;
+            product.Aciklama = model.Aciklama;
+
+            // FOTOĞRAF YENİLENDİ Mİ?
+            if (foto != null && foto.Length > 0)
+            {
+                var fileName = Guid.NewGuid() + Path.GetExtension(foto.FileName);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/YedekParcaAssets", fileName);
+                using var stream = new FileStream(path, FileMode.Create);
+                await foto.CopyToAsync(stream);
+                product.ResimYolu = fileName;
+            }
+
+            // ESKİ MAKİNELERİ SİL
+            _context.ProductMachines.RemoveRange(product.ProductMachines);
+
+            // YENİLERİ EKLE
+            if (selectedMachines != null)
+            {
+                product.ProductMachines = selectedMachines.Select(mid => new ProductMachine
+                {
+                    MakineId = mid
+                }).ToList();
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Parça başarıyla güncellendi.";
+            return RedirectToAction("Index");
+        }
+
+
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
