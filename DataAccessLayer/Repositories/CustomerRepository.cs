@@ -22,6 +22,7 @@ namespace DataAccessLayer.Repositories
         {
             return await _context.Customers
                 .Include(c => c.Country)
+                .OrderBy(c => c.Id)
                 .ToListAsync();
         }
 

@@ -1,0 +1,122 @@
+﻿@* <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebClient</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebClient.styles.css" asp-append-version="true" />
+    <link href="~/adminlte/assets/fonts/inter/inter.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/adminlte/css/adminlte.css" />
+    <link rel="stylesheet" href="~/adminlte/assets/icons/fontawesome/css/all.min.css" />
+</head>
+<body class="layout-navbar-fixed layout-menu-fixed">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebClient</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - WebClient - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/adminlte/js/adminlte.js"></script>
+    <script src="~/adminlte/assets/js/jquery/jquery.min.js"></script>
+    <script src="~/adminlte/assets/js/bootstrap/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+ *@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ERP Sistemi</title>
+
+    <!-- AdminLTE CSS -->
+    <link href="~/adminlte/assets/fonts/inter/inter.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/adminlte/css/adminlte.css" />
+    <link rel="stylesheet" href="~/adminlte/assets/icons/fontawesome/css/all.min.css" />
+</head>
+
+<body class="layout-navbar-fixed layout-menu-fixed">
+    <div class="wrapper">
+
+        <!-- Navbar -->
+        <nav class="layout-navbar navbar navbar-expand navbar-light bg-white">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <img src="~/adminlte/assets/img/credit/logo.png" alt="Logo" style="height: 45px;">
+                    <span class="ml-2">ERP Sistemi</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar -->
+        <aside class="layout-menu bg-light">
+            <div class="menu-inner-shadow"></div>
+            <ul class="nav nav-pills nav-sidebar flex-column pt-3" data-widget="treeview" role="menu">
+                <li class="nav-item">
+                    <a href="/YedekParca" class="nav-link">
+                        <i class="nav-icon fas fa-cogs"></i>
+                        <p>Yedek Parçalar</p>
+                    </a>
+                </li>
+                <!-- diğer menüler buraya -->
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Customer")" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>Müşteriler</p>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Content Wrapper -->
+        <div class="content-wrapper p-3">
+            @RenderBody()
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer text-center">
+            <strong>&copy; 2025 - Özgenç ERP Sistemi</strong> Tüm Hakları Saklıdır.
+        </footer>
+    </div>
+
+    <!-- AdminLTE Scripts -->
+    <script src="~/adminlte/assets/js/jquery/jquery.min.js"></script>
+    <script src="~/adminlte/assets/js/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="~/adminlte/js/adminlte.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

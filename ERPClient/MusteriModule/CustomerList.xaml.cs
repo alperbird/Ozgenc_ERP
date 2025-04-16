@@ -181,7 +181,7 @@ namespace ERPClient.MusteriModule
 
         private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (dgMusteri.SelectedItem is EntityLayer.DTOs.CustomerCreateDto selectedCustomer)
+            if (dgMusteri.SelectedItem is Model.Customer selectedCustomer)
             {
                 var result = MessageBox.Show($"Müşteri '{selectedCustomer.CustomerName}' silinecek! Onaylıyor musunuz?",
                                              "Silme Onayı", MessageBoxButton.YesNo, MessageBoxImage.Warning);

@@ -183,6 +183,15 @@ namespace ERPClient.SiparisModule
                     // Formu temizle
                     orderItems.Clear();
                     cmbCustomer.SelectedIndex = -1;
+                    txtCountry.Text = string.Empty;
+                    txtTaxNo.Text = string.Empty;
+                    txtAddress.Text = string.Empty;
+                    txtDeliveryAddress.Text = string.Empty;
+                    txtPhone.Text = string.Empty;
+                    txtEmail.Text = string.Empty;
+                    txtOrderDate.Text = string.Empty;
+                    txtShippingFee.Text = string.Empty;
+                    txtAdjustmentPercentage.Text = "0";
                     cmbProduct.SelectedIndex = -1;
                     cmbAdjustmentType.SelectedIndex = -1;
                     txtProductName.Clear();

@@ -65,7 +65,10 @@ public partial class MainWindow : Window
 
     private void Yurtİci_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
+        e.Handled = true;
 
+        YurtIci yi = new YurtIci();
+        yi.Show();
     }
 
     private void YurtDisi_PreviewMouseDown(object sender, MouseButtonEventArgs e)

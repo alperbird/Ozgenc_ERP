@@ -1,0 +1,154 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@using EntityLayer.Entities;
+@model PagedResult<EntityLayer.Entities.Product>
+
+@{
+    ViewData["Title"] = "Yedek Parçalar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int startPage = Math.Max(1, Model.PageNumber - 2);
+    int endPage = Math.Min(Model.TotalPages, Model.PageNumber + 4);
+}
+
+
+<div class="content-wrapper">
+    <section class="content pt-3 px-3">
+        <h2 class="mb-3">Yedek Parçalar</h2>
+        <div class="card">
+            <div class="card-body">
+                <div class="mb-3 text-end">
+                    <a href="@Url.Action("Create", "YedekParca")" class="btn btn-outline-success">
+                        <i class="fas fa-plus"></i> Parça Ekle
+                    </a>
+                </div>
+                <table class="table table-hover table-striped table-bordered align-middle text-center">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Makineler</th>
+                            <th>Sınıf</th>
+                            <th>Fotoğraf</th>
+                            <th>Parça Adı</th>
+                            <th>Fiyat (TL)</th>
+                            <th>Fiyat (EUR)</th>
+                            <th>Açıklama</th>
+                            <th>Güncelle</th>
+                            <th>Sil</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>
+                                    @if (item.ProductMachines != null && item.ProductMachines.Count > 0)
+                                    {
+                                        foreach (var m in item.ProductMachines)
+                                        {
+                                            <span class="badge bg-primary-subtle text-dark me-1">@m.Machine?.MakineAdi</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Yok</span>
+                                    }
+                                </td>
+                                <td>@item.Sinif</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ResimYolu))
+                                    {
+                                        <img src="~/YedekParcaAssets/@item.ResimYolu" class="img-thumbnail" style="height: 60px; object-fit: contain;" />
+
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>@item.ParcaAdi</td>
+                                <td>@item.FiyatTL ₺</td>
+                                <td>@item.FiyatEUR €</td>
+                                <td>@item.Aciklama</td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a href="@Url.Action("Edit", "YedekParca", new { id = item.Id })"
+                                           class="btn btn-sm btn-outline-warning"
+                                           title="Düzenle">
+                                            <i class="fas fa-pen fa-lg"></i> Düzenle
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Sil"
+                                                onclick="showDeletePopup(@item.Id, '@item.ParcaAdi')">
+                                            <i class="fas fa-trash fa-lg"></i> Sil
+                                        </button>
+                                    </div>
+
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+                <nav class="mt-3">
+                    <ul class="pagination justify-content-center">
+
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1 })#pagedown">&laquo;</a>
+                            </li>
+                        }
+
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { page = i })#pagedown">@i</a>
+                            </li>
+                        }
+
+                        @if (Model.PageNumber < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1 })#pagedown">&raquo;</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </section>
+</div>
+<div id="deletePopup" class="modal d-none position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 justify-content-center align-items-center">
+    <div class="bg-white p-4 rounded shadow" style="width: 400px;">
+        <h5 class="text-danger">Silme Onayı</h5>
+        <p id="deleteText">Bu parçayı silmek istediğinize emin misiniz?</p>
+        <form id="deleteForm" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="deleteId" />
+            <button type="submit" class="btn btn-danger me-2">Sil</button>
+            <button type="button" class="btn btn-secondary" onclick="closeDeletePopup()">İptal</button>
+        </form>
+    </div>
+</div>
+<script>
+    function showDeletePopup(id, name) {
+        document.getElementById("deleteId").value = id;
+        document.getElementById("deleteText").innerText = `'${name}' adlı parçayı silmek istediğinize emin misiniz?`;
+        document.getElementById("deleteForm").action = `/YedekParca/Delete/${id}`;
+        document.getElementById("deletePopup").classList.remove("d-none");
+        document.getElementById("deletePopup").classList.add("d-flex");
+    }
+
+    function closeDeletePopup() {
+        document.getElementById("deletePopup").classList.remove("d-flex");
+        document.getElementById("deletePopup").classList.add("d-none");
+    }
+</script>
