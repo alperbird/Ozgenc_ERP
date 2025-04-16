@@ -25,8 +25,8 @@ namespace GeneratePdf
             string email = args[4];
             string phone = args[5];
             string country = args[6];
-            string adjustmentText = args[7]; // kullanılmayacak yurt içi için
-            string shippingFee = args[8];    // kullanılmayacak yurt içi için
+            string adjustmentText = args[7];
+            string shippingFee = args[8];
             string total = args[9];
             string jsonItems = args[10];
 
@@ -41,10 +41,12 @@ namespace GeneratePdf
                 return;
             }
 
+            // 📂 PDF Kaydedilecek Klasör: Masaüstü\Invoice
             string masaustu = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string invoiceKlasoru = Path.Combine(masaustu, "Invoice");
             Directory.CreateDirectory(invoiceKlasoru);
 
+            // 📄 PDF Dosya Adı
             string tarihFormatli = DateTime.Now.ToString("dd_MM_yyyy");
             string dosyaAdiBase = $"{customerName}_{tarihFormatli}";
             string pdfYolu = Path.Combine(invoiceKlasoru, dosyaAdiBase + ".pdf");
@@ -56,8 +58,10 @@ namespace GeneratePdf
                 sayac++;
             }
 
+            // 📎 Şablon Dosyası EXE'nin Bulunduğu Klasörden Gelecek
+            string exeKlasoru = AppDomain.CurrentDomain.BaseDirectory;
             string sablonAdi = country.Trim().ToLower() == "türkiye" ? "yurticisablon.xlsx" : "yurtdisisablon.xlsx";
-            string sablonYolu = Path.Combine(invoiceKlasoru, sablonAdi);
+            string sablonYolu = Path.Combine(exeKlasoru, sablonAdi);
 
             if (!File.Exists(sablonYolu))
             {
@@ -70,22 +74,18 @@ namespace GeneratePdf
                 Visible = false,
                 DisplayAlerts = false
             };
-            /*74, 75 ve 76. satırlar Server'daki bilgisayara atılacağı zaman yorum satırına alınacak. Hata patlatıyor sürekli oradayken. Siz kullanırken hata patlatmaz diye umuyorum*/
-            excelApp.DisplayAlerts = false;
-            excelApp.Calculation = Excel.XlCalculation.xlCalculationManual;
-            excelApp.ScreenUpdating = false;
+
             var workbook = excelApp.Workbooks.Open(sablonYolu);
-            dynamic sheet = workbook.Sheets[1]; // EN ÖNEMLİSİ BU
+            dynamic sheet = workbook.Sheets[1];
 
             try
             {
                 if (country.Trim().ToLower() == "türkiye")
                 {
-                    //Yurt İçi
                     sheet.Cells[11, 4].Value = customerName;
                     sheet.Cells[12, 4].Value = contact;
                     sheet.Cells[13, 4].Value = address;
-                    sheet.Cells[14, 4].Value = deliveryAddress;
+                    sheet.Cells[15, 4].Value = deliveryAddress;
                     sheet.Cells[11, 9].Value = DateTime.Now.ToString("dd/MM/yyyy");
                     sheet.Cells[15, 9].Value = email;
 
@@ -98,15 +98,9 @@ namespace GeneratePdf
                         sheet.Cells[row, 10].Value = item.Total;
                         row++;
                     }
-
-                    sheet.Cells[24, 10].Value = total;
-
-                    if (decimal.TryParse(total, out decimal totalDecimal))
-                        sheet.Cells[29, 10].Value = (totalDecimal + 1.2m).ToString("0.00");
                 }
                 else
                 {
-                    //Yurt Dışı
                     sheet.Cells[7, 4].Value = customerName;
                     sheet.Cells[8, 4].Value = address;
                     sheet.Cells[9, 4].Value = deliveryAddress;
@@ -130,9 +124,19 @@ namespace GeneratePdf
                     sheet.Cells[28, 17].Value = total;
                 }
 
-                workbook.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, pdfYolu);
-                Console.WriteLine($"PDF oluşturuldu: {pdfYolu}");
+                // 👇 SADECE İLK SAYFA PDF’E DÖNÜŞTÜRÜLÜYOR
+                workbook.ExportAsFixedFormat(
+                    Excel.XlFixedFormatType.xlTypePDF,
+                    pdfYolu,
+                    Excel.XlFixedFormatQuality.xlQualityStandard,
+                    true,
+                    false,
+                    1,
+                    1,
+                    false
+                );
 
+                Console.WriteLine($"PDF oluşturuldu: {pdfYolu}");
                 Process.Start(new ProcessStartInfo(pdfYolu) { UseShellExecute = true });
             }
             catch (Exception ex)

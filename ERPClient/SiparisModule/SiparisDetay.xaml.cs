@@ -136,8 +136,7 @@ namespace ERPClient.SiparisModule
                         Arguments = arguments,
                         UseShellExecute = false, // Shell'e ihtiyaç yok
                         CreateNoWindow = true,   // CMD ekranını sakla
-                        WindowStyle = ProcessWindowStyle.Hidden // Garanti olsun
-                        //WorkingDirectory = @"C:\Ozgenc_ERP\Tools" // exe'nin bulunduğu klasör! Burası da server kısmında değişiklik olursa açılacak
+                        //WindowStyle = ProcessWindowStyle.Hidden // Garanti olsun
                     };
 
                     Process.Start(psi);

@@ -56,7 +56,7 @@
                     </StackPanel>
                 </Button>
                 <TreeView Name="treeSales" Background="#EEE" Visibility="Collapsed">
-                    <TreeViewItem Header="Satın Alma">
+                    <TreeViewItem Header="Siparişler">
                         <TreeViewItem>
                             <TreeViewItem.Header>
                                 <StackPanel Orientation="Horizontal" PreviewMouseDown="Yurtİci_PreviewMouseDown">
