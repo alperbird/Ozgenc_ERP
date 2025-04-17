@@ -1,0 +1,63 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@using EntityLayer.DTOs
+@model OrderDetailDto
+@{
+}
+<div class="content-wrapper p-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Sipariş Detayları - #@Model.Id</h2>
+        <a class="btn btn-success"
+           href="@Url.Action("GenerateProforma", "Order", new { id = Model.Id })">
+            <i class="bi bi-file-earmark-pdf-fill"></i> Proforma Oluştur
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h5>Müşteri Bilgileri</h5>
+            <p><strong>Ad:</strong> @Model.Customer.CustomerName</p>
+            <p><strong>Ülke:</strong> @Model.Customer.Country?.CountryName</p>
+            <p><strong>Vergi No:</strong> @Model.Customer.TaxNo</p>
+            <p><strong>Adres:</strong> @Model.Customer.Address</p>
+            <p><strong>Teslimat Adresi:</strong> @Model.Customer.DeliveryAddress</p>
+            <p><strong>İlgili Kişi:</strong> @Model.Customer.Contact</p>
+            <p><strong>Email:</strong> @Model.Customer.Email</p>
+            <p><strong>Telefon:</strong> @Model.Customer.PhoneNumber</p>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Sipariş Bilgileri</h5>
+            <p><strong>Sipariş Tarihi:</strong> @Model.OrderDate.ToString("dd.MM.yyyy")</p>
+            <p><strong>Kargo Ücreti:</strong> @(Model.ShippingFee?.ToString("C2", new System.Globalization.CultureInfo("fr-FR")) ?? "-")</p>
+            <p><strong>İndirim / Zam:</strong> @(Model.AdjustmentPercentage ?? 0)% @Model.AdjustmentType</p>
+            <p><strong>Toplam Tutar:</strong> @Model.TotalPrice.ToString("C2", new System.Globalization.CultureInfo("fr-FR"))</p>
+        </div>
+    </div>
+
+    <h5>Parçalar</h5>
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Parça Adı</th>
+                <th>Adet</th>
+                <th>Birim Fiyat (€)</th>
+                <th>Toplam (€)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderItems)
+            {
+                <tr>
+                    <td>@item.Product.ParcaAdi</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice.ToString("C2", new System.Globalization.CultureInfo("fr-FR"))</td>
+                    <td>@((item.UnitPrice * item.Quantity).ToString("C2", new System.Globalization.CultureInfo("fr-FR")))</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
