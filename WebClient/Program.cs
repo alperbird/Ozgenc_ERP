@@ -1,3 +1,5 @@
+using BusinessLayer.Interfaces;
+using BusinessLayer.Services;
 using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +16,9 @@ namespace WebClient
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpClient();
+
+            builder.Services.AddScoped<IProformaService, ProformaService>();
 
             var app = builder.Build();
 
