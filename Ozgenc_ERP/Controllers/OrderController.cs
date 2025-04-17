@@ -87,5 +87,13 @@ namespace ApiLayer.Controllers
             await _orderService.UpdateOrderAsync(existingOrder);
             return Ok(existingOrder);
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchOrders([FromQuery] string? keyword)
+        {
+            var result = await _orderService.SearchOrderAsync(keyword);
+
+            return Ok(result);
+        }
     }
 }

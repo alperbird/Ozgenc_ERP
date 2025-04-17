@@ -16,5 +16,7 @@ namespace DataAccessLayer.Interfaces
         Task AddAsync(Order o);
 
         Task UpdateAsync(Order o);
+
+        Task<List<Order>> SearchAsync(string? keyword);
     }
 }

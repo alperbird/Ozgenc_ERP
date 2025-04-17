@@ -13,5 +13,6 @@ namespace BusinessLayer.Interfaces
         Task<Order> GetOrderBtIdAsync(int id);
         Task AddOrderAsync(Order o);
         Task UpdateOrderAsync(Order o);
+        Task<List<Order>> SearchOrderAsync(string? keyword);
     }
 }

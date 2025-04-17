@@ -1,0 +1,144 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@using EntityLayer.DTOs
+@model OrderCreateDto
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+}
+@{
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<div class="container mt-4">
+    <h2>Sipariş Oluştur</h2>
+
+    <form asp-action="Create" method="post">
+
+        <!-- Sipariş Türü -->
+        <div class="form-group">
+            <label for="orderType">Sipariş Türü</label>
+            <select id="orderType" class="form-control">
+                <option value="yurtici">Yurt İçi</option>
+                <option value="yurtdisi">Yurt Dışı</option>
+            </select>
+        </div>
+
+        <!-- Müşteri Seçimi -->
+        <div class="form-group">
+            <label for="CustomerId">Müşteri</label>
+            <select id="customerSelect" name="CustomerId" class="form-control select2">
+                <option value="">-- Müşteri Seçin --</option>
+                @foreach (var c in ViewBag.Customers as List<CustomerDto>)
+                {
+                    <option value="@c.Id" data-country="@c.CountryName">@c.CountryName (@c.CountryName)</option>
+                }
+            </select>
+        </div>
+
+        <!-- Sipariş Kalemleri -->
+        <div id="orderItemsContainer">
+            <div class="order-item border p-3 mb-2">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Ürün</label>
+                        <select name="OrderItems[0].ProductId" class="form-control select2-product">
+                            @foreach (var p in ViewBag.Products as List<ProductDto>)
+                            {
+                                <option value="@p.Id">@p.ParcaAdi</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Adet</label>
+                        <input type="number" name="OrderItems[0].Quantity" value="1" class="form-control" value="1" min="1" max="999" required/>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Fiyat (EUR)</label>
+                        <input type="number" name="OrderItems[0].UnitPrice" class="form-control" step="0.01" min="0.01" max="9999" required/>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Özel Parça Adı (opsiyonel)</label>
+                        <input type="text" name="OrderItems[0].CustomProductName" class="form-control" placeholder="Varsayılan yerine yazılacak" />
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger remove-item">−</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary mb-3" id="addItem">+ Kalem Ekle</button>
+        <br />
+        <button type="submit" class="btn btn-success">Siparişi Kaydet</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({ placeholder: "Müşteri Ara..." });
+            $('.select2-product').select2({ placeholder: "Ürün Seç" });
+
+            let index = 1;
+
+            $('#addItem').click(function () {
+                let itemHtml = `
+                <div class="order-item border p-3 mb-2">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Ürün</label>
+                            <select name="OrderItems[${index}].ProductId" class="form-control select2-product">
+                                ${$('#customerSelect').html()} <!-- Bu alanı ViewBag.Products ile doldurman gerekir -->
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label>Adet</label>
+                            <input type="number" name="OrderItems[${index}].Quantity" value="1" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Fiyat (EUR)</label>
+                            <input type="number" name="OrderItems[${index}].UnitPrice" class="form-control" step="0.01" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Özel Parça Adı</label>
+                            <input type="text" name="OrderItems[${index}].CustomProductName" class="form-control" />
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end">
+                            <button type="button" class="btn btn-danger remove-item">−</button>
+                        </div>
+                    </div>
+                </div>`;
+                $('#orderItemsContainer').append(itemHtml);
+                index++;
+                $('.select2-product').select2({ placeholder: "Ürün Seç" }); // yeniden initialize et
+            });
+
+            $(document).on('click', '.remove-item', function () {
+                $(this).closest('.order-item').remove();
+            });
+
+            $('#orderType').on('change', function () {
+                const type = $(this).val();
+                $('#customerSelect option').each(function () {
+                    const country = $(this).data('country');
+                    if (type === 'yurtici' && country !== 'Türkiye') {
+                        $(this).hide();
+                    } else if (type === 'yurtdisi' && country === 'Türkiye') {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+                $('#customerSelect').val(null).trigger('change');
+            });
+        });
+    </script>
+}

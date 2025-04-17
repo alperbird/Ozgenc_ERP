@@ -60,5 +60,10 @@ namespace BusinessLayer.Services
 
             return itemsTotal + adjustment + shipping;
         }
+
+        public async Task<List<Order>> SearchOrderAsync(string? keyword)
+        {
+            return await _orderRepository.SearchAsync(keyword);
+        }
     }
 }
