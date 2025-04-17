@@ -38,12 +38,15 @@ namespace BusinessLayer.PdfTemplates
 
         void ComposeHeader(IContainer container)
         {
-            container.Column(col =>
+            container.Row(row =>
             {
-                col.Item().AlignCenter().Text("PROFORMA FATURA").FontSize(16).SemiBold();
-                col.Item().Text($"FATURA : {_order.Customer.CustomerName} {_order.OrderDate:dd/MM/yyyy}");
-                col.Item().Text($"İLGİLİ KİŞİ: {_order.Customer.Contact}");
+                row.ConstantItem(100).Element(c => c.Image("wwwroot/images/logo-msk.png"));
+                row.RelativeItem().AlignCenter().Text("PROFORMA FATURA").FontSize(16).SemiBold();
+                row.ConstantItem(100).Element(c => c.Image("wwwroot/images/logo-ozgenc.png"));
             });
+
+            container.PaddingTop(5).Text($"FATURA : {_order.Customer.CustomerName} {_order.OrderDate:dd/MM/yyyy}");
+            container.Text($"İLGİLİ KİŞİ: {_order.Customer.Contact}");
         }
 
         void ComposeContent(IContainer container)
