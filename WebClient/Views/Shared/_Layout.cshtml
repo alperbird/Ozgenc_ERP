@@ -68,77 +68,102 @@
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - Özgenç ERP</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- AdminLTE Styles -->
+    <!-- AdminLTE 4 Styles -->
     <link rel="stylesheet" href="~/adminlte/css/adminlte.css" />
     <link rel="stylesheet" href="~/adminlte/assets/icons/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-<body class="sidebar-mini layout-fixed layout-navbar-fixed">
-    <div class="wrapper">
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
 
         <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="/" class="nav-link">Ana Sayfa</a>
-                </li>
-            </ul>
-
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#">
-                        <img src="~/adminlte/assets/img/user2-160x160.jpg" alt="User" class="img-size-32 mr-2 img-circle">
-                        <span>Admin</span>
-                    </a>
-                </li>
-            </ul>
+        <nav class="app-header navbar navbar-expand bg-body">
+            <div class="container-fluid">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+                            <i class="bi bi-list"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item d-none d-md-block">
+                        <a href="/" class="nav-link">Anasayfa</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link font-weight-bold">ÖZGENÇ ERP</span>
+                    </li>
+                </ul>
+            </div>
         </nav>
-        <!-- /Navbar -->
+        <!-- /.navbar -->
         <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <!-- Brand Logo -->
-            <a href="/" class="brand-link">
-                <img src="~/adminlte/assets/img/credit/logo.png" alt="Ozgenç Logo" class="brand-image img-circle elevation-3" style="height: 35px; width: auto; opacity: .8;">
-
-                <span class="brand-text font-weight-light">ERP Sistemi</span>
-            </a>
-
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <!-- Sidebar Menu -->
+        <aside class="app-sidebar bg-dark text-white">
+            <div class="sidebar-brand d-flex align-items-center justify-content-center py-3">
+                <span class="fs-5 fw-semibold text-white">Menü</span>
+            </div>
+            <div class="sidebar-wrapper">
                 <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-lte-toggle="treeview" role="menu">
+                        <!-- Yedek Parçalar -->
                         <li class="nav-item">
-                            <a href="/YedekParca" class="nav-link">
-                                <i class="nav-icon fas fa-cogs"></i>
-                                <p>Yedek Parçalar</p>
+                            <a href="/YedekParca" class="nav-link text-white">
+
+                                <p class="text-white">Yedek Parçalar</p>
                             </a>
                         </li>
+
+                        <!-- Müşteriler -->
                         <li class="nav-item">
-                            <a href="@Url.Action("Index", "Customer")" class="nav-link">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>Müşteriler</p>
+                            <a href="/Customer" class="nav-link text-white">
+                                <p class="text-white">Müşteriler</p>
                             </a>
+                        </li>
+
+                        <!-- Siparişler (treeview) -->
+                        <li class="nav-item menu-open">
+                            <a href="#" class="nav-link bg-secondary text-white">
+                                <p class="text-white">
+                                    Siparişler
+                                    <i class="nav-arrow bi bi-chevron-right text-white"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link text-white">
+                                        <p class="text-white">Sipariş Geçmişi</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link text-white">
+                                        <p class="text-white">Yurt Dışı Sipariş</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link text-white">
+                                        <p class="text-white">Yurt İçi Sipariş</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </nav>
-                <!-- /.sidebar-menu -->
             </div>
-            <!-- /.sidebar -->
         </aside>
-        <!-- /Sidebar -->
-        <!-- Content Wrapper -->
-        <div class="content-wrapper p-3">
-            @RenderBody()
-        </div>
+
+        <!-- /.sidebar -->
+        <!-- Main Content -->
+        <main class="app-main">
+            <div class="app-content p-4">
+                @RenderBody()
+            </div>
+        </main>
 
         <!-- Footer -->
-        <footer class="main-footer text-center">
+        <footer class="app-footer text-center">
             <strong>&copy; 2025 - Özgenç ERP Sistemi</strong> Tüm Hakları Saklıdır.
         </footer>
     </div>
@@ -147,8 +172,68 @@
     <script src="~/adminlte/assets/js/jquery/jquery.min.js"></script>
     <script src="~/adminlte/assets/js/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="~/adminlte/js/adminlte.js"></script>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          if (window.OverlayScrollbars) {
+            OverlayScrollbars(document.querySelectorAll('.sidebar-wrapper'), {
+              scrollbars: {
+                autoHide: 'leave',
+                clickScroll: true
+              }
+            });
+          }
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
 
+
+
+@*
+    <!-- Navbar -->
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+  <!-- Sol taraf: Menü Toggle -->
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+        <i class="fas fa-bars"></i>
+      </a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <a href="/" class="nav-link">Anasayfa</a>
+    </li>
+  </ul>
+
+  <!-- Sağ taraf: Logo veya kullanıcı -->
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item">
+      <span class="nav-link font-weight-bold">ÖZGÜN ERP</span>
+    </li>
+  </ul>
+</nav>
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar Menü -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+        <li class="nav-item">
+          <a href="/yedek-parcalar" class="nav-link">
+            <i class="nav-icon fas fa-cogs"></i>
+            <p>Yedek Parçalar</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/musteriler" class="nav-link">
+            <i class="nav-icon fas fa-users"></i>
+            <p>Müşteriler</p>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+*@

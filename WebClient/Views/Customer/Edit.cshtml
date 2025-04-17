@@ -1,0 +1,76 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using EntityLayer.Entities;
+@model EntityLayer.Entities.Customer
+
+@{
+    ViewData["Title"] = "Müşteri Güncelle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var countries = ViewBag.Country as List<Country>;
+}
+
+<div class="content-wrapper">
+    <section class="content pt-3 px-3">
+        <h2 class="mb-3">Müşteri Güncelle</h2>
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="CustomerName" class="form-label">Ad</label>
+                        <input asp-for="CustomerName" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CountryId" class="form-label">Ülke</label>
+                        <select asp-for="CountryId" class="form-select">
+                            @foreach (var c in countries)
+                            {
+                                <option value="@c.Id" selected="@(Model.CountryId == c.Id)")>
+                                    @c.CountryName
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label">Adres</label>
+                        <input asp-for="Address" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DeliveryAddress" class="form-label">Teslimat Adresi</label>
+                        <input asp-for="DeliveryAddress" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Contact" class="form-label">İletişim</label>
+                        <input asp-for="Contact" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input asp-for="Email" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">Telefon</label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TaxNo" class="form-label">Vergi No</label>
+                        <input asp-for="TaxNo" class="form-control" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">İptal</a>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+

@@ -91,7 +91,7 @@
                                             <i class="fas fa-trash fa-lg"></i> Sil
                                         </button>
                                     </div>
-
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -131,7 +131,6 @@
         <h5 class="text-danger">Silme Onayı</h5>
         <p id="deleteText">Bu parçayı silmek istediğinize emin misiniz?</p>
         <form id="deleteForm" method="post">
-            @Html.AntiForgeryToken()
             <input type="hidden" name="id" id="deleteId" />
             <button type="submit" class="btn btn-danger me-2">Sil</button>
             <button type="button" class="btn btn-secondary" onclick="closeDeletePopup()">İptal</button>

@@ -37,6 +37,7 @@
                             <th>İletişim</th>
                             <th>Email</th>
                             <th>Telefon</th>
+                            <th>Vergi No</th>
                             <th>Düzenle</th>
                             <th>Sil</th>
                         </tr>
@@ -53,12 +54,27 @@
                                 <td>@m.Contact</td>
                                 <td>@m.Email</td>
                                 <td>@m.PhoneNumber</td>
-                                <td>
-                                    <a href="@Url.Action("Edit", "Customer", new { id = m.Id })" class="btn btn-sm btn-outline-warning"><i class="fas fa-edit"></i>Düzenle</a>
+                                <td>@m.TaxNo</td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a href="@Url.Action("Edit", "Customer", new { id = m.Id })"
+                                           class="btn btn-sm btn-outline-warning"
+                                           title="Düzenle">
+                                            <i class="fas fa-pen fa-lg"></i> Düzenle
+                                        </a>
+                                    </div>
                                 </td>
-                                <td>
-                                    <a href="@Url.Action("Delete", "Customer", new { id = m.Id })" class="btn btn-sm btn-outline-danger" onclick="return confirm('Müşteri silinsin mi?')"><i class="fas fa-trash"></i>Sil</a>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Sil"
+                                                onclick="showDeletePopup(@m.Id, '@m.CustomerName')">
+                                            <i class="fas fa-trash fa-lg"></i> Sil
+                                        </button>
+                                    </div>
                                 </td>
+
                             </tr>
                         }
                     </tbody>
@@ -66,6 +82,12 @@
 
                 <nav class="mt-3">
                     <ul class="pagination justify-content-center">
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { page = 1 })#pagedown">İlk Sayfa</a>
+                            </li>
+                        }
 
                         @if (Model.PageNumber > 1)
                         {
@@ -87,10 +109,43 @@
                                 <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1 })#pagedown">&raquo;</a>
                             </li>
                         }
+
+                        <!-- Ekstra: Son Sayfa Butonu -->
+                        @if (Model.PageNumber < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { page = Model.TotalPages })#pagedown">Son Sayfa</a>
+                            </li>
+                        }
+
                     </ul>
                 </nav>
             </div>
         </div>
     </section>
 </div>
-<a id="pagedown"></a>
+<div id="deletePopup" class="modal d-none position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 justify-content-center align-items-center">
+    <div class="bg-white p-4 rounded shadow" style="width: 400px;">
+        <h5 class="text-danger">Silme Onayı</h5>
+        <p id="deleteText">Bu parçayı silmek istediğinize emin misiniz?</p>
+        <form id="deleteForm" method="post">
+            <input type="hidden" name="id" id="deleteId" />
+            <button type="submit" class="btn btn-danger me-2">Sil</button>
+            <button type="button" class="btn btn-secondary" onclick="closeDeletePopup()">İptal</button>
+        </form>
+    </div>
+</div>
+<script>
+    function showDeletePopup(id, name) {
+        document.getElementById("deleteId").value = id;
+        document.getElementById("deleteText").innerText = `'${name}' adlı müşteriyi silmek istediğinize emin misiniz?`;
+        document.getElementById("deleteForm").action = `/Customer/Delete/${id}`;
+        document.getElementById("deletePopup").classList.remove("d-none");
+        document.getElementById("deletePopup").classList.add("d-flex");
+    }
+
+    function closeDeletePopup() {
+        document.getElementById("deletePopup").classList.remove("d-flex");
+        document.getElementById("deletePopup").classList.add("d-none");
+    }
+</script>
