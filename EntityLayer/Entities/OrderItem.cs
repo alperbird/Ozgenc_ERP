@@ -29,5 +29,7 @@ namespace EntityLayer.Entities
         public decimal UnitPrice { get; set; } //birim fiyat
 
         public decimal TotalPrice => UnitPrice * Quantity;
+
+        public string? CustomProductName { get; set; }
     }
 }

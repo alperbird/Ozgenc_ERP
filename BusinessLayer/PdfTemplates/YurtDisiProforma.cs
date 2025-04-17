@@ -104,7 +104,10 @@ namespace BusinessLayer.PdfTemplates
                 {
                     var total = item.Quantity * item.UnitPrice;
                     table.Cell().Text(i++.ToString());
-                    table.Cell().Text(item.Product.ParcaAdi);
+                    var productNameToUse = string.IsNullOrWhiteSpace(item.CustomProductName)
+                        ? item.Product.ParcaAdi
+                        : item.CustomProductName;
+                    table.Cell().Text(productNameToUse);
                     table.Cell().Text(item.Quantity.ToString());
                     table.Cell().Text(item.UnitPrice.ToString("C2", new CultureInfo("fr-FR")));
                     table.Cell().Text(total.ToString("C2", new CultureInfo("fr-FR")));
