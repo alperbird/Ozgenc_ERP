@@ -31,9 +31,9 @@
         <div class="col-md-6">
             <h5>Sipariş Bilgileri</h5>
             <p><strong>Sipariş Tarihi:</strong> @Model.OrderDate.ToString("dd.MM.yyyy")</p>
-            <p><strong>Kargo Ücreti:</strong> @(Model.ShippingFee?.ToString("C2", new System.Globalization.CultureInfo("fr-FR")) ?? "-")</p>
+            <p><strong>Kargo Ücreti:</strong> @(Model.ShippingFee?.ToString("C2", new System.Globalization.CultureInfo("en-IE")) ?? "-")</p>
             <p><strong>İndirim / Zam:</strong> @(Model.AdjustmentPercentage ?? 0)% @Model.AdjustmentType</p>
-            <p><strong>Toplam Tutar:</strong> @Model.TotalPrice.ToString("C2", new System.Globalization.CultureInfo("fr-FR"))</p>
+            <p><strong>Toplam Tutar:</strong> @Model.TotalPrice.ToString("C2", new System.Globalization.CultureInfo("en-IE"))</p>
         </div>
     </div>
 
@@ -53,8 +53,8 @@
                 <tr>
                     <td>@item.Product.ParcaAdi</td>
                     <td>@item.Quantity</td>
-                    <td>@item.UnitPrice.ToString("C2", new System.Globalization.CultureInfo("fr-FR"))</td>
-                    <td>@((item.UnitPrice * item.Quantity).ToString("C2", new System.Globalization.CultureInfo("fr-FR")))</td>
+                    <td>@item.UnitPrice.ToString("C2", new System.Globalization.CultureInfo("en-IE"))</td>
+                    <td>@((item.UnitPrice * item.Quantity).ToString("C2", new System.Globalization.CultureInfo("en-IE")))</td>
 
                 </tr>
             }
