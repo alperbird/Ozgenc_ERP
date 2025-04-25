@@ -20,7 +20,7 @@ namespace EntityLayer.Entities
         public int CountryId { get; set; }
 
         [ForeignKey("CountryId")]
-        public Country Country { get; set; }
+        public Country CountryName { get; set; }
 
         public string Address { get; set; } = string.Empty;
 

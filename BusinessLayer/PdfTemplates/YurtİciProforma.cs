@@ -1,158 +1,83 @@
 ﻿using EntityLayer.Entities;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace BusinessLayer.PdfTemplates
 {
-    public class YurtIciProforma : IDocument
+    public class YurtIciProforma
     {
-        private readonly Order _order;
-
-        public YurtIciProforma(Order order)
+        public static void Fill(Order order, string filePath)
         {
-            _order = order;
-        }
+            string tempDir = Path.Combine(Path.GetDirectoryName(filePath)!, "temp_" + Guid.NewGuid());
+            Directory.CreateDirectory(tempDir);
+            ZipFile.ExtractToDirectory(filePath, tempDir);
 
-        public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
+            string contentXml = Path.Combine(tempDir, "content.xml");
+            XmlDocument doc = new XmlDocument();
+            doc.Load(contentXml);
 
-        public void Compose(IDocumentContainer container)
-        {
-            container.Page(page =>
+            ReplaceCell(doc, "D11", order.Customer.CustomerName);
+            ReplaceCell(doc, "D12", order.Customer.Contact);
+            ReplaceCell(doc, "D13", order.Customer.Address);
+            ReplaceCell(doc, "D14", order.Customer.DeliveryAddress);
+            ReplaceCell(doc, "I11", order.OrderDate.ToString("dd/MM/yyyy"));
+            ReplaceCell(doc, "I15", order.Customer.Email);
+
+            int row = 18;
+            decimal total = 0;
+
+            foreach (var item in order.OrderItems)
             {
-                page.Size(PageSizes.A4);
-                page.Margin(30);
-                page.DefaultTextStyle(TextStyle.Default.FontFamily("Calibri").FontSize(10));
+                string productName = string.IsNullOrWhiteSpace(item.CustomProductName)
+                    ? item.Product.ParcaAdi
+                    : item.CustomProductName;
 
-                page.Header().Element(ComposeHeader);
-                page.Content().Element(ComposeContent);
-                page.Footer().Element(ComposeFooter);
-            });
+                ReplaceCell(doc, $"D{row}", productName);
+                ReplaceCell(doc, $"H{row}", item.Quantity.ToString());
+                ReplaceCell(doc, $"I{row}", item.UnitPrice.ToString(CultureInfo.InvariantCulture));
+
+                decimal lineTotal = item.Quantity * item.UnitPrice;
+                ReplaceCell(doc, $"J{row}", lineTotal.ToString(CultureInfo.InvariantCulture));
+                total += lineTotal;
+
+                row++;
+            }
+
+            ReplaceCell(doc, "J24", total.ToString(CultureInfo.InvariantCulture));
+            decimal totalWithKdv = total * 1.2m;
+            ReplaceCell(doc, "J29", totalWithKdv.ToString(CultureInfo.InvariantCulture));
+
+            doc.Save(contentXml);
+
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
+            ZipFile.CreateFromDirectory(tempDir, filePath);
+            Directory.Delete(tempDir, true);
         }
 
-        void ComposeHeader(IContainer container)
+        private static void ReplaceCell(XmlDocument doc, string cellRef, string newValue)
         {
-            container.Row(row =>
-            {
-                row.ConstantItem(100).Element(c => c.Image("wwwroot/images/logo-msk.png"));
-                row.RelativeItem().AlignCenter().Text("PROFORMA FATURA").FontSize(16).SemiBold();
-                row.ConstantItem(100).Element(c => c.Image("wwwroot/images/logo-ozgenc.png"));
-            });
-
-            container.PaddingTop(5).Text($"FATURA : {_order.Customer.CustomerName} {_order.OrderDate:dd/MM/yyyy}");
-            container.Text($"İLGİLİ KİŞİ: {_order.Customer.Contact}");
+            var node = doc.SelectSingleNode($"//table:table-cell[@table:cell-address='{cellRef}']/text:p", GetNamespaceManager(doc));
+            if (node != null)
+                node.InnerText = newValue;
         }
 
-        void ComposeContent(IContainer container)
+        private static XmlNamespaceManager GetNamespaceManager(XmlDocument doc)
         {
-            var customer = _order.Customer;
-
-            container.PaddingVertical(10).Column(col =>
-            {
-                col.Spacing(8);
-
-                col.Item().Row(row =>
-                {
-                    row.RelativeItem().Column(info =>
-                    {
-                        info.Item().Text($"TARİH: {_order.OrderDate:dd/MM/yyyy}");
-                        info.Item().Text("FATURA NO: ");
-                        info.Item().Text("VERGİ NO: ");
-                        info.Item().Text("VERGİ DAİRESİ: ");
-                        info.Item().Text($"MAİL ADRESİ: {customer.Email}");
-                    });
-
-                    row.RelativeItem().Column(info =>
-                    {
-                        info.Item().Text("ADRES:");
-                        info.Item().Text($"{customer.Address} {customer.Address}");
-                        info.Item().Text("SEVK ADRESİ:");
-                        info.Item().Text($"{customer.DeliveryAddress ?? customer.DeliveryAddress}");
-                    });
-                });
-
-                col.Item().Element(ComposeProductTable);
-                col.Item().Element(ComposeTotals);
-            });
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+            nsmgr.AddNamespace("table", "urn:oasis:names:tc:opendocument:xmlns:table:1.0");
+            nsmgr.AddNamespace("text", "urn:oasis:names:tc:opendocument:xmlns:text:1.0");
+            return nsmgr;
         }
 
-        void ComposeProductTable(IContainer container)
-        {
-            container.Table(table =>
-            {
-                table.ColumnsDefinition(columns =>
-                {
-                    columns.ConstantColumn(30);  // No
-                    columns.RelativeColumn(2);   // Stok Kod
-                    columns.RelativeColumn(4);   // Detay
-                    columns.ConstantColumn(50);  // Miktar
-                    columns.ConstantColumn(70);  // Fiyat
-                    columns.ConstantColumn(80);  // Toplam
-                });
 
-                table.Header(header =>
-                {
-                    header.Cell().Text("NO").SemiBold();
-                    header.Cell().Text("STOK KODU").SemiBold();
-                    header.Cell().Text("DETAY").SemiBold();
-                    header.Cell().Text("MİKTAR").SemiBold();
-                    header.Cell().Text("FİYAT").SemiBold();
-                    header.Cell().Text("TOPLAM").SemiBold();
-                });
-
-                int i = 1;
-                foreach (var item in _order.OrderItems)
-                {
-                    var total = item.Quantity * item.UnitPrice;
-                    table.Cell().Text(i++.ToString());
-                    table.Cell().Text("-"); // Stok Kodu boş
-                    table.Cell().Text(i++.ToString());
-                    var productNameToUse = string.IsNullOrWhiteSpace(item.CustomProductName)
-                        ? item.Product.ParcaAdi
-                        : item.CustomProductName;
-                    table.Cell().Text(productNameToUse);
-                    table.Cell().Text(item.Quantity.ToString());
-                    table.Cell().Text(item.UnitPrice.ToString("C2", new CultureInfo("en-IE")));
-                    table.Cell().Text(total.ToString("C2", new CultureInfo("en-IE")));
-                }
-            });
-        }
-
-        void ComposeTotals(IContainer container)
-        {
-            decimal total = _order.OrderItems.Sum(x => x.Quantity * x.UnitPrice);
-            decimal kdv = total * 0.2m;
-            decimal genelToplam = total + kdv;
-
-            container.PaddingTop(10).Column(col =>
-            {
-                col.Item().AlignRight().Text($"TOPLAM: {total.ToString("C2", new CultureInfo("en-IE"))}");
-                col.Item().AlignRight().Text($"KDV: {kdv.ToString("C2", new CultureInfo("en-IE"))}");
-                col.Item().AlignRight().Text($"GENEL TOPLAM: {genelToplam.ToString("C2", new CultureInfo("en-IE"))}").Bold();
-            });
-        }
-
-        void ComposeFooter(IContainer container)
-        {
-            container.PaddingTop(15).Column(col =>
-            {
-                col.Item().Text("FİYATLARIMIZA KDV DAHİL DEĞİLDİR.").Italic();
-                col.Item().PaddingTop(10).Text("BANKA BİLGİSİ").SemiBold();
-                col.Item().Text("ZİRAAT BANKASI BURSA OSB GİRİŞİMCİ ŞUBESİ");
-                col.Item().Text("HESAP SAHİBİ: M.S.K MOTOR KOMPRESÖR MAKİNA SAN.TİC.LTD.ŞTİ");
-                col.Item().Text("IBAN: TR20 0001 0027 0155 9886 9350 09");
-                col.Item().Text("HESAP NO: 2701-5598 8693 5009");
-                col.Item().Text("SWIFT CODE: TCZBTR2A");
-                col.Item().Text("TESLİM KOŞULLARI: Fabrikadan Teslim");
-                col.Item().Text("SATIŞ KOŞULLARI: % 100 GÖNDERİMDEN ÖNCE");
-                col.Item().PaddingTop(10).Text("Yetkili İmzası ve Şirket Mührü");
-            });
-        }
     }
+
 }

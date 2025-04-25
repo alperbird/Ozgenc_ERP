@@ -6,150 +6,199 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.PdfTemplates
 {
-    using QuestPDF.Fluent;
-    using QuestPDF.Helpers;
-    using QuestPDF.Infrastructure;
-    using QuestPDF.Drawing;
-    using QuestPDF.Elements;
     using System.Globalization;
     using EntityLayer.Entities.Enums;
     using EntityLayer.Entities;
+    using System.IO.Compression;
+    using System.Xml;
 
-    public class YurtDisiProforma : IDocument
+    public class YurtDisiProforma
     {
-        private readonly Order _order;
+        public string TemplatePath => "Templates/yurtdisisablon.ods";
+        public string OutputDirectory => "GeneratedProformas";
 
-        public YurtDisiProforma(Order order)
+        public static void Fill(Order order, string filePath)
         {
-            _order = order;
+            string tempDir = Path.Combine(Path.GetDirectoryName(filePath)!, "temp_" + Guid.NewGuid());
+            Directory.CreateDirectory(tempDir);
+            ZipFile.ExtractToDirectory(filePath, tempDir);
+
+            string contentXml = Path.Combine(tempDir, "content.xml");
+            var doc = new XmlDocument();
+            doc.Load(contentXml);
+
+            var nsMgr = new XmlNamespaceManager(doc.NameTable);
+            nsMgr.AddNamespace("table", "urn:oasis:names:tc:opendocument:xmlns:table:1.0");
+            nsMgr.AddNamespace("text", "urn:oasis:names:tc:opendocument:xmlns:text:1.0");
+
+            FindCellByText(doc, nsMgr, "TOTAL");
+            FindCellByText(doc, nsMgr, "GENERAL TOTAL");
+            FindCellByText(doc, nsMgr, "SHIPPING");
+            FindCellByText(doc, nsMgr, "GRAND TOTAL");
+
+            var table = doc.SelectSingleNode("//table:table", nsMgr);
+            var rows = table.SelectNodes("table:table-row", nsMgr);
+
+
+            // Müşteri bilgileri
+            ReplaceCell(doc, nsMgr, 6, 3, order.Customer.CustomerName); // D7
+            ReplaceCell(doc, nsMgr, 7, 3, order.Customer.Address);      // D8
+            ReplaceCell(doc, nsMgr, 8, 3, order.Customer.DeliveryAddress); // D9
+            ReplaceCell(doc, nsMgr, 9, 3, order.Customer.Contact);      // D10
+            ReplaceCell(doc, nsMgr, 10, 3, order.Customer.Email);       // D11
+            ReplaceCell(doc, nsMgr, 6, 9, DateTime.Now.ToString("dd/MM/yyyy")); // K7
+            ReplaceCell(doc, nsMgr, 7, 7, order.Customer.PhoneNumber);         // K8
+
+            // Ürünler ve hesaplamalar
+            int row = 15;
+            int productIndex = 1;
+            foreach (var item in order.OrderItems)
+            {
+                string name = string.IsNullOrWhiteSpace(item.CustomProductName)
+                    ? item.Product.ParcaAdi
+                    : item.CustomProductName;
+                ReplaceCell(doc, nsMgr, row, 0, productIndex.ToString()); 
+                ReplaceCell(doc, nsMgr, row, 1, name); // Ürün Adı
+                ReplaceCell(doc, nsMgr, row, 2, item.Quantity.ToString()); // Adet
+                ReplaceCell(doc, nsMgr, row, 3, item.UnitPrice.ToString("0.00", CultureInfo.InvariantCulture)); // Birim Fiyat
+                ReplaceCell(doc, nsMgr, row, 4, item.TotalPrice.ToString("0.00", CultureInfo.InvariantCulture)); // Toplam Fiyat
+                row++;
+                productIndex++;
+                Console.WriteLine($"Ürün: {name} - Adet: {item.Quantity} - Fiyat: {item.UnitPrice}");
+            }
+
+
+            // Tutar bilgileri doğrudan TotalPrice üzerinden
+            //ReplaceCell(doc, nsMgr, 28, 13, order.AdjustmentType == PriceAdjustmentType.Discount
+            //    ? $"-{order.AdjustmentPercentage}%"
+            //    : $"+{order.AdjustmentPercentage}%");
+            //ReplaceCell(doc, nsMgr, 31, 13, (order.ShippingFee ?? 0).ToString("0.00", CultureInfo.InvariantCulture));
+            //ReplaceCell(doc, nsMgr, 32, 13, order.TotalPrice.ToString("0.00", CultureInfo.InvariantCulture));
+
+            ReplaceCell(doc, nsMgr, 24, 1, order.OrderItems.Sum(i => i.Quantity * i.UnitPrice).ToString("0.00", CultureInfo.InvariantCulture));
+
+            // N29: Genel Tutar (İndirimli veya zamlı)
+            decimal itemsTotal = order.OrderItems.Sum(i => i.Quantity * i.UnitPrice);
+            decimal adjustment = 0;
+            if (order.AdjustmentType == PriceAdjustmentType.Discount)
+                adjustment = -(itemsTotal * (order.AdjustmentPercentage ?? 0) / 100);
+            else if (order.AdjustmentType == PriceAdjustmentType.Increase)
+                adjustment = (itemsTotal * (order.AdjustmentPercentage ?? 0) / 100);
+            decimal generalTotal = itemsTotal + adjustment;
+            ReplaceCell(doc, nsMgr, 26, 1, generalTotal.ToString("0.00", CultureInfo.InvariantCulture));
+
+            // N30: Kargo Ücreti
+            ReplaceCell(doc, nsMgr, 27, 1, (order.ShippingFee ?? 0).ToString("0.00", CultureInfo.InvariantCulture));
+
+            // N31: Grand Total
+            decimal grandTotal = generalTotal + (order.ShippingFee ?? 0);
+            ReplaceCell(doc, nsMgr, 28, 1, grandTotal.ToString("0.00", CultureInfo.InvariantCulture));
+
+            doc.Save(contentXml);
+
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
+            ZipFile.CreateFromDirectory(tempDir, filePath);
+            Directory.Delete(tempDir, true);
         }
 
-        public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
+        //private static void ReplaceCell(XmlDocument doc, XmlNamespaceManager nsMgr, int rowIndex, int colIndex, string value)
+        //{
+        //    var table = doc.SelectSingleNode("//table:table", nsMgr);
+        //    if (table == null) return;
 
-        public void Compose(IDocumentContainer container)
+        //    var rows = table.SelectNodes("table:table-row", nsMgr);
+        //    if (rows == null || rowIndex >= rows.Count) return;
+
+        //    var row = rows[rowIndex];
+        //    var cells = row.SelectNodes("table:table-cell", nsMgr);
+        //    if (cells == null || colIndex >= cells.Count) return;
+
+        //    var cell = cells[colIndex];
+        //    var text = cell.SelectSingleNode("text:p", nsMgr);
+
+        //    if (text == null)
+        //    {
+        //        text = doc.CreateElement("text:p", nsMgr.LookupNamespace("text"));
+        //        cell.AppendChild(text);
+        //    }
+
+        //    text.InnerText = value;
+        //}
+
+        private static void ReplaceCell(XmlDocument doc, XmlNamespaceManager nsMgr, int rowIndex, int colIndex, string value)
         {
-            container.Page(page =>
+            var table = doc.SelectSingleNode("//table:table", nsMgr);
+            if (table == null) return;
+
+            var rows = table.SelectNodes("table:table-row", nsMgr);
+            if (rows == null || rowIndex >= rows.Count) return;
+
+            var row = rows[rowIndex];
+            var cells = row.SelectNodes("table:table-cell", nsMgr);
+            if (cells == null || colIndex >= cells.Count) return;
+
+            var cell = cells[colIndex];
+
+            // Hücre içindeki tüm <text:p> düğümlerini temizle
+            foreach (XmlNode child in cell.ChildNodes)
             {
-                page.Margin(30);
-                page.Size(PageSizes.A4);
-                page.DefaultTextStyle(TextStyle.Default.FontFamily("Calibri").FontSize(10));
-
-                page.Header().Element(ComposeHeader);
-                page.Content().Element(ComposeBody);
-                page.Footer().Element(ComposeFooter);
-            });
-        }
-
-        void ComposeHeader(IContainer container)
-        {
-            container.Row(row =>
-            {
-                row.ConstantItem(100).Element(c => c.Image("wwwroot/images/logo-murser.png"));
-                row.RelativeItem().AlignCenter().Text("COMMERCIAL INVOICE", TextStyle.Default.FontFamily("Calibri").FontSize(16).SemiBold());
-                row.ConstantItem(100).Element(c => c.Image("wwwroot/images/logo-ozgenc.png"));
-            });
-        }
-
-        void ComposeBody(IContainer container)
-        {
-            container.PaddingVertical(10).Column(column =>
-            {
-                column.Spacing(10);
-                column.Item().Element(ComposeBuyerInfo);
-                column.Item().Element(ComposeProductTable);
-                column.Item().Element(ComposeBottomInfo);
-            });
-        }
-
-        void ComposeBuyerInfo(IContainer container)
-        {
-            var customer = _order.Customer;
-
-            container.Border(1).Padding(5).Column(col =>
-            {
-                col.Spacing(4);
-                col.Item().Text($"BUYER: {customer.CustomerName}");
-                col.Item().Text($"Address: {customer.Address} {customer.Address}");
-                col.Item().Text($"Delivery Address: {customer.DeliveryAddress ?? customer.DeliveryAddress}");
-                col.Item().Text($"Contact: {customer.Contact}");
-                col.Item().Text($"Email: {customer.Email}");
-                col.Item().Text($"Phone: {customer.PhoneNumber}");
-            });
-        }
-
-        void ComposeProductTable(IContainer container)
-        {
-            container.Table(table =>
-            {
-                table.ColumnsDefinition(columns =>
+                if (child.Name == "text:p")
                 {
-                    columns.ConstantColumn(30);
-                    columns.RelativeColumn(4);
-                    columns.ConstantColumn(50);
-                    columns.ConstantColumn(60);
-                    columns.ConstantColumn(70);
-                });
-
-                table.Header(header =>
-                {
-                    header.Cell().Text("No").SemiBold();
-                    header.Cell().Text("Details").SemiBold();
-                    header.Cell().Text("Qty").SemiBold();
-                    header.Cell().Text("Unit Price").SemiBold();
-                    header.Cell().Text("Total").SemiBold();
-                });
-
-                int i = 1;
-                foreach (var item in _order.OrderItems)
-                {
-                    var total = item.Quantity * item.UnitPrice;
-                    table.Cell().Text(i++.ToString());
-                    var productNameToUse = string.IsNullOrWhiteSpace(item.CustomProductName)
-                        ? item.Product.ParcaAdi
-                        : item.CustomProductName;
-                    table.Cell().Text(productNameToUse);
-                    table.Cell().Text(item.Quantity.ToString());
-                    table.Cell().Text(item.UnitPrice.ToString("C2", new CultureInfo("fr-FR")));
-                    table.Cell().Text(total.ToString("C2", new CultureInfo("fr-FR")));
+                    cell.RemoveChild(child);
                 }
-            });
+            }
+
+            // Yeni <text:p> oluştur
+            var textNode = doc.CreateElement("text:p", nsMgr.LookupNamespace("text"));
+            textNode.InnerText = value;
+            cell.AppendChild(textNode);
+
+            // Hücre türünü string olarak belirt (bu kısmı unutursan sayı gelmez)
+            cell.Attributes.RemoveNamedItem("office:value-type");
+            var valueTypeAttr = doc.CreateAttribute("office", "value-type", nsMgr.LookupNamespace("office"));
+            valueTypeAttr.Value = "string";
+            cell.Attributes.Append(valueTypeAttr);
         }
 
-        void ComposeBottomInfo(IContainer container)
+        private static void FindCellByText(XmlDocument doc, XmlNamespaceManager nsMgr, string targetText)
         {
-            var shipping = _order.ShippingFee ?? 0;
-            var discount = _order.AdjustmentPercentage ?? 0;
-            var isDiscount = _order.AdjustmentType == PriceAdjustmentType.Discount;
+            var rows = doc.SelectNodes("//table:table-row", nsMgr);
+            if (rows == null) return;
 
-            decimal itemsTotal = _order.OrderItems.Sum(x => x.Quantity * x.UnitPrice);
-            decimal adjustmentAmount = isDiscount ? -itemsTotal * discount / 100 : itemsTotal * discount / 100;
-            decimal grandTotal = itemsTotal + adjustmentAmount + shipping;
-
-            container.PaddingTop(10).Column(col =>
+            for (int rowIndex = 0; rowIndex < rows.Count; rowIndex++)
             {
-                col.Spacing(5);
-                col.Item().Text($"Discount/Surcharge: {(isDiscount ? "-" : "+")}{discount}%");
-                col.Item().Text($"Shipping: {shipping.ToString("C2", new CultureInfo("fr-FR"))}");
-                col.Item().Text($"GRAND TOTAL: {grandTotal.ToString("C2", new CultureInfo("fr-FR"))}").Bold();
+                var row = rows[rowIndex];
+                var cells = row.SelectNodes("table:table-cell", nsMgr);
+                if (cells == null) continue;
 
-                col.Item().PaddingTop(20).Row(row =>
+                int colIndex = 0;
+
+                foreach (XmlNode cell in cells)
                 {
-                    row.RelativeItem().Text("SELLER\n\nAuthorized Signature and Company Stamp");
-                    row.RelativeItem().Text("BUYER\n\nAuthorized Signature and Company Stamp");
-                });
+                    int repeat = 1;
+                    var repeatAttr = cell.Attributes?["table:number-columns-repeated"];
+                    if (repeatAttr != null)
+                        repeat = int.Parse(repeatAttr.Value);
 
-                col.Item().PaddingTop(15).Text("BANK INFORMATION").SemiBold();
-                col.Item().Text("Bank: ZIRAAT BANKASI A.S. | Branch: Bursa OSB Girisimci Sube");
-                col.Item().Text("Account (EUR): 2701-56483856-5009 | IBAN: TR310001002701564838565009");
-                col.Item().Text("SWIFT CODE: TCZBTR2A");
-            });
+                    var textNode = cell.SelectSingleNode("text:p", nsMgr);
+                    if (textNode != null && textNode.InnerText.Trim().Equals(targetText, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Console.WriteLine($"Bulundu: '{targetText}' → Satır {rowIndex}, Sütun {colIndex}");
+                    }
+
+                    colIndex += repeat;
+                }
+            }
         }
 
-        void ComposeFooter(IContainer container)
+        public string GetOutputFileName(string customerName, DateTime orderDate)
         {
-            container.AlignCenter().Text("MURSER DIS TICARET LTD. STI. - Bursa, Turkey - www.ozgencmachine.com").FontSize(9).Italic();
+            var safeName = string.Join("_", customerName.Split(Path.GetInvalidFileNameChars()));
+            return Path.Combine(OutputDirectory, $"{safeName}_{orderDate:dd_MM_yyyy}.ods");
         }
     }
 
-
 }
+

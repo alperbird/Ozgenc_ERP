@@ -103,12 +103,19 @@ namespace ERPClient.SiparisModule
                 return;
             }
 
+            if (cmbProduct.SelectedItem is not Product selectedProduct)
+            {
+                MessageBox.Show("Lütfen bir ürün seçin.");
+                return;
+            }
             // DataGrid'e ekleme işlemimiz
             var newItem = new ProductOrderRow
             {
+                ProductId = selectedProduct.Id,
                 ProductName = txtProductName.Text,
+                CustomProductName = txtProductName.Text, // Kullanıcı tarafından girilen özel parça adı
                 Quantity = quantity,
-                UnitPrice = unitPrice,
+                UnitPrice = unitPrice
             };
 
             orderItems.Add(newItem);
@@ -149,9 +156,10 @@ namespace ERPClient.SiparisModule
             //OrderItems -> ProductId eşleştirmesi
             var items = orderItems.Select(item => new OrderItemCreateDto
             {
-                ProductId = products.FirstOrDefault(p => p.ParcaAdi == item.ProductName)?.Id ?? 0,
+                ProductId = item.ProductId,
                 Quantity = item.Quantity,
-                UnitPrice = item.UnitPrice
+                UnitPrice = item.UnitPrice,
+                CustomProductName = item.CustomProductName
             }).ToList();
 
             //DTO
@@ -164,9 +172,11 @@ namespace ERPClient.SiparisModule
                 AdjustmentPercentage = adjustmentPercentage,
                 OrderItems = orderItems.Select(item => new OrderItemCreateDto
                 {
-                    ProductId = products.First(p => p.ParcaAdi == item.ProductName).Id,
+                    ProductId = item.ProductId,
                     Quantity = item.Quantity,
-                    UnitPrice = item.UnitPrice
+                    UnitPrice = item.UnitPrice,
+                    CustomProductName = item.CustomProductName
+
                 }).ToList()
             };
 

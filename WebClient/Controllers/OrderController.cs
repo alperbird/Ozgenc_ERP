@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Net.Http;
+using DataAccessLayer.Interfaces;
 
 namespace WebClient.Controllers
 {
@@ -16,14 +17,15 @@ namespace WebClient.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IProformaService _service;
-        private readonly OrderRepository _repo;
+        private readonly IOrderRepository _repo;
 
-        public OrderController(AppDbContext context, IProformaService service, OrderRepository repo)
+        public OrderController(AppDbContext context, IProformaService service, IOrderRepository repo)
         {
             _context = context;
             _service = service;
             _repo = repo;
         }
+
         public async Task<IActionResult> Index(DateTime? startDate = null, DateTime? endDate = null, int page = 1) //listeleme + pagination
         {
             int pageSize = 10;
@@ -65,7 +67,7 @@ namespace WebClient.Controllers
         {
             var order = await _context.Orders
                 .Include(o => o.Customer)
-                    .ThenInclude(c => c.Country)
+                    .ThenInclude(c => c.CountryName)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == id);
@@ -95,51 +97,53 @@ namespace WebClient.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create() //sipariş oluşturma 
+        public async Task<IActionResult> Create()
         {
-            // ViewBag ile müşteri ve ürün listesi gönderiyoruz
+            ViewBag.Products = await _context.Products
+                .OrderBy(p => p.Id)
+                .Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    ParcaAdi = p.ParcaAdi,
+                    FiyatEUR = p.FiyatEUR
+                }).ToListAsync();
+
             ViewBag.Customers = await _context.Customers
-                .Include(c => c.Country)
+                .Include(c => c.CountryName)
+                .OrderBy(c => c.Id)
                 .Select(c => new CustomerDto
                 {
                     Id = c.Id,
                     CustomerName = c.CustomerName,
                     CountryId = c.CountryId,
-                    CountryName = c.Country.CountryName,
+                    CountryName = c.CountryName.CountryName, // Burası önemli
                     Address = c.Address,
                     DeliveryAddress = c.DeliveryAddress,
                     Contact = c.Contact,
                     Email = c.Email,
                     PhoneNumber = c.PhoneNumber,
                     TaxNo = c.TaxNo
-                })
-                .ToListAsync();
-
-            ViewBag.Products = await _context.Products
-                .Select(p => new ProductDto
-                {
-                    Id = p.Id,
-                    ParcaAdi = p.ParcaAdi
-                })
-                .ToListAsync();
+                }).ToListAsync();
 
             return View();
         }
 
+
+
         [HttpPost]
-        public async Task<IActionResult> Create(OrderCreateDto dto)
+        public async Task<IActionResult> Create(OrderCreateDto dto) //sipariş oluşturma
         {
             if (!ModelState.IsValid)
             {
                 // Hatalıysa formu yeniden doldur (müşteri & ürün)
                 ViewBag.Customers = await _context.Customers
-                    .Include(c => c.Country)
+                    .Include(c => c.CountryName)
                     .Select(c => new CustomerDto
                     {
                         Id = c.Id,
                         CustomerName = c.CustomerName,
                         CountryId = c.CountryId,
-                        CountryName = c.Country.CountryName,
+                        CountryName = c.CountryName.CountryName,
                         Address = c.Address,
                         DeliveryAddress = c.DeliveryAddress,
                         Contact = c.Contact,
@@ -149,10 +153,11 @@ namespace WebClient.Controllers
                     }).ToListAsync();
 
                 ViewBag.Products = await _context.Products
-                    .Select(p => new ProductDto
+                    .Select(p => new 
                     {
                         Id = p.Id,
-                        ParcaAdi = p.ParcaAdi
+                        ParcaAdi = p.ParcaAdi,
+                        UnitPrice = p.FiyatEUR
                     }).ToListAsync();
 
                 return View(dto);
@@ -166,15 +171,15 @@ namespace WebClient.Controllers
                 ShippingFee = dto.ShippingFee ?? 0,
                 AdjustmentPercentage = dto.AdjustmentPercentage ?? 0,
                 AdjustmentType = dto.AdjustmentType,
-                OrderItems = dto.OrderItems.Select(item => new OrderItem
-                {
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    UnitPrice = item.UnitPrice,
-                    CustomProductName = string.IsNullOrWhiteSpace(item.CustomProductName)
-                        ? null
-                        : item.CustomProductName.Trim()
-                }).ToList()
+                OrderItems = dto.OrderItems
+                    .Where(item => item.ProductId > 0) // 0 olanları ayıkla
+                    .Select(item => new OrderItem
+                    {
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+                        CustomProductName = string.IsNullOrWhiteSpace(item.CustomProductName) ? null : item.CustomProductName.Trim()
+                    }).ToList()
             };
 
             // Toplam fiyatı hesapla
@@ -197,33 +202,43 @@ namespace WebClient.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GenerateProforma(int id) //şurası proforma oluşturuyor (inş)
+        public async Task<IActionResult> GenerateProforma(int id)
         {
             var order = await _context.Orders
-                .Include(o => o.Customer).ThenInclude(c => c.Country)
-                .Include(o => o.OrderItems).ThenInclude(i => i.Product)
+                .Include(o => o.Customer)
+                    .ThenInclude(c => c.CountryName)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (order == null)
                 return NotFound();
 
             var filePath = await _service.GenerateProformaAsync(order);
-            return File(System.IO.File.ReadAllBytes(filePath), "application/pdf", Path.GetFileName(filePath));
+
+            if (!System.IO.File.Exists(filePath))
+                return StatusCode(500, "PDF oluşturulamadı.");
+
+            var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+            var fileName = Path.GetFileName(filePath);
+            return File(fileBytes, "application/pdf", fileName);
         }
 
-        public async Task<IActionResult> Index(string? keyword)
-        {
-            var orders = await _repo.SearchAsync(keyword);
-            var orderListDtos = orders.Select(o => new OrderListDto
-            {
-                Id = o.Id,
-                Customer = o.Customer,
-                OrderDate = o.OrderDate,
-                TotalPrice = o.TotalPrice
-            }).ToList();
 
-            return View(orderListDtos);
-        }
+
+        //public async Task<IActionResult> Index(string? keyword)
+        //{
+        //    var orders = await _repo.SearchAsync(keyword);
+        //    var orderListDtos = orders.Select(o => new OrderListDto
+        //    {
+        //        Id = o.Id,
+        //        Customer = o.Customer,
+        //        OrderDate = o.OrderDate,
+        //        TotalPrice = o.TotalPrice
+        //    }).ToList();
+
+        //    return View(orderListDtos);
+        //}
 
     }
 }

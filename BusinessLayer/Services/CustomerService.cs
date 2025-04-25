@@ -26,7 +26,7 @@ namespace BusinessLayer.Services
             {
                 Id = c.Id,
                 CustomerName = c.CustomerName,
-                CountryName = c.Country != null ? c.Country.CountryName : "",
+                CountryName = c.CountryName != null ? c.CountryName.CountryName : "",
                 CountryId = c.CountryId,
                 Address = c.Address,
                 DeliveryAddress = c.DeliveryAddress,

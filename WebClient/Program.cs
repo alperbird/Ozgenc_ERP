@@ -1,6 +1,8 @@
 using BusinessLayer.Interfaces;
 using BusinessLayer.Services;
 using DataAccessLayer.Data;
+using DataAccessLayer.Interfaces;
+using DataAccessLayer.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebClient
@@ -19,6 +21,9 @@ namespace WebClient
             builder.Services.AddHttpClient();
 
             builder.Services.AddScoped<IProformaService, ProformaService>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+
 
             var app = builder.Build();
 

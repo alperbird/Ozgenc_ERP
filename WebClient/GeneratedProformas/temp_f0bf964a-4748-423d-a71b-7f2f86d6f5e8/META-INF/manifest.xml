@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.4" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0">
+ <manifest:file-entry manifest:full-path="/" manifest:version="1.4" manifest:media-type="application/vnd.oasis.opendocument.spreadsheet"/>
+ <manifest:file-entry manifest:full-path="Configurations2/" manifest:media-type="application/vnd.sun.xml.ui.configuration"/>
+ <manifest:file-entry manifest:full-path="manifest.rdf" manifest:media-type="application/rdf+xml"/>
+ <manifest:file-entry manifest:full-path="styles.xml" manifest:media-type="text/xml"/>
+ <manifest:file-entry manifest:full-path="meta.xml" manifest:media-type="text/xml"/>
+ <manifest:file-entry manifest:full-path="content.xml" manifest:media-type="text/xml"/>
+ <manifest:file-entry manifest:full-path="Thumbnails/thumbnail.png" manifest:media-type="image/png"/>
+ <manifest:file-entry manifest:full-path="Pictures/1006B50C0000C7B6000078F96325861C.emf" manifest:media-type="image/x-emf"/>
+ <manifest:file-entry manifest:full-path="Pictures/10000001000003AA000000D3E026AD1E.png" manifest:media-type="image/png"/>
+ <manifest:file-entry manifest:full-path="Pictures/100006B400004D840000117730A11802.wmf" manifest:media-type="image/x-wmf"/>
+ <manifest:file-entry manifest:full-path="Pictures/1045D6F80000E5BE0000641AF3F12AB2.emf" manifest:media-type="image/x-emf"/>
+ <manifest:file-entry manifest:full-path="Pictures/100000010000042F000001D3B565D4CB.png" manifest:media-type="image/png"/>
+ <manifest:file-entry manifest:full-path="Pictures/100000010000038C0000022693E90ED2.png" manifest:media-type="image/png"/>
+ <manifest:file-entry manifest:full-path="Pictures/100000010000016E0000019AC70C59A7.png" manifest:media-type="image/png"/>
+ <manifest:file-entry manifest:full-path="Pictures/10000F1800001E3F000021EF1CD53DB0.wmf" manifest:media-type="image/x-wmf"/>
+ <manifest:file-entry manifest:full-path="settings.xml" manifest:media-type="text/xml"/>
+</manifest:manifest>

@@ -39,7 +39,7 @@ namespace ERPClient.SiparisModule
         private void LoadDetails()
         {
             txtCustomerName.Text = _detail.Customer.CustomerName;
-            txtCountry.Text = _detail.Customer.Country?.CountryName ?? "";
+            txtCountry.Text = _detail.Customer.CountryName?.CountryName ?? "";
             txtTaxNo.Text = _detail.Customer.TaxNo;
             txtAddress.Text = _detail.Customer.Address;
             txtDeliveryAddress.Text = _detail.Customer.DeliveryAddress;
@@ -49,7 +49,7 @@ namespace ERPClient.SiparisModule
 
             txtOrderDate.Text = _detail.OrderDate.ToShortDateString();
 
-            var YurtIci = _detail.Customer.Country?.CountryName?.ToLower() == "Türkiye";
+            var YurtIci = _detail.Customer.CountryName?.CountryName?.ToLower() == "Türkiye";
             var currencySymbol = YurtIci ? "₺" : "€";
 
             txtShippingFee.Text = currencySymbol + (_detail.ShippingFee ?? 0).ToString("N2");
@@ -64,7 +64,7 @@ namespace ERPClient.SiparisModule
             // Ürünler
             var items = _detail.OrderItems.Select(x => new
             {
-                x.Product.ParcaAdi,
+                ParcaAdi = string.IsNullOrWhiteSpace(x.CustomProductName) ? x.Product.ParcaAdi : x.CustomProductName,
                 x.Quantity,
                 x.UnitPrice,
                 Total = x.Quantity * x.UnitPrice
@@ -93,7 +93,7 @@ namespace ERPClient.SiparisModule
                 string phone = txtPhone.Text;
                 string country = txtCountry.Text.Trim();
                 string adjustment = txtAdjustmentPercentage.Text;
-                string shippingFee = txtShippingFee.Text;
+                string shippingFee = txtShippingFee.Text.Replace("₺", "").Replace("€", "").Trim();
                 string total = txtTotal.Text;
 
                 // Ürünleri JSON'a çeviriyoruz

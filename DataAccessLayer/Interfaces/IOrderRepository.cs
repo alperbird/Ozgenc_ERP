@@ -18,5 +18,9 @@ namespace DataAccessLayer.Interfaces
         Task UpdateAsync(Order o);
 
         Task<List<Order>> SearchAsync(string? keyword);
+
+        Task<List<Order>> GetPagedOrderAsync(int page, int pageSize);
+
+        IQueryable<Order> Query();
     }
 }

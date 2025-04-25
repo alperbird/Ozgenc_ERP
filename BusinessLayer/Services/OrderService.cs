@@ -1,7 +1,9 @@
 ﻿using BusinessLayer.Interfaces;
 using DataAccessLayer.Interfaces;
+using EntityLayer.DTOs;
 using EntityLayer.Entities;
 using EntityLayer.Entities.Enums;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,6 +66,31 @@ namespace BusinessLayer.Services
         public async Task<List<Order>> SearchOrderAsync(string? keyword)
         {
             return await _orderRepository.SearchAsync(keyword);
+        }
+
+        public async Task<PagedResult<Order>> GetPagedOrderAsync(int page, int pageSize)
+        {
+            var query = _orderRepository.Query()
+        .Include(o => o.Customer)
+        .OrderByDescending(o => o.OrderDate);
+
+            var totalCount = await query.CountAsync(); // toplam kayıt sayısı
+
+            var pagedOrders = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Order>
+            {
+                Items = pagedOrders,
+                TotalCount = totalCount
+            };
+        }
+
+        Task<PagedResult<Order>> IOrderService.GetPagedOrderAsync(int page, int pageSize)
+        {
+            return GetPagedOrderAsync(page, pageSize);
         }
     }
 }
