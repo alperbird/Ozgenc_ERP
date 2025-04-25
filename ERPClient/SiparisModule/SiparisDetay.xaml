@@ -40,9 +40,9 @@
 
             <WrapPanel>
                 <TextBlock Text="Adres: " FontWeight="Bold"/>
-                <TextBlock x:Name="txtAddress" Margin="5,0,20,0"/>
+                <TextBox x:Name="txtAddress" Margin="5,0,20,0" Width="200"/>
                 <TextBlock Text="Teslimat Adresi: " FontWeight="Bold"/>
-                <TextBlock x:Name="txtDeliveryAddress" Margin="5,0,20,0"/>
+                <TextBox x:Name="txtDeliveryAddress" Margin="5,0,20,0" Width="200"/>
             </WrapPanel>
 
             <WrapPanel>

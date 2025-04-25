@@ -41,12 +41,10 @@ namespace GeneratePdf
                 return;
             }
 
-            // 📂 PDF Kaydedilecek Klasör: Masaüstü\Invoice
             string masaustu = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string invoiceKlasoru = Path.Combine(masaustu, "Invoice");
             Directory.CreateDirectory(invoiceKlasoru);
 
-            // 📄 PDF Dosya Adı
             string tarihFormatli = DateTime.Now.ToString("dd_MM_yyyy");
             string dosyaAdiBase = $"{customerName}_{tarihFormatli}";
             string pdfYolu = Path.Combine(invoiceKlasoru, dosyaAdiBase + ".pdf");
@@ -58,7 +56,6 @@ namespace GeneratePdf
                 sayac++;
             }
 
-            // 📎 Şablon Dosyası EXE'nin Bulunduğu Klasörden Gelecek
             string exeKlasoru = AppDomain.CurrentDomain.BaseDirectory;
             string sablonAdi = country.Trim().ToLower() == "türkiye" ? "yurticisablon.xlsx" : "yurtdisisablon.xlsx";
             string sablonYolu = Path.Combine(exeKlasoru, sablonAdi);
@@ -124,7 +121,6 @@ namespace GeneratePdf
                     sheet.Cells[28, 17].Value = total;
                 }
 
-                // 👇 SADECE İLK SAYFA PDF’E DÖNÜŞTÜRÜLÜYOR
                 workbook.ExportAsFixedFormat(
                     Excel.XlFixedFormatType.xlTypePDF,
                     pdfYolu,
@@ -162,4 +158,5 @@ namespace GeneratePdf
             public decimal Total { get; set; }
         }
     }
+
 }

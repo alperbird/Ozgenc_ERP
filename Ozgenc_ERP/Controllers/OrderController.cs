@@ -45,7 +45,8 @@ namespace ApiLayer.Controllers
                 {
                     ProductId = x.ProductId,
                     Quantity = x.Quantity,
-                    UnitPrice = x.UnitPrice
+                    UnitPrice = x.UnitPrice,
+                    CustomProductName = x.CustomProductName
                 }).ToList()
             };
 
@@ -63,11 +64,11 @@ namespace ApiLayer.Controllers
 
             var existingOrder = await _orderService.GetOrderBtIdAsync(id);
 
-            if(existingOrder == null)
+            if (existingOrder == null)
             {
                 return NotFound("Sipariş bulunamadı!"); //404 döndürecek
             }
-
+            
             existingOrder.CustomerId = o.CustomerId;
             existingOrder.OrderDate = o.OrderDate;
             existingOrder.ShippingFee = o.ShippingFee;
@@ -81,7 +82,8 @@ namespace ApiLayer.Controllers
             {
                 ProductId = x.ProductId,
                 Quantity = x.Quantity,
-                UnitPrice = x.UnitPrice
+                UnitPrice = x.UnitPrice,
+                CustomProductName = x.CustomProductName
             }).ToList();
 
             await _orderService.UpdateOrderAsync(existingOrder);
@@ -95,5 +97,34 @@ namespace ApiLayer.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPagedOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 16)
+        {
+            var result = await _orderService.GetPagedOrderAsync(page, pageSize);
+
+            var dto = result.Items.Select(o => new OrderListDto
+            {
+                Id = o.Id,
+                Customer = o.Customer,
+                CustomerName = o.Customer?.CustomerName,
+                OrderDate = o.OrderDate,
+                TotalPrice = o.TotalPrice
+            }).ToList();
+
+            return Ok(new PagedResult<OrderListDto>
+            {
+                Items = dto,
+                TotalCount = result.TotalCount
+            });
+        }
     }
 }
+
+/*
+ public string GetOutputFileName(string customerName, DateTime orderDate)
+        {
+            var safeName = string.Join("_", customerName.Split(Path.GetInvalidFileNameChars()));
+            return Path.Combine(OutputDirectory, $"{safeName}_{orderDate:dd_MM_yyyy}.ods");
+        }
+ */

@@ -21,7 +21,7 @@ namespace WebClient.Controllers
             var totalItems = await _context.Customers.CountAsync();
 
             var items = await _context.Customers
-                .Include(c => c.Country)
+                .Include(c => c.CountryName)
                 .OrderBy(c => c.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)

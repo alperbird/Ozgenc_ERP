@@ -1,4 +1,5 @@
-﻿using EntityLayer.Entities;
+﻿using EntityLayer.DTOs;
+using EntityLayer.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace BusinessLayer.Interfaces
         Task AddOrderAsync(Order o);
         Task UpdateOrderAsync(Order o);
         Task<List<Order>> SearchOrderAsync(string? keyword);
+        Task<PagedResult<Order>> GetPagedOrderAsync(int page, int pageSize);
     }
 }

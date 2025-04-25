@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Printing;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,6 +28,9 @@ namespace ERPClient.SiparisModule
         private const string apiUrl = "http://192.168.5.81:5001/api/Order";
         private List<OrderListDto> allOrders = new(); // loadtable içine dolacak
 
+        //pagination 
+        private int currentPage = 1;
+        private const int pageSize = 16; 
         public SiparisGecmisi()
         {
             InitializeComponent();
@@ -37,24 +41,40 @@ namespace ERPClient.SiparisModule
         {
             try
             {
-                HttpResponseMessage response = await _client.GetAsync(apiUrl);
-                response.EnsureSuccessStatusCode();
+                string pagedUrl = $"http://192.168.5.81:5001/api/Order/paged?page={currentPage}&pageSize={pageSize}";
+                HttpResponseMessage response = await _client.GetAsync(pagedUrl);
 
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                allOrders = JsonConvert.DeserializeObject<List<OrderListDto>>(jsonResponse) ?? new();
-
-                Dispatcher.Invoke(() =>
+                if (response.IsSuccessStatusCode)
                 {
-                    dgOrders.ItemsSource = allOrders;
-                });
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
 
+                    // Artık PagedResult<OrderListDto> deserializeliyoruz
+                    var result = JsonConvert.DeserializeObject<PagedResult<OrderListDto>>(jsonResponse);
+
+                    if (result != null)
+                    {
+                        var pagedOrders = result.Items;
+                        int totalOrderCount = result.TotalCount;
+
+                        Dispatcher.Invoke(() =>
+                        {
+                            dgOrders.ItemsSource = pagedOrders;
+                            txtPageInfo.Text = $"Sayfa {currentPage} - Gösterilen: {pagedOrders.Count} / Toplam: {totalOrderCount}";
+                        });
+                    }
+                }
+                else
+                {
+                    string err = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Veri yüklenemedi! Status Code: {response.StatusCode}\nDetay: {err}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Geçmiş siparişler yüklenirken bir hata oluştu!\n" + ex.Message);
             }
-            
         }
+
 
         // Sipariş detaylarını listeleyen buton
         private async void btnList_Click(object sender, RoutedEventArgs e) //Sipariş detaylarının listeleneceği kısım
@@ -143,6 +163,25 @@ namespace ERPClient.SiparisModule
             this.Close();
         }
 
+        
+        private void btnPrevious_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--;
+                LoadTable();
+            }
+        }
 
+        private void btnNext_Click(object sender, RoutedEventArgs e)
+        {
+            currentPage++;
+            LoadTable();
+        }
+
+        public void Refresh()
+        {
+            LoadTable();
+        }
     }
 }

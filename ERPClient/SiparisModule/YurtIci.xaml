@@ -85,23 +85,23 @@
 
                 <!-- Fiyat -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
-                    <TextBlock Text="₺ Fiyat:" Width="60" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBlock Text="€ Fiyat:" Width="60" VerticalAlignment="Center" Margin="0,0,5,0"/>
                     <TextBox x:Name="txtUnitPrice" Width="80" />
                 </StackPanel>
 
                 <!-- Kargo -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
-                    <TextBlock Text="Kargo Ücreti (₺):" Width="120" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBlock Text="Kargo Ücreti (€):" Width="120" VerticalAlignment="Center" Margin="0,0,5,0"/>
                     <TextBox x:Name="txtShippingFee" Width="100"/>
                 </StackPanel>
 
                 <!-- İndirim/Zam -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
-                    <TextBlock Text="İndirim/Zam:" Width="100" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBlock Text="İskonto/KDV:" Width="100" VerticalAlignment="Center" Margin="0,0,5,0"/>
                     <ComboBox x:Name="cmbAdjustmentType" Width="120" SelectedIndex="-1">
                         <ComboBoxItem Content="Yok" Tag="" />
-                        <ComboBoxItem Content="İndirim" Tag="0" />
-                        <ComboBoxItem Content="Zam" Tag="1" />
+                        <ComboBoxItem Content="İskonto" Tag="0" />
+                        <ComboBoxItem Content="KDV" Tag="1" />
                     </ComboBox>
                 </StackPanel>
 

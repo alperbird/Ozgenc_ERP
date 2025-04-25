@@ -21,7 +21,7 @@ namespace DataAccessLayer.Repositories
         public async Task<List<Customer>> GetAllAsync()
         {
             return await _context.Customers
-                .Include(c => c.Country)
+                .Include(c => c.CountryName)
                 .OrderBy(c => c.Id)
                 .ToListAsync();
         }

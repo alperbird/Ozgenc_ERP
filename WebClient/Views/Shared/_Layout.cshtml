@@ -60,7 +60,7 @@
 
                         <!-- Siparişler (treeview) -->
                         <li class="nav-item menu-open">
-                            <a href="/Order" class="nav-link bg-secondary text-white">
+                            <a href="#" class="nav-link bg-secondary text-white">
                                 <i class="bi bi-basket"></i>
                                 <p class="text-white">
                                     Siparişler
@@ -90,6 +90,7 @@
         <main class="app-main">
             <div class="app-content p-4">
                 @RenderBody()
+                @RenderSection("Styles", required: false)
             </div>
         </main>
 
@@ -101,6 +102,7 @@
 
     <!-- Scripts -->
     <script src="~/adminlte/assets/js/jquery/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/adminlte/assets/js/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="~/adminlte/js/adminlte.js"></script>
     <script>

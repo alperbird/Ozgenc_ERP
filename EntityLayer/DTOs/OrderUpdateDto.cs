@@ -1,4 +1,5 @@
-﻿using EntityLayer.Entities.Enums;
+﻿using EntityLayer.Entities;
+using EntityLayer.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,13 @@ namespace EntityLayer.DTOs
 {
     public class OrderUpdateDto
     {
-        public int Id { get; set; }
+        public CustomerDto Customer;
 
+        public int Id { get; set; }
         public int CustomerId { get; set; }
 
+        public string Address { get; set; } = string.Empty;
+        public string DeliveryAddress { get; set; } = string.Empty;
         public DateTime OrderDate { get; set; }
 
         public decimal? ShippingFee { get; set; }
@@ -21,6 +25,6 @@ namespace EntityLayer.DTOs
 
         public PriceAdjustmentType AdjustmentType { get; set; }
 
-        public List<OrderItemDto> OrderItems { get; set; }
+        public List<OrderItemCreateDto> OrderItems { get; set; }
     }
 }
