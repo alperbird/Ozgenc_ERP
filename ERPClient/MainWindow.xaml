@@ -97,8 +97,40 @@
                         </TreeViewItem>
 
                     </TreeViewItem>
+
                 </TreeView>
+
+                <Button Background="Transparent" BorderThickness="0" Click="btnToggleTree_Click" Tag="treeForms">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/list.png" Width="30" Height="30" Margin="0,0,5,0"/>
+                        <TextBlock Text="Teklif/İş-İstek" FontSize="16" FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+                <TreeView Name="treeForms" Background="#EEE" Visibility="Collapsed">
+                    <TreeViewItem Header="Formlar">
+                        <TreeViewItem>
+                            <TreeViewItem.Header>
+                                <StackPanel Orientation="Horizontal" PreviewMouseDown="TeklifFormu_PreviewMouseDown">
+                                    <Image Source="/Assets/add.png" Width="30" Height="30" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Teklif Oluşturma" Foreground="Black" Cursor="Hand"/>
+                                </StackPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+
+                        <TreeViewItem>
+                            <TreeViewItem.Header>
+                                <StackPanel Orientation="Horizontal" PreviewMouseDown="IsEmriFormu_PreviewMouseDown">
+                                    <Image Source="/Assets/add.png" Width="30" Height="30" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Malzeme İstek Formu" Foreground="Black" Cursor="Hand"/>
+                                </StackPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                    </TreeViewItem>
+                </TreeView>
+
             </StackPanel>
+
+
         </Border>
 
         <!-- İçerik Alanı -->

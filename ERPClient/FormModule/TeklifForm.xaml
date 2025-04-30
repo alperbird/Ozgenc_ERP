@@ -1,0 +1,127 @@
+﻿<Window x:Class="ERPClient.FormModule.TeklifForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ERPClient.FormModule"
+        mc:Ignorable="d"
+        Title="TeklifForm" Height="800" Width="1000" Background="#F4F4F4"
+        WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+        <DockPanel Grid.Row="0" Background="#003366">
+            <TextBlock Text="Hocam Aykut Uç Yiyo" Foreground="White" FontSize="20" FontWeight="Bold"
+                   VerticalAlignment="Center" Margin="20,0,0,0"/>
+            <Button Background="DarkRed" BorderThickness="0" Cursor="Hand" Click="btnBack_Click"
+                HorizontalAlignment="Right" Margin="0,0,20,0" Width="100">
+                <Image Source="/Assets/exit.png" Width="75" Height="44"/>
+            </Button>
+        </DockPanel>
+
+        <!-- MÜŞTERİ BİLGİLERİ ALANI -->
+        <Border Grid.Row="1" Margin="20" Padding="10" BorderBrush="#CCCCCC" BorderThickness="1" Background="White">
+            <StackPanel Orientation="Vertical">
+                <WrapPanel Margin="0 0 10 10">
+                    <TextBlock Text="Müşteri Seç:" FontWeight="Bold" VerticalAlignment="Center" Width="120"/>
+                    <ComboBox x:Name="cmbCustomer" Width="300" IsEditable="True"
+                        IsTextSearchEnabled="True" SelectionChanged="cmbCustomer_SelectionChanged"/>
+                </WrapPanel>
+
+                <WrapPanel Margin="0 0 10 0">
+                    <TextBlock Text="Ülke:" Width="100"/>
+                    <TextBlock x:Name="txtCountry" Width="200"/>
+                    <TextBlock Text="Vergi No:" Width="100"/>
+                    <TextBlock x:Name="txtTaxNo" Width="200"/>
+                </WrapPanel>
+
+                <WrapPanel>
+                    <TextBlock Text="Adres:" Width="100"/>
+                    <TextBlock x:Name="txtAddress" Width="400"/>
+                    <TextBlock Text="Teslimat Adresi:" Width="150"/>
+                    <TextBlock x:Name="txtDeliveryAddress" Width="400"/>
+                </WrapPanel>
+
+                <WrapPanel>
+                    <TextBlock Text="Telefon:" Width="100"/>
+                    <TextBlock x:Name="txtPhone" Width="200"/>
+                    <TextBlock Text="Email:" Width="100"/>
+                    <TextBlock x:Name="txtEmail" Width="300"/>
+                </WrapPanel>
+
+                <WrapPanel>
+                    <TextBlock Text="Sipariş Tarihi:" Width="120"/>
+                    <TextBlock x:Name="txtOrderDate" Width="150"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- ÜRÜN EKLEME VE TABLO -->
+        <StackPanel Grid.Row="2" Margin="20">
+            <TextBlock Text="Yedek Parça Ekle" FontWeight="Bold" FontSize="16" Margin="0 0 0 10"/>
+
+            <WrapPanel Margin="0 0 10 0" VerticalAlignment="Center">
+                <!-- Parça Seçimi -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
+                    <TextBlock Text="Parça Seç:" Width="80" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <ComboBox x:Name="cmbProduct" Width="200" SelectionChanged="cmbProduct_SelectionChanged"/>
+                </StackPanel>
+
+                <!-- Parça Adı -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
+                    <TextBlock Text="Parça Adı:" Width="80" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBox x:Name="txtProductName" Width="200"/>
+                </StackPanel>
+
+                <!-- Adet -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
+                    <TextBlock Text="Adet:" Width="50" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBox x:Name="txtQuantity" Width="50" Text="1"/>
+                </StackPanel>
+
+                <!-- Fiyat -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
+                    <TextBlock Text="€ Fiyat:" Width="60" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBox x:Name="txtUnitPrice" Width="80" />
+                </StackPanel>
+
+                <!-- Kargo -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
+                    <TextBlock Text="Kargo Ücreti (€):" Width="120" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBox x:Name="txtShippingFee" Width="100"/>
+                </StackPanel>
+
+                <!-- Ekle Butonu -->
+                <Button Content="Ekle" Width="80" Click="btnAddProduct_Click" HorizontalAlignment="Right"
+        Background="#003366" Foreground="White" Margin="10,10,0,0" VerticalAlignment="Bottom"/>
+            </WrapPanel>
+
+
+            <DataGrid x:Name="dgProducts" AutoGenerateColumns="False" Height="300" CanUserAddRows="False" Margin="0,10,0,0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Parça Adı" Binding="{Binding ProductName}" Width="*"/>
+                    <DataGridTextColumn Header="Adet" Binding="{Binding Quantity}" Width="100"/>
+                    <DataGridTextColumn Header="Birim Fiyat (€)" Binding="{Binding UnitPrice}" Width="100"/>
+                    <DataGridTextColumn Header="Toplam (€)" Binding="{Binding Total}" Width="100"/>
+                    <DataGridTemplateColumn Header="Sil" Width="60">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="🗑" Background="Tomato" Foreground="White"
+                Width="40" Height="25" Cursor="Hand"
+                Click="btnDelete_Click"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,20,0">
+                <Button Content="Kaydet" Width="120" Height="35" Background="Green" Foreground="White" Click="btnSave_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

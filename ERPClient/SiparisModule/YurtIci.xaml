@@ -29,7 +29,8 @@
             <StackPanel Orientation="Vertical">
                 <WrapPanel Margin="0 0 10 10">
                     <TextBlock Text="Müşteri Seç:" FontWeight="Bold" VerticalAlignment="Center" Width="120"/>
-                    <ComboBox x:Name="cmbCustomer" Width="300" SelectionChanged="cmbCustomer_SelectionChanged"/>
+                    <ComboBox x:Name="cmbCustomer" Width="300" IsEditable="True"
+                        IsTextSearchEnabled="True" SelectionChanged="cmbCustomer_SelectionChanged"/>
                 </WrapPanel>
 
                 <WrapPanel Margin="0 0 10 0">

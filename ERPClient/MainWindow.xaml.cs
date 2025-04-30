@@ -1,4 +1,5 @@
-﻿using ERPClient.MusteriModule;
+﻿using ERPClient.FormModule;
+using ERPClient.MusteriModule;
 using ERPClient.SiparisModule;
 using System.Net.Http;
 using System.Text;
@@ -86,4 +87,19 @@ public partial class MainWindow : Window
         SiparisGecmisi sg = new SiparisGecmisi();
         sg.Show();
     }
+
+    private void TeklifFormu_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        e.Handled = true;
+        TeklifForm tf = new TeklifForm();
+        tf.Show();
+    }
+
+    private void IsEmriFormu_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        e.Handled = true;
+        IsEmri ie = new IsEmri();
+        ie.Show();
+    }
+
 }
