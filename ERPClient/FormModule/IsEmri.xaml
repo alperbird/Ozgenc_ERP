@@ -1,0 +1,102 @@
+﻿<Window x:Class="ERPClient.FormModule.IsEmri"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Malzeme İstek Formu" Height="800" Width="1000" Background="#F4F4F4"
+        WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <!-- Satır ve Sütun Tanımlamaları -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <!-- Üst Menü -->
+            <RowDefinition Height="*"/>
+            <!-- İçerik -->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Üst Menü -->
+        <DockPanel Grid.Row="0" Grid.ColumnSpan="2" Background="#003366">
+            <TextBlock Text="Malzeme İstek Formu Oluşturma" Foreground="White" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <Button x:Name="btnExit" Background="DarkRed" BorderThickness="0" Cursor="Hand" Click="btnExit_Click" HorizontalAlignment="Right" Margin="0,0,20,0" Width="100">
+                <Image Source="/Assets/exit.png" Width="75" Height="44"/>
+            </Button>
+        </DockPanel>
+
+        <!-- Form İçeriği -->
+        <ScrollViewer Grid.Row="1" Grid.Column="1" Margin="20">
+            <StackPanel>
+                <!-- Üst Bilgiler -->
+                <Grid Margin="0,0,0,30">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Firma:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                    <TextBox x:Name="txtFirma" Grid.Row="0" Grid.Column="1" Margin="5" BorderBrush="Gray" BorderThickness="1"/>
+
+                    <TextBlock Text="Talep Gelme Tarihi:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                    <DatePicker x:Name="dpTalepGelmeTarihi" Grid.Row="1" Grid.Column="1" Margin="5" BorderBrush="Gray" BorderThickness="1"/>
+
+                    <TextBlock Text="Invoice Atılma Tarihi:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                    <DatePicker x:Name="dpInvoiceAtilmaTarihi" Grid.Row="2" Grid.Column="1" Margin="5" BorderBrush="Gray" BorderThickness="1"/>
+
+                    <TextBlock Text="Verilen Termin:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                    <DatePicker x:Name="dpVerilenTermin" Grid.Row="3" Grid.Column="1" Margin="5" BorderBrush="Gray" BorderThickness="1"/>
+
+                    <TextBlock Text="Ödeme Durum ve Tarih:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                    <TextBox x:Name="txtOdemeDurum" Grid.Row="4" Grid.Column="1" Margin="5" BorderBrush="Gray" BorderThickness="1"/>
+
+                    <TextBlock Text="Açıklama:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="0,5"/>
+                    <TextBox x:Name="txtAciklama" Grid.Row="5" Grid.Column="1" Margin="5" BorderBrush="Gray" BorderThickness="1" Height="60" TextWrapping="Wrap" AcceptsReturn="True"/>
+                </Grid>
+
+                <!-- Malzeme Listesi Başlığı -->
+
+                <!-- Parça Seçme Butonu -->
+                <TextBlock Text="Malzeme Listesi" FontSize="20" HorizontalAlignment="Left" FontWeight="Bold" Width="432"/>
+                <Button Content="Parça Ekle" Height="30" Width="150" HorizontalAlignment="Right" BorderThickness="0" Cursor="Hand" 
+                       Background="ForestGreen"  Click="BtnParcaEkle_Click"/>
+
+                <!-- Malzeme Listesi (DataGrid) -->
+                <DataGrid x:Name="dgMalzemeListesi" AutoGenerateColumns="False" CanUserAddRows="True" ContextMenuOpening="dgMalzemeListesi_ContextMenuOpening"
+                          HeadersVisibility="Column" Margin="0,0,0,20" BorderBrush="Gray" BorderThickness="1">
+
+                    <DataGrid.ContextMenu>
+                        <ContextMenu x:Name="dgContextMenu">
+                            <MenuItem Header="Sil" Click="MenuItem_Delete_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/Assets/delete.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Malzeme Adı" Binding="{Binding MalzemeAdi}" Width="*"/>
+                        <DataGridTextColumn Header="Talep Miktarı" Binding="{Binding TalepMiktari}" Width="150"/>
+                        <DataGridTextColumn Header="Tüketim Zamanı" Binding="{Binding TuketimZamani}" Width="150"/>
+                        <DataGridTextColumn Header="İhtiyaç Tarihi" Binding="{Binding IhtiyacTarihi}" Width="150"/>
+                        <DataGridTextColumn Header="Not" Binding="{Binding Not}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Yazdır Butonu -->
+                <Button Content="Excel'e Aktar ve Aç" Height="40" Width="200" HorizontalAlignment="Right" Margin="0,30,0,0" Cursor="Hand" 
+                       BorderThickness="0" TextElement.Foreground="White" Background="#003366" Click="BtnYazdir_Click"/>
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</Window>
