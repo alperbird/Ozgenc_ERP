@@ -51,7 +51,16 @@ namespace ERPClient.FormModule
             try
             {
                 string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tools", "MALZEME İSTEK FORMU.xlsx");
-                string outputPath = Path.Combine(Path.GetTempPath(), "MalzemeIstekFormu_Doldurulmus.xlsx");
+
+                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string isFolder = Path.Combine(desktopPath, "Invoice", "Malzeme-İstek");
+
+                if (!Directory.Exists(isFolder))
+                {
+                    Directory.CreateDirectory(isFolder);
+                }
+                string fileName = $"{DateTime.Now:yyyyMMddHHmmss}_MalzemeİstekFormu.xlsx";
+                string outputPath = Path.Combine(isFolder, fileName);
 
                 File.Copy(templatePath, outputPath, true); // Şablonu geçici klasöre kopyala
 
@@ -87,10 +96,36 @@ namespace ERPClient.FormModule
                     }
 
                     workbook.Save();
+                    string sofficePath = GetSofficePath();
+                    if (!File.Exists(sofficePath))
+                    {
+                        MessageBox.Show("LibreOffice bulunamadı! Lütfen kurulum yolunu kontrol edin.", "Eksik Uygulama", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    string pdfOutput = Path.ChangeExtension(outputPath, ".pdf");
+
+                    var process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = sofficePath,
+                            Arguments = $"--headless --convert-to pdf \"{outputPath}\" --outdir \"{Path.GetDirectoryName(outputPath)}\"",
+                            CreateNoWindow = true,
+                            UseShellExecute = false
+                        }
+                    };
+                    process.Start();
+                    process.WaitForExit();
+
+                    // PDF dosyasını aç
+                    if (File.Exists(pdfOutput))
+                        Process.Start(new ProcessStartInfo(pdfOutput) { UseShellExecute = true });
+                    else
+                        MessageBox.Show("PDF oluşturulamadı!");
                 }
 
-                // Excel dosyasını açalım
-                Process.Start(new ProcessStartInfo(outputPath) { UseShellExecute = true });
+
             }
             catch (Exception ex)
             {
@@ -134,6 +169,22 @@ namespace ERPClient.FormModule
         }
         #endregion
 
-        
+        private string GetSofficePath()
+        {
+            if (OperatingSystem.IsWindows()) // windows işletim sistemi ise
+            {
+                return @"C:\Program Files\LibreOffice\program\soffice.exe";
+            }
+
+            else if (OperatingSystem.IsMacOS()) //mac işletim sistemi ise
+            {
+                return @"/Applications/LibreOffice.app/Contents/MacOS/soffice";
+            }
+
+            else // Linux işletim sistemi ise
+            {
+                return "/usr/bin/soffice";
+            }
+        }
     }
 }

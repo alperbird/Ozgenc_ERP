@@ -46,7 +46,7 @@ namespace GeneratePdf
             Directory.CreateDirectory(invoiceKlasoru);
 
             string tarihFormatli = DateTime.Now.ToString("dd_MM_yyyy");
-            string dosyaAdiBase = $"{customerName}_{tarihFormatli}";
+            string dosyaAdiBase = $"{tarihFormatli}_{customerName}";
             string pdfYolu = Path.Combine(invoiceKlasoru, dosyaAdiBase + ".pdf");
 
             int sayac = 1;

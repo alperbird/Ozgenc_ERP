@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ERPClient.MusteriModule"
       mc:Ignorable="d" 
-      d:DesignHeight="430" d:DesignWidth="450"
+      d:DesignHeight="480" d:DesignWidth="450"
       Title="CustomerUpdate" Background="#F4F4F4">
 
     <Grid>

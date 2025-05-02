@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ERPClient.FormModule"
         mc:Ignorable="d"
-        Title="TeklifForm" Height="800" Width="1000" Background="#F4F4F4"
+        Title="TeklifForm" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}" Background="#F4F4F4"
         WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
@@ -16,7 +16,7 @@
 
         <!-- HEADER -->
         <DockPanel Grid.Row="0" Background="#003366">
-            <TextBlock Text="Hocam Aykut Uç Yiyo" Foreground="White" FontSize="20" FontWeight="Bold"
+            <TextBlock Text="Düşük Teklif Formu" Foreground="White" FontSize="20" FontWeight="Bold"
                    VerticalAlignment="Center" Margin="20,0,0,0"/>
             <Button Background="DarkRed" BorderThickness="0" Cursor="Hand" Click="btnBack_Click"
                 HorizontalAlignment="Right" Margin="0,0,20,0" Width="100">
@@ -69,7 +69,8 @@
                 <!-- Parça Seçimi -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
                     <TextBlock Text="Parça Seç:" Width="80" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <ComboBox x:Name="cmbProduct" Width="200" SelectionChanged="cmbProduct_SelectionChanged"/>
+                    <ComboBox x:Name="cmbProduct" Width="200" IsEditable="True"
+                        IsTextSearchEnabled="True" SelectionChanged="cmbProduct_SelectionChanged"/>
                 </StackPanel>
 
                 <!-- Parça Adı -->
@@ -97,7 +98,7 @@
                 </StackPanel>
 
                 <!-- Ekle Butonu -->
-                <Button Content="Ekle" Width="80" Click="btnAddProduct_Click" HorizontalAlignment="Right"
+                <Button Content="Ekle" Width="80" Click="btnAddProduct_Click" HorizontalAlignment="Right" Cursor="Hand"
         Background="#003366" Foreground="White" Margin="10,10,0,0" VerticalAlignment="Bottom"/>
             </WrapPanel>
 
@@ -120,7 +121,7 @@
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,20,0">
-                <Button Content="Kaydet" Width="120" Height="35" Background="Green" Foreground="White" Click="btnSave_Click"/>
+                <Button Content="Kaydet" Width="120" Height="35" Background="Green" Foreground="White" Click="btnSave_Click" Cursor="Hand"/>
             </StackPanel>
         </StackPanel>
     </Grid>
