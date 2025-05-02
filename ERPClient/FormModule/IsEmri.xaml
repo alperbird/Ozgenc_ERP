@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ERPClient.FormModule.IsEmri"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Malzeme İstek Formu" Height="800" Width="1000" Background="#F4F4F4"
+        Title="Malzeme İstek Formu" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}" Background="#F4F4F4"
         WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
 
     <Grid>
@@ -93,7 +93,7 @@
                 </DataGrid>
 
                 <!-- Yazdır Butonu -->
-                <Button Content="Excel'e Aktar ve Aç" Height="40" Width="200" HorizontalAlignment="Right" Margin="0,30,0,0" Cursor="Hand" 
+                <Button Content="Excel'e Aktar ve Pdf'i Aç" Height="40" Width="200" HorizontalAlignment="Right" Margin="0,30,0,0" Cursor="Hand" 
                        BorderThickness="0" TextElement.Foreground="White" Background="#003366" Click="BtnYazdir_Click"/>
             </StackPanel>
         </ScrollViewer>
