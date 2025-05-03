@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:ERPClient.FormModule"
         mc:Ignorable="d"
         Title="TeklifForm" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}" Background="#F4F4F4"
@@ -29,8 +30,8 @@
             <StackPanel Orientation="Vertical">
                 <WrapPanel Margin="0 0 10 10">
                     <TextBlock Text="Müşteri Seç:" FontWeight="Bold" VerticalAlignment="Center" Width="120"/>
-                    <ComboBox x:Name="cmbCustomer" Width="300" IsEditable="True"
-                        IsTextSearchEnabled="True" SelectionChanged="cmbCustomer_SelectionChanged"/>
+                    <ComboBox x:Name="cmbCustomer" Width="300" IsEditable="True" DisplayMemberPath="CustomerName" SelectedValuePath="Id"
+                        IsTextSearchEnabled="False" StaysOpenOnEdit="True" PreviewKeyUp="cmbCustomer_PreviewKeyUp" SelectionChanged="cmbCustomer_SelectionChanged"/>
                 </WrapPanel>
 
                 <WrapPanel Margin="0 0 10 0">
@@ -69,8 +70,14 @@
                 <!-- Parça Seçimi -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
                     <TextBlock Text="Parça Seç:" Width="80" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <ComboBox x:Name="cmbProduct" Width="200" IsEditable="True"
-                        IsTextSearchEnabled="True" SelectionChanged="cmbProduct_SelectionChanged"/>
+                    <ComboBox x:Name="cmbProduct"
+                        IsEditable="True"
+                        IsTextSearchEnabled="False"
+                        StaysOpenOnEdit="True"
+                        KeyUp="cmbProduct_KeyUp"
+                        SelectionChanged="cmbProduct_SelectionChanged"
+                        Width="300"
+                        DisplayMemberPath="ParcaAdi" />
                 </StackPanel>
 
                 <!-- Parça Adı -->

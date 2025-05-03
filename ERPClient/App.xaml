@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:ERPClient" xmlns:conv="clr-namespace:ERPClient.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <conv:ImagePathConverter x:Key="ImagePathConverter"/>
+        
+
+      <conv:ImagePathConverter x:Key="ImagePathConverter"/>
+
     </Application.Resources>
+
 </Application>

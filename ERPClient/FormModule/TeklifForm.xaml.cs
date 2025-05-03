@@ -4,12 +4,15 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using Path = System.IO.Path;
+
 
 namespace ERPClient.FormModule
 {
@@ -24,7 +27,12 @@ namespace ERPClient.FormModule
 
         private List<Customer> customers = new();
         private List<Product> products = new();
+        private ICollectionView productView;
+        private ICollectionView customerView;
+
+        private TextBox cmbCustomerTextBox;
         private ObservableCollection<ProductOrderRow> orderItems = new();
+        private ObservableCollection<Customer> filteredCustomers = new();
         private Model.Customer? _selectedCustomer;
         public TeklifForm()
         {
@@ -221,10 +229,11 @@ namespace ERPClient.FormModule
                 var allCustomers = JsonConvert.DeserializeObject<List<Customer>>(json) ?? new();
 
                 customers = allCustomers
-                .Where(c => !string.Equals(c.CountryName?.Trim(), "Türkiye", StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            .Where(c => !string.Equals(c.CountryName?.Trim(), "Türkiye", StringComparison.OrdinalIgnoreCase))
+            .ToList();
 
-                cmbCustomer.ItemsSource = customers;
+                filteredCustomers = new ObservableCollection<Customer>(customers);
+                cmbCustomer.ItemsSource = filteredCustomers;
                 cmbCustomer.DisplayMemberPath = "CustomerName";
                 cmbCustomer.SelectedValuePath = "Id";
             }
@@ -243,6 +252,7 @@ namespace ERPClient.FormModule
                 txtProductName.Text = selectedProduct.ParcaAdi;
                 txtUnitPrice.Text = selectedProduct.FiyatEUR.ToString("N2");
                 txtQuantity.Text = "1"; // her zaman başlangıç olarak 1
+                txtShippingFee.Text = "0"; // her zaman başlangıç olarak 0
 
                 if (!decimal.TryParse(txtShippingFee.Text, out decimal shippingFee))
                 {
@@ -262,14 +272,15 @@ namespace ERPClient.FormModule
                 string json = await response.Content.ReadAsStringAsync();
                 products = JsonConvert.DeserializeObject<List<Product>>(json) ?? new();
 
-                cmbProduct.ItemsSource = products;
-                cmbProduct.DisplayMemberPath = "ParcaAdi";
+                productView = CollectionViewSource.GetDefaultView(products);
+                cmbProduct.ItemsSource = productView;
                 cmbProduct.SelectedValuePath = "Id";
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Yedek parçalar yüklenemedi!\n" + ex.Message);
             }
+
         }
         #endregion
         private void btnBack_Click(object sender, RoutedEventArgs e)
@@ -301,5 +312,49 @@ namespace ERPClient.FormModule
                 return "/usr/bin/soffice";
             }
         }
+
+        #region Filtreleme ve Arama
+        private void cmbProduct_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (productView == null) return;
+
+            string filterText = cmbProduct.Text?.ToLower() ?? "";
+
+            productView.Filter = item =>
+            {
+                if (item is Product p)
+                    return p.ParcaAdi != null && p.ParcaAdi.ToLower().Contains(filterText);
+                return false;
+            };
+
+            productView.Refresh();
+            cmbProduct.IsDropDownOpen = true;
+
+            var tb = (TextBox)cmbProduct.Template.FindName("PART_EditableTextBox", cmbProduct);
+            if (tb != null)
+                tb.SelectionStart = tb.Text.Length;
+        }
+
+        private void cmbCustomer_Loaded(object sender, RoutedEventArgs e)
+        {
+            cmbCustomerTextBox = (TextBox)cmbCustomer.Template.FindName("PART_EditableTextBox", cmbCustomer);
+        }
+
+        private void cmbCustomer_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            var input = cmbCustomer.Text.ToLower();
+
+            var filtered = customers
+                .Where(c => c.CustomerName != null && c.CustomerName.ToLower().Contains(input))
+                .ToList();
+
+            filteredCustomers.Clear();
+            foreach (var item in filtered)
+                filteredCustomers.Add(item);
+
+            cmbCustomer.IsDropDownOpen = true;
+        }
+        #endregion
+
     }
 }
