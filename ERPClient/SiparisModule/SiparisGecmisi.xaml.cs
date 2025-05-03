@@ -5,17 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Printing;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Forms;
 
 namespace ERPClient.SiparisModule
 {
@@ -30,6 +22,7 @@ namespace ERPClient.SiparisModule
 
         //pagination 
         private int currentPage = 1;
+        private int maxPage;
         private const int pageSize = 16; 
         public SiparisGecmisi()
         {
@@ -55,6 +48,8 @@ namespace ERPClient.SiparisModule
                     {
                         var pagedOrders = result.Items;
                         int totalOrderCount = result.TotalCount;
+                        maxPage = (int)Math.Ceiling((double)totalOrderCount / pageSize);
+                        allOrders = pagedOrders.ToList();
 
                         Dispatcher.Invoke(() =>
                         {
@@ -66,12 +61,12 @@ namespace ERPClient.SiparisModule
                 else
                 {
                     string err = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Veri yüklenemedi! Status Code: {response.StatusCode}\nDetay: {err}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show($"Veri yüklenemedi! Status Code: {response.StatusCode}\nDetay: {err}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Geçmiş siparişler yüklenirken bir hata oluştu!\n" + ex.Message);
+                System.Windows.MessageBox.Show("Geçmiş siparişler yüklenirken bir hata oluştu!\n" + ex.Message);
             }
         }
 
@@ -79,7 +74,7 @@ namespace ERPClient.SiparisModule
         // Sipariş detaylarını listeleyen buton
         private async void btnList_Click(object sender, RoutedEventArgs e) //Sipariş detaylarının listeleneceği kısım
         {
-            var btn = sender as Button;
+            var btn = sender as System.Windows.Controls.Button;
             var selectedOrder = btn?.DataContext as OrderListDto;
 
             if (selectedOrder != null)
@@ -98,7 +93,7 @@ namespace ERPClient.SiparisModule
                 }
                 else
                 {
-                    MessageBox.Show("Sipariş detayları alınamadı!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show("Sipariş detayları alınamadı!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -149,12 +144,15 @@ namespace ERPClient.SiparisModule
                 }
                 else
                 {
-                    MessageBox.Show("Tarih aralığı seçmediniz!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    System.Windows.MessageBox.Show("Tarih aralığı seçmediniz!", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
             }
             var filtered = allOrders.Where(x => x.OrderDate.Date >= startDate && x.OrderDate.Date <= endDate).ToList();
             dgOrders.ItemsSource = filtered;
+            txtPageInfo.Text = $"Filtreli sonuçlar: {filtered.Count} kayıt";
+            btnPrevious.IsEnabled = false;
+            btnNext.IsEnabled = false;
         }
         #endregion
 
@@ -175,13 +173,29 @@ namespace ERPClient.SiparisModule
 
         private void btnNext_Click(object sender, RoutedEventArgs e)
         {
-            currentPage++;
-            LoadTable();
+            if (currentPage < maxPage)
+            {
+                currentPage++;
+                LoadTable();
+            }
         }
 
         public void Refresh()
         {
             LoadTable();
+        }
+
+        private void BtnFiltreTemizle_Click(object sender, RoutedEventArgs e)
+        {
+            dpStartDate.SelectedDate = null;
+            dpEndDate.SelectedDate = null;
+            cmbDateFilter.SelectedIndex = -1;
+
+            currentPage = 1;
+            LoadTable();
+
+            btnPrevious.IsEnabled = true;
+            btnNext.IsEnabled = true;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using ERPClient.LoginRegister;
+using System.Configuration;
 using System.Data;
 using System.Net.Http;
 using System.Windows;
@@ -19,6 +20,14 @@ public partial class App : Application
         client.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
             );
+    }
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
+        var authWindow = new AuthWindow();
+        authWindow.Show();
     }
 
 }

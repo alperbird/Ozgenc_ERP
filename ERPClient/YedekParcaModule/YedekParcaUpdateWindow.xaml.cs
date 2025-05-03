@@ -1,18 +1,10 @@
-﻿using ERPClient.Model;
+﻿using EntityLayer.Entities;
+using ERPClient.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using User = EntityLayer.Entities.User;
 
 namespace ERPClient.YedekParcaModule
 {
@@ -21,13 +13,16 @@ namespace ERPClient.YedekParcaModule
     /// </summary>
     public partial class YedekParcaUpdateWindow : Window
     {
-        public YedekParcaUpdateWindow(Product selectedProduct, HttpClient client)
+        private readonly User _currentUser;
+        private Model.Product selectedProduct;
+        private HttpClient client;
+        private object user;
+
+        public YedekParcaUpdateWindow(Model.Product selectedProduct, HttpClient client, User user)
         {
             InitializeComponent();
-
-            contentFrame.Content = new YedekParcaUpdate(selectedProduct, client);
+            _currentUser = user;
+            contentFrame.Content = new YedekParcaUpdate(selectedProduct, client, _currentUser);
         }
-
-
     }
 }
