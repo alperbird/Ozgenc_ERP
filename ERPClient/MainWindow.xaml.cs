@@ -1,17 +1,15 @@
-﻿using ERPClient.FormModule;
+﻿using EntityLayer.Entities;
+using ERPClient.FormModule;
+using ERPClient.LoginRegister;
+using ERPClient.Model;
 using ERPClient.MusteriModule;
 using ERPClient.SiparisModule;
 using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace ERPClient;
 
@@ -20,9 +18,11 @@ namespace ERPClient;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    private readonly User _currentUser;
+    public MainWindow(User user)
     {
         InitializeComponent();
+        _currentUser = user;
     }
 
     private void btnMenuToggle_Click(object sender, RoutedEventArgs e)
@@ -32,7 +32,10 @@ public partial class MainWindow : Window
 
     private void btnExit_Click(object sender, RoutedEventArgs e)
     {
-        Application.Current.Shutdown();
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} sistemden çıkış yaptı.");
+        AuthWindow login = new AuthWindow();
+        login.Show();
+        this.Close();
     }
 
     private void btnToggleTree_Click(object sender, RoutedEventArgs e)
@@ -51,7 +54,8 @@ public partial class MainWindow : Window
         MessageBox.Show("Yedek Parça Listesi Açılıyor...");
         e.Handled = true;
 
-        YedekParca yp = new YedekParca();
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yedek Parça sistemine girdi.");
+        YedekParca yp = new YedekParca(_currentUser);
         yp.Show();
     }
 

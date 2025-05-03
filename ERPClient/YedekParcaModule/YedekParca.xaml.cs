@@ -1,34 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ERPClient.Model;
 using System.Text.Json;
-using System.Windows.Navigation;
 using ERPClient.YedekParcaModule;
 using System.IO;
 using EntityLayer.DTOs;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
-using Newtonsoft.Json.Linq;
 using Path = System.IO.Path;
 using Microsoft.Win32;
 using System.Net.Http.Headers;
-using System.Globalization;
+using User = EntityLayer.Entities.User;
 
 namespace ERPClient
 {
+
     /// <summary>
     /// Interaction logic for YedekParca.xaml
     /// </summary>
@@ -40,19 +34,20 @@ namespace ERPClient
         private List<Product> tumParcalar = new List<Product>(); // Tüm verileri saklamak için
         private Product? _selectedProduct;
         private string? selectedImagePath = null;
+        private readonly User _currentUser;
 
         private ObservableCollection<Product> allProducts = new ObservableCollection<Product>(); // Tüm veriler burada tutulacak
         private ObservableCollection<Product> paginatedProducts = new ObservableCollection<Product>(); // DataGrid'e bağlanacak veri
         private int currentPage = 1;
         private int pageSize = 10;
 
-        public YedekParca()
+        public YedekParca(User user)
         {
             InitializeComponent();
             LoadTable();
             LoadMachines(); // Makine listesini yükle
             LoadSinif();
-
+            _currentUser = user;
         }
 
         // Tüm ürünleri getir
@@ -183,6 +178,7 @@ namespace ERPClient
                 productResponse.EnsureSuccessStatusCode();
 
                 MessageBox.Show("Yedek parça başarıyla kaydedildi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} {txtParcaAdi.Text} adında yeni bir yedek parça ekledi. ");
                 LoadTable();
                 CleanForm();
             }
@@ -197,7 +193,8 @@ namespace ERPClient
         {
             if (dgYedekParca.SelectedItem is Product selectedProduct)
             {
-                var updateWindow = new YedekParcaUpdateWindow(selectedProduct, _client);
+                LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} {selectedProduct.ParcaAdi} adlı yedek parçanın güncelleme sayfasını açtı.");
+                var updateWindow = new YedekParcaUpdateWindow(selectedProduct, _client, _currentUser);
                 updateWindow.ShowDialog();
             }
             else
@@ -227,6 +224,7 @@ namespace ERPClient
                         if (response.IsSuccessStatusCode)
                         {
                             MessageBox.Show("Yedek parça başarıyla silindi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} {selectedProduct.ParcaAdi} adlı yedek parçayı sildi. ");
                             LoadTable(); // Tabloyu güncelle
                         }
                         else
@@ -247,6 +245,7 @@ namespace ERPClient
         //Programı kapat
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yedek Parça sisteminden çıktı.");
             this.Close();
         }
 
