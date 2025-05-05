@@ -1,13 +1,12 @@
-﻿using EntityLayer.DTOs;
+﻿using User = EntityLayer.Entities.User;
+using EntityLayer.DTOs;
 using Newtonsoft.Json;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
+using ERPClient.Model;
+
+
 
 namespace ERPClient.SiparisModule
 {
@@ -17,6 +16,7 @@ namespace ERPClient.SiparisModule
     public partial class SiparisGecmisi : Window
     {
         HttpClient _client = new HttpClient();
+        private readonly User _currentUser;
         private const string apiUrl = "http://192.168.5.81:5001/api/Order";
         private List<OrderListDto> allOrders = new(); // loadtable içine dolacak
 
@@ -24,9 +24,10 @@ namespace ERPClient.SiparisModule
         private int currentPage = 1;
         private int maxPage;
         private const int pageSize = 16; 
-        public SiparisGecmisi()
+        public SiparisGecmisi(User user)
         {
             InitializeComponent();
+            _currentUser = user;
             LoadTable();
         }
 
@@ -42,7 +43,7 @@ namespace ERPClient.SiparisModule
                     string jsonResponse = await response.Content.ReadAsStringAsync();
 
                     // Artık PagedResult<OrderListDto> deserializeliyoruz
-                    var result = JsonConvert.DeserializeObject<PagedResult<OrderListDto>>(jsonResponse);
+                    var result = JsonConvert.DeserializeObject<EntityLayer.DTOs.PagedResult<OrderListDto>>(jsonResponse);
 
                     if (result != null)
                     {
@@ -88,7 +89,8 @@ namespace ERPClient.SiparisModule
                     var json = await response.Content.ReadAsStringAsync();
                     var detailDto = JsonConvert.DeserializeObject<OrderDetailDto>(json);
 
-                    var detail = new SiparisDetay(detailDto);
+                    var detail = new SiparisDetay(detailDto, _currentUser);
+                    LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, {selectedOrder.CustomerName}  Sipariş Detayları sayfasına girdi.");
                     detail.ShowDialog();
                 }
                 else
@@ -158,6 +160,7 @@ namespace ERPClient.SiparisModule
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Sipariş Geçmişi sayfasından çıkış yaptı.");
             this.Close();
         }
 

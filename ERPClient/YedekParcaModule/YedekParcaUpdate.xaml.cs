@@ -67,7 +67,7 @@ namespace ERPClient.YedekParcaModule
 
                 lstMakine.ItemsSource = machines;
 
-                // 📌 **Seçili makineleri işaretle**
+                // Seçili makineleri işaretle
                 foreach (var machine in machines)
                 {
                     var selectedMachineIds = _selectedProduct.ProductMachines.Select(pm => pm.MakineId).ToList();
@@ -203,7 +203,7 @@ namespace ERPClient.YedekParcaModule
                         var mainWindow = Application.Current.Windows.OfType<YedekParca>().FirstOrDefault();
                         if (mainWindow != null)
                         {
-                            mainWindow.LoadTable(); // **DataGrid Yenilensin**
+                            mainWindow.LoadTable(); // DataGrid Yenilensin
                         }
 
                         Window.GetWindow(this)?.Close();
@@ -292,7 +292,7 @@ namespace ERPClient.YedekParcaModule
 
         private async Task UpdateProduct(ProductUpdateDto product)
         {
-            Console.WriteLine($"📷 Güncellenen Resim Yolu: {product.ResimYolu}");
+            Console.WriteLine($"Güncellenen Resim Yolu: {product.ResimYolu}");
 
             using (var client = new HttpClient())
             {

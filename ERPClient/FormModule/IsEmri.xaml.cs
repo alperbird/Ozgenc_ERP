@@ -1,21 +1,14 @@
 ﻿using ClosedXML.Excel;
 using DataAccessLayer.Data;
 using DataAccessLayer.Repositories;
-using DocumentFormat.OpenXml.Office2010.CustomUI;
-using DocumentFormat.OpenXml.Wordprocessing;
 using ERPClient.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
+using User = EntityLayer.Entities.User;
 
 
 namespace ERPClient.FormModule
@@ -26,9 +19,10 @@ namespace ERPClient.FormModule
     public partial class IsEmri : Window
     {
         private readonly ProductRepository _repo;
+        private readonly User _currentUser;
         private ObservableCollection<MalzemeList> malzemeListesi = new ObservableCollection<MalzemeList>();
 
-        public IsEmri()
+        public IsEmri(User user)
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
                     .UseSqlServer("Server=192.168.5.81,1433;Database=Ozgenc_ERP;User Id=sa;Password=ozgencmachine16;TrustServerCertificate=True;")
@@ -38,10 +32,12 @@ namespace ERPClient.FormModule
             InitializeComponent();
             //dpTarih.SelectedDate = DateTime.Now;
             dgMalzemeListesi.ItemsSource = malzemeListesi;
+            _currentUser = user;
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Malzeme İstek sayfasından çıkış yaptı.");
             this.Close();
         }
 
@@ -116,6 +112,7 @@ namespace ERPClient.FormModule
                         }
                     };
                     process.Start();
+                    LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, {txtFirma.Text} Malzeme İstek Formunu oluşturdu.");
                     process.WaitForExit();
 
                     // PDF dosyasını aç

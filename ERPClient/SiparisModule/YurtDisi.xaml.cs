@@ -9,15 +9,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Customer = ERPClient.Model.Customer;
 using Product = ERPClient.Model.Product;
 
@@ -29,6 +24,7 @@ namespace ERPClient.SiparisModule
     public partial class YurtDisi : Window
     {
         HttpClient _client = new HttpClient();
+        private readonly User _currentUser;
         private const string customerUrl = "http://192.168.5.81:5001/api/Customer";
         private const string productUrl = "http://192.168.5.81:5001/api/Product";
         private ICollectionView productView;
@@ -40,16 +36,18 @@ namespace ERPClient.SiparisModule
         private ObservableCollection<ProductOrderRow> orderItems = new();
         private ObservableCollection<Customer> filteredCustomers = new();
 
-        public YurtDisi()
+        public YurtDisi(User user)
         {
             InitializeComponent();
             LoadCustomers();
             LoadProducts();
+            _currentUser = user;
             dgProducts.ItemsSource = orderItems;
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yurt Dışı Sipariş sayfasından çıkış yaptı.");
             this.Close();
         }
 
@@ -196,6 +194,8 @@ namespace ERPClient.SiparisModule
                 if (response.IsSuccessStatusCode)
                 {
                     MessageBox.Show("Sipariş başarıyla oluşturuldu!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                    LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, '{selectedCustomer.CustomerName}' için yeni bir yurt dışı siparişi oluşturdu.");
+
                     // Formu temizle
                     orderItems.Clear();
                     cmbCustomer.SelectedIndex = -1;

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace EntityLayer.DTOs
 {
@@ -14,6 +13,8 @@ namespace EntityLayer.DTOs
         public int Id { get; set; }
         public string CustomerName { get; set; } = string.Empty;
         public int CountryId { get; set; }
+
+        [JsonPropertyName("CountryName")]
         public Country Country { get; set; } = new();
         public string Address { get; set; } = string.Empty;
         public string DeliveryAddress { get; set; } = string.Empty;
