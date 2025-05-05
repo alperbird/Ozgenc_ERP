@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using User = EntityLayer.Entities.User;
 
 namespace ERPClient.MusteriModule
 {
@@ -21,10 +22,12 @@ namespace ERPClient.MusteriModule
     /// </summary>
     public partial class CustomerUpdateWindow : Window
     {
-        public CustomerUpdateWindow(Customer selectedCustomer, HttpClient client)
+        private readonly User _currentUser;
+        public CustomerUpdateWindow(Customer selectedCustomer, HttpClient client, User user)
         {
             InitializeComponent();
-            contentFrame.Content = new CustomerUpdate(selectedCustomer, client);
+            _currentUser = user;
+            contentFrame.Content = new CustomerUpdate(selectedCustomer, client, _currentUser);
         }
     }
 }

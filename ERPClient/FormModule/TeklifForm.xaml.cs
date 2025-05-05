@@ -1,8 +1,6 @@
 ﻿using ClosedXML.Excel;
 using ERPClient.Model;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -12,7 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Path = System.IO.Path;
-
+using User = EntityLayer.Entities.User;
 
 namespace ERPClient.FormModule
 {
@@ -25,6 +23,7 @@ namespace ERPClient.FormModule
         private const string customerUrl = "http://192.168.5.81:5001/api/Customer";
         private const string productUrl = "http://192.168.5.81:5001/api/Product";
 
+        private readonly User _currentUser;
         private List<Customer> customers = new();
         private List<Product> products = new();
         private ICollectionView productView;
@@ -34,9 +33,10 @@ namespace ERPClient.FormModule
         private ObservableCollection<ProductOrderRow> orderItems = new();
         private ObservableCollection<Customer> filteredCustomers = new();
         private Model.Customer? _selectedCustomer;
-        public TeklifForm()
+        public TeklifForm(User user)
         {
             InitializeComponent();
+            _currentUser = user;
             LoadCustomers();
             LoadProducts();
             dgProducts.ItemsSource = orderItems;
@@ -184,6 +184,7 @@ namespace ERPClient.FormModule
                     }
                 };
                 process.Start();
+                LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, {_selectedCustomer.CustomerName}  adlı müşterinin düşük teklif proformasını oluşturdu.");
                 process.WaitForExit();
 
                 // 8. PDF dosyasını aç
@@ -285,6 +286,7 @@ namespace ERPClient.FormModule
         #endregion
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Teklif Form sayfasından çıkış yaptı.");
             this.Close();
         }
         private void Clean()

@@ -3,25 +3,12 @@ using EntityLayer.Entities;
 using ERPClient.Model;
 using ERPClient.YedekParcaModule;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Text.Json;
 using Country = ERPClient.Model.Country;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using System.Diagnostics;
@@ -36,6 +23,7 @@ namespace ERPClient.MusteriModule
     {
 
         private readonly HttpClient _client = new HttpClient();
+        private readonly User _currentUser;
         private const string apiUrl = "http://192.168.5.81:5001/api/Customer";
         private Model.Customer? _selectedCustomer;
         private ObservableCollection<Model.Customer> allCustomer = new ObservableCollection<Model.Customer>();
@@ -45,13 +33,13 @@ namespace ERPClient.MusteriModule
         private int pageSize = 10;
 
 
-        public CustomerList()
+        public CustomerList(User user)
         {
             InitializeComponent();
             //dgMusteri.ItemsSource = _customer;
             LoadTable();
             LoadCountries();
-
+            _currentUser = user;
         }
 
         private async void LoadTable()
@@ -125,6 +113,7 @@ namespace ERPClient.MusteriModule
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var createdCustomer = JsonConvert.DeserializeObject<CustomerCreateDto>(responseBody);
                     MessageBox.Show($"Müşteri başarılı bir şekilde eklendi. Müşteri Id: {createdCustomer.Id}", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                    LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} yeni müşteri ekledi. Müşteri adı: {newCustomer.CustomerName}");
 
                     LoadTable();
                     CleanForm();
@@ -167,7 +156,8 @@ namespace ERPClient.MusteriModule
                     LastUpdated = dto.LastUpdated
                 };
 
-                var updateWindow = new CustomerUpdateWindow(selectedCustomer, _client);
+                LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} {selectedCustomer.CustomerName} adlı müşterinin güncelleme sayfasını açtı.");
+                var updateWindow = new CustomerUpdateWindow(selectedCustomer, _client, _currentUser);
                 updateWindow.ShowDialog();
 
                 LoadTable();
@@ -193,6 +183,7 @@ namespace ERPClient.MusteriModule
                     if (response.IsSuccessStatusCode)
                     {
                         MessageBox.Show("Müşteri başarıyla silindi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} müşteri sildi. Müşteri adı: {selectedCustomer.CustomerName}");
                         LoadTable();
                     }
                     else
@@ -290,6 +281,7 @@ namespace ERPClient.MusteriModule
 
         private void Button_Click(object sender, RoutedEventArgs e) //sayfadan çıkış butonu
         {
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Müşteri sayfasından çıkış yaptı.");
             this.Close();
         }
 

@@ -54,7 +54,7 @@ public partial class MainWindow : Window
         MessageBox.Show("Yedek Parça Listesi Açılıyor...");
         e.Handled = true;
 
-        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yedek Parça sistemine girdi.");
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yedek Parça sayfasına girdi.");
         YedekParca yp = new YedekParca(_currentUser);
         yp.Show();
     }
@@ -64,7 +64,8 @@ public partial class MainWindow : Window
         MessageBox.Show("Müşteri Listesi Açılıyor...");
         e.Handled = true;
 
-        CustomerList c = new CustomerList();
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Müşteri sayfasına girdi.");
+        CustomerList c = new CustomerList(_currentUser);
         c.Show();
     }
 
@@ -72,7 +73,8 @@ public partial class MainWindow : Window
     {
         e.Handled = true;
 
-        YurtIci yi = new YurtIci();
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yurt İçi Sipariş sayfasına girdi.");
+        YurtIci yi = new YurtIci(_currentUser);
         yi.Show();
     }
 
@@ -80,7 +82,8 @@ public partial class MainWindow : Window
     {
         e.Handled = true;
 
-        YurtDisi yd = new YurtDisi();
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yurt Dışı Sipariş sayfasına girdi.");
+        YurtDisi yd = new YurtDisi(_currentUser);
         yd.Show();
     }
 
@@ -88,21 +91,26 @@ public partial class MainWindow : Window
     {
         e.Handled = true;
 
-        SiparisGecmisi sg = new SiparisGecmisi();
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Sipariş Geçmişi sayfasına girdi.");
+        SiparisGecmisi sg = new SiparisGecmisi(_currentUser);
         sg.Show();
     }
 
     private void TeklifFormu_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
         e.Handled = true;
-        TeklifForm tf = new TeklifForm();
+
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Teklif Formu sayfasına girdi.");
+        TeklifForm tf = new TeklifForm(_currentUser);
         tf.Show();
     }
 
     private void IsEmriFormu_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
         e.Handled = true;
-        IsEmri ie = new IsEmri();
+
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Malzeme İstek sayfasına girdi.");
+        IsEmri ie = new IsEmri(_currentUser);
         ie.Show();
     }
 

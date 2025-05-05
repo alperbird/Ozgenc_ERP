@@ -8,20 +8,23 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Country = ERPClient.Model.Country;
+using User = EntityLayer.Entities.User;
 
 namespace ERPClient.MusteriModule
 {
     public partial class CustomerUpdate : Page
     {
         private readonly Model.Customer _selectedCustomer;
+        private readonly User _currentUser;
         private readonly HttpClient _client;
         private readonly string apiUrl = "http://192.168.5.81:5001/api/Customer";
 
-        public CustomerUpdate(Model.Customer customer, HttpClient client)
+        public CustomerUpdate(Model.Customer customer, HttpClient client, User user)
         {
             InitializeComponent();
             _selectedCustomer = customer;
             _client = client;
+            _currentUser = user;
             _ = InitForm();            
 
         }
@@ -112,6 +115,41 @@ namespace ERPClient.MusteriModule
             if (customerResponse.IsSuccessStatusCode)
             {
                 MessageBox.Show("Müşteri başarılı bir şekilde güncellendi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                var old = _selectedCustomer;
+                StringBuilder sb = new();
+                sb.AppendLine($"{_currentUser.Name} {_currentUser.Surname}, {old.CustomerName} adlı müşteriyi güncelledi.");
+
+                if (old.CustomerName != updateCustomer.CustomerName)
+                    sb.AppendLine($"Müşteri adı: {old.CustomerName} -> {updateCustomer.CustomerName}");
+
+                if (old.Address != updateCustomer.Address)
+                    sb.AppendLine($"Adres: {old.Address} -> {updateCustomer.Address}");
+
+                if (old.DeliveryAddress != updateCustomer.DeliveryAddress)
+                    sb.AppendLine($"Teslimat Adresi: {old.DeliveryAddress} -> {updateCustomer.DeliveryAddress}");
+
+                if (old.Contact != updateCustomer.Contact)
+                    sb.AppendLine($"İletişim: {old.Contact} -> {updateCustomer.Contact}");
+
+                if (old.Email != updateCustomer.Email)
+                    sb.AppendLine($"E-posta: {old.Email} -> {updateCustomer.Email}");
+
+                if (old.PhoneNumber != updateCustomer.PhoneNumber)
+                    sb.AppendLine($"Telefon Numarası: {old.PhoneNumber} -> {updateCustomer.PhoneNumber}");
+
+                if (old.TaxNo != updateCustomer.TaxNo)
+                    sb.AppendLine($"Vergi No: {old.TaxNo} -> {updateCustomer.TaxNo}");
+
+                if (old.CountryId != updateCustomer.CountryId)
+                {
+                    // İki ülke de null değilse isimle karşılaştır
+                    string oldCountryName = old.CountryName ?? $"ID: {old.CountryId}";
+                    string newCountryName = updateCustomer.Country?.CountryName ?? $"ID: {updateCustomer.CountryId}";
+
+                    sb.AppendLine($"Ülke: {oldCountryName} -> {newCountryName}");
+                }
+                LogHelper.LogAction(_currentUser.Id, sb.ToString().Trim());
+
                 Window.GetWindow(this)?.Close();
             }
             else
@@ -122,6 +160,7 @@ namespace ERPClient.MusteriModule
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} değişiklik yapmadı. Güncelleme sayfasından çıkış yapıldı.");
             Window.GetWindow(this)?.Close();
         }
 

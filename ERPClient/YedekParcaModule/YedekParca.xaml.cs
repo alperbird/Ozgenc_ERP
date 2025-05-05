@@ -245,7 +245,7 @@ namespace ERPClient
         //Programı kapat
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yedek Parça sisteminden çıktı.");
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yedek Parça sayfasından çıktı.");
             this.Close();
         }
 
