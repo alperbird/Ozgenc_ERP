@@ -196,6 +196,26 @@ namespace ERPClient.SiparisModule
                     MessageBox.Show("Sipariş başarıyla oluşturuldu!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                     LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, '{selectedCustomer.CustomerName}' için yeni bir yurt dışı siparişi oluşturdu.");
 
+                    foreach (var item in dto.OrderItems)
+                    {
+                        var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                        if (product != null)
+                        {
+                            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, '{product.ParcaAdi}' ürününün stok miktarını siparişle birlikte {item.Quantity} adet düşürdü.");
+                        }
+
+                        int newStok = product.Stok - item.Quantity;
+
+                        if (newStok < 0)
+                        {
+                            MessageBox.Show($"DİKKAT! '{product.ParcaAdi}' ürününün stok miktarı eksiye düştü!", "Stok Ekside", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                        else if (newStok <= 10)
+                        {
+                            MessageBox.Show($"UYARI! '{product.ParcaAdi}' ürününün stok miktarı azaldı!", "Stok Azaldı", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+
                     // Formu temizle
                     orderItems.Clear();
                     cmbCustomer.SelectedIndex = -1;

@@ -1,24 +1,23 @@
 ﻿using BusinessLayer.Interfaces;
 using DataAccessLayer.Interfaces;
+using DataAccessLayer.Repositories;
 using EntityLayer.DTOs;
 using EntityLayer.Entities;
 using EntityLayer.Entities.Enums;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.IdentityModel.Logging;
 
 namespace BusinessLayer.Services
 {
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly ProductRepository _repo;
 
-        public OrderService(IOrderRepository orderRepository)
+        public OrderService(IOrderRepository orderRepository, ProductRepository repo)
         {
             _orderRepository = orderRepository;
+            _repo = repo;
         }
 
         public async Task<List<Order>> GetAllOrderAsync()
@@ -35,6 +34,17 @@ namespace BusinessLayer.Services
         {
             o.TotalPrice = CalculateTotalPrice(o);
             await _orderRepository.AddAsync(o);
+
+            foreach (var item in o.OrderItems)
+            {
+                var product = await _repo.GetByIdAsync(item.ProductId);
+                if (product != null)
+                {
+                    product.Stok -= item.Quantity; // ürünün stok miktarını azalt
+                    await _repo.UpdateProduct(product); // güncellenmiş ürünü kaydet
+                }
+            }
+
         }
 
         public async Task UpdateOrderAsync(Order o)

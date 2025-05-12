@@ -95,11 +95,11 @@
 
                 <!-- İndirim/Zam -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
-                    <TextBlock Text="İndirim/Zam:" Width="100" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBlock Text="İskonto/KDV:" Width="100" VerticalAlignment="Center" Margin="0,0,5,0"/>
                     <ComboBox x:Name="cmbAdjustmentType" Width="120" SelectedIndex="-1">
                         <ComboBoxItem Content="Yok" Tag="" />
-                        <ComboBoxItem Content="İndirim" Tag="0" />
-                        <ComboBoxItem Content="Zam" Tag="1" />
+                        <ComboBoxItem Content="İskonto" Tag="0" />
+                        <ComboBoxItem Content="KDV" Tag="1" />
                     </ComboBox>
                 </StackPanel>
 

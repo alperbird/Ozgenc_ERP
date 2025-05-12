@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interfaces;
 using BusinessLayer.Services;
+using BusinessLayer.SignalR;
 using DataAccessLayer.Data;
 using DataAccessLayer.Interfaces;
 using DataAccessLayer.Repositories;
@@ -45,6 +46,15 @@ namespace ApiLayer
             builder.Services.AddScoped<ICountryRepository, CountryRepository>();
             builder.Services.AddScoped<ICountryService, CountryService>();
 
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IUserService, UserService>();
+
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+            builder.Services.AddScoped<IRoleService, RoleService>();
+
+            builder.Services.AddScoped<StockService>();
+            builder.Services.AddSignalR();
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -69,6 +79,7 @@ namespace ApiLayer
             //app.UseHttpsRedirection();
 
             app.UseAuthorization();
+            app.MapHub<StockHub>("/stockHub");
             app.MapControllers();
             app.Run();
         }

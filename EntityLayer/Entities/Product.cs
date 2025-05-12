@@ -19,7 +19,7 @@ namespace EntityLayer.Entities
         public decimal FiyatTL { get; set; }
         public decimal FiyatEUR { get; set; }
         public string? Aciklama { get; set; }
-
+        public int Stok { get; set; }
 
         public List<ProductMachine> ProductMachines { get; set; } = new List<ProductMachine>(); // Many-to-Many ilişki
     }

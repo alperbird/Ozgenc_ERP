@@ -16,6 +16,8 @@ namespace EntityLayer.DTOs
         public decimal FiyatEUR { get; set; }
         public string? Aciklama { get; set; }
 
+        public int Stok { get; set; }
+
         public string MakineAdi { get; set; }
 
         public List<ProductMachineDto>? ProductMachines { get; set; }

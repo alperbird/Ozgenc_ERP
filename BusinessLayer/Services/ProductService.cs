@@ -71,11 +71,34 @@ namespace BusinessLayer.Services
             }
         }
 
-
-
         public async Task<bool> DeleteProductAsync(int id)
         {
             return await _repository.DeleteProduct(id);
+        }
+
+        public async Task<List<ProductStockDto>> GetStockListAsync()
+        {
+            var products = await _repository.GetAllAsync();
+
+            return products.Select(p => new ProductStockDto
+            {
+                Id = p.Id,
+                ParcaAdi = p.ParcaAdi,
+                Stok = p.Stok
+            }).ToList();
+        }
+
+        public async Task UpdateStockAsync(ProductStockDto dto)
+        {
+            var product = await _repository.GetByIdAsync(dto.Id);
+
+            if (product == null)
+            {
+                throw new Exception("Ürün bulunamadı.");
+            }
+
+            product.Stok += dto.Stok;
+            await _repository.UpdateProduct(product);
         }
     }
     

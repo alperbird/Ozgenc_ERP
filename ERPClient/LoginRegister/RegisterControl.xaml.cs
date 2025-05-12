@@ -1,20 +1,16 @@
 ﻿using DataAccessLayer.Data;
 using EntityLayer.Entities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ERPClient.LoginRegister
 {
@@ -36,7 +32,7 @@ namespace ERPClient.LoginRegister
             _parent.ShowLogin();
         }
 
-        private void BtnRegister_Click(object sender, RoutedEventArgs e)
+        private async void BtnRegister_Click(object sender, RoutedEventArgs e)
         {
             string name = txtName.Text.Trim();
             string surname = txtSurname.Text.Trim();
@@ -51,55 +47,65 @@ namespace ERPClient.LoginRegister
                 return;
             }
 
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                    .UseSqlServer("Server=192.168.5.81,1433;Database=Ozgenc_ERP;User Id=sa;Password=ozgencmachine16;TrustServerCertificate=True;")
-                    .Options;
-            using (var context = new AppDbContext(options))
+            var newUserDto = new
             {
-                // Aynı kullanıcı adı var mı kontrol
-                if (context.Users.Any(u => u.UserName == username))
+                Name = name,
+                Surname = surname,
+                Username = username,
+                Password = password,
+                RoleId = selectedRole.Id
+            };
+
+            try
+            {
+                using var client = new HttpClient();
+                var json = System.Text.Json.JsonSerializer.Serialize(newUserDto);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync("http://192.168.5.81:5001/api/User/register", content);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show("Bu kullanıcı adı zaten kullanılıyor.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                    MessageBox.Show("Kayıt başarıyla oluşturuldu!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                    _parent.ShowLogin(); // login ekranına dön
                 }
-
-                var newUser = new User
+                else
                 {
-                    Name = name,
-                    Surname = surname,
-                    UserName = username,
-                    Password = password,
-                    RoleId = selectedRole.Id
-                };
-
-                context.Users.Add(newUser);
-                context.SaveChanges();
-
-                var log = new Log
-                {
-                    UserId = newUser.Id,
-                    Information = $"{newUser.Name} {newUser.Surname} adlı kullanıcı sisteme kayıt oldu.",
-                    Date = DateTime.Now
-                };
-
-                context.Logs.Add(log);
-                context.SaveChanges();
+                    string error = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Kayıt başarısız!\n{error}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-
-            MessageBox.Show("Kayıt başarıyla oluşturuldu!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
-            _parent.ShowLogin(); // login ekranına dön
-        }
-
-        private void LoadRoles()
-        {
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                    .UseSqlServer("Server=192.168.5.81,1433;Database=Ozgenc_ERP;User Id=sa;Password=ozgencmachine16;TrustServerCertificate=True;")
-                    .Options;
-            using (var context = new AppDbContext(options))
+            catch (Exception ex)
             {
-                var roles = context.Roles.ToList();
-                cmbRoles.ItemsSource = roles;
+                MessageBox.Show("API bağlantı hatası:\n" + ex.Message, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
+        private async void LoadRoles()
+        {
+            try
+            {
+                using var client = new HttpClient();
+                var response = await client.GetAsync("http://192.168.5.81:5001/api/Role");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var roles = JsonConvert.DeserializeObject<List<Role>>(json);
+                    cmbRoles.ItemsSource = roles;
+                }
+                else
+                {
+                    MessageBox.Show("Roller yüklenemedi!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Beklenmedik hata: {ex.Message}");
+            }
+        }
+
+
     }
 }

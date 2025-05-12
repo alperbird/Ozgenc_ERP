@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.Services;
+using DataAccessLayer.Repositories;
 using EntityLayer.DTOs;
 using EntityLayer.Entities;
 using Microsoft.AspNetCore.Http;
@@ -23,7 +24,7 @@ namespace ApiLayer.Controllers
 
         [HttpGet]
         [Produces("application/json")]
-        public async Task<ActionResult<List<ProductDto>>> GetAllProducts()
+        public async Task<ActionResult> GetAllProducts()
         {
             var products = await _service.GetAllProductAsync();
 
@@ -36,6 +37,7 @@ namespace ApiLayer.Controllers
                 FiyatEUR = p.FiyatEUR,
                 ResimYolu = p.ResimYolu,
                 Aciklama = p.Aciklama,
+                Stok = p.Stok,
                 MakineAdi = p.ProductMachines != null && p.ProductMachines.Any()
             ? string.Join(", ", p.ProductMachines.Select(pm => pm.Machine.MakineAdi))
             : "Makine Yok",
@@ -92,7 +94,7 @@ namespace ApiLayer.Controllers
                 FiyatTL = productDto.FiyatTL,
                 FiyatEUR = productDto.FiyatEUR,
                 Aciklama = productDto.Aciklama,
-                ResimYolu = productDto.ResimYolu
+                ResimYolu = productDto.ResimYolu,
             };
 
             await _service.AddProductAsync(product, productDto.MakineIdleri);
@@ -184,6 +186,20 @@ namespace ApiLayer.Controllers
             }
 
             return NoContent(); // 204 - Başarılı ama içerik yok
+        }
+
+        [HttpGet("stocklist")]
+        public async Task<IActionResult> GetStockList()
+        {
+            var result = await _service.GetStockListAsync();
+            return Ok(result);
+        }
+
+        [HttpPut("update-stock")]
+        public async Task<IActionResult> Update([FromBody] ProductStockDto dto)
+        {
+            await _service.UpdateStockAsync(dto);
+            return Ok(new { message = "Stok güncellendi!" });
         }
 
     }

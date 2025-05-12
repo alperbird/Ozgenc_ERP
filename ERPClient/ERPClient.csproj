@@ -31,8 +31,10 @@
     <None Remove="Assets\pdf.png" />
     <None Remove="Assets\purchase.png" />
     <None Remove="Assets\sales.png" />
+    <None Remove="Assets\settings.png" />
     <None Remove="Assets\spareparts.png" />
     <None Remove="Assets\update.png" />
+    <None Remove="Assets\user.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,8 +69,10 @@
     <Resource Include="Assets\pdf.png" />
     <Resource Include="Assets\purchase.png" />
     <Resource Include="Assets\sales.png" />
+    <Resource Include="Assets\settings.png" />
     <Resource Include="Assets\spareparts.png" />
     <Resource Include="Assets\update.png" />
+    <Resource Include="Assets\user.png" />
   </ItemGroup>
 
 </Project>
