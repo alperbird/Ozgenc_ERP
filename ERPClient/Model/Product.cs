@@ -21,6 +21,8 @@ namespace ERPClient.Model
         public decimal FiyatTL { get; set; }
         public decimal FiyatEUR { get; set; }
         public string? Aciklama { get; set; }
+
+        public int Stok { get; set; }
         [JsonIgnore]
         public List<ProductMachine>? ProductMachines { get; set; }
     }

@@ -4,10 +4,12 @@ using ERPClient.LoginRegister;
 using ERPClient.Model;
 using ERPClient.MusteriModule;
 using ERPClient.SiparisModule;
+using ERPClient.StokModule;
 using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 
@@ -30,13 +32,6 @@ public partial class MainWindow : Window
         MenuPanel.Visibility = MenuPanel.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
     }
 
-    private void btnExit_Click(object sender, RoutedEventArgs e)
-    {
-        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} sistemden çıkış yaptı.");
-        AuthWindow login = new AuthWindow();
-        login.Show();
-        this.Close();
-    }
 
     private void btnToggleTree_Click(object sender, RoutedEventArgs e)
     {
@@ -114,4 +109,32 @@ public partial class MainWindow : Window
         ie.Show();
     }
 
+    private void btnSettings_Click(object sender, RoutedEventArgs e)
+    {
+        btnSettings.ContextMenu.PlacementTarget = btnSettings;
+        btnSettings.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        btnSettings.ContextMenu.IsOpen = true;
+    }
+
+    private void MenuItem_Profile_Click(object sender, RoutedEventArgs e)
+    {
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Profil Ayarları sayfasına girdi.");
+        ProfileSettings ps = new ProfileSettings(_currentUser);
+        ps.Show();
+    }
+
+    private void MenuItem_Logout_Click(object sender, RoutedEventArgs e)
+    {
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} sistemden çıkış yaptı.");
+        AuthWindow login = new AuthWindow();
+        login.Show();
+        this.Close();
+    }
+
+    private void Stok_Click(object sender, MouseButtonEventArgs e)
+    {
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Stok Takip sayfasına giriş yaptı.");
+        StokYonetim sy = new StokYonetim(_currentUser);
+        sy.Show();
+    }
 }

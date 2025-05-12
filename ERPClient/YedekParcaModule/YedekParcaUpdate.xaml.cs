@@ -146,72 +146,89 @@ namespace ERPClient.YedekParcaModule
                     ResimYolu = selectedImagePathUpdate,
                     MakineIdleri = selectedMachineIds
                 };
+
                 await UpdateProduct(updatedProduct);
+
                 string jsonContent = System.Text.Json.JsonSerializer.Serialize(updatedProduct, new JsonSerializerOptions
                 {
                     WriteIndented = true
                 });
 
-                //MessageBox.Show($"Giden JSON:\n{jsonContent}", "Güncelleme JSON", MessageBoxButton.OK, MessageBoxImage.Information);
-
                 var productContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                 HttpResponseMessage productResponse = await _client.PutAsync($"{apiUrl}/{_selectedProduct.Id}", productContent);
-
-
                 string responseContent = await productResponse.Content.ReadAsStringAsync();
 
                 if (productResponse.IsSuccessStatusCode)
                 {
-                    MessageBox.Show("Yedek parça başarıyla güncellendi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                     var old = _selectedProduct;
                     StringBuilder sb = new();
+                    bool hasChange = false;
+
                     sb.AppendLine($"{_currentUser.Name} {_currentUser.Surname}, '{old.ParcaAdi}' adlı yedek parçayı güncelledi:");
 
                     if (old.ParcaAdi != updatedProduct.ParcaAdi)
+                    {
                         sb.AppendLine($"- Parça Adı: '{old.ParcaAdi}' → '{updatedProduct.ParcaAdi}'");
+                        hasChange = true;
+                    }
 
                     if (old.Sinif != updatedProduct.Sinif)
+                    {
                         sb.AppendLine($"- Sınıf: '{old.Sinif}' → '{updatedProduct.Sinif}'");
+                        hasChange = true;
+                    }
 
                     if (old.FiyatTL != updatedProduct.FiyatTL)
+                    {
                         sb.AppendLine($"- Fiyat (TL): {old.FiyatTL} → {updatedProduct.FiyatTL}");
+                        hasChange = true;
+                    }
 
                     if (old.FiyatEUR != updatedProduct.FiyatEUR)
+                    {
                         sb.AppendLine($"- Fiyat (EUR): {old.FiyatEUR} → {updatedProduct.FiyatEUR}");
+                        hasChange = true;
+                    }
 
                     if (old.Aciklama != updatedProduct.Aciklama)
+                    {
                         sb.AppendLine($"- Açıklama değiştirildi.");
+                        hasChange = true;
+                    }
 
                     if (old.ResimYolu != updatedProduct.ResimYolu)
+                    {
                         sb.AppendLine($"- Görsel güncellendi.");
+                        hasChange = true;
+                    }
 
-                    var oldMakineIds = old.ProductMachines.Select(pm => pm.MakineId).OrderBy(id => id).ToList();
+                    var oldMakineIds = old.ProductMachines?.Select(pm => pm.MakineId).OrderBy(id => id).ToList() ?? new List<int>();
                     var newMakineIds = updatedProduct.MakineIdleri.OrderBy(id => id).ToList();
 
                     if (!oldMakineIds.SequenceEqual(newMakineIds))
                     {
-                        // Eğer machineDict varsa constructor'dan al, yoksa burada yeniden çek
                         var machineDict = await GetMachineDictionaryAsync();
-
                         var oldMakineNames = string.Join(", ", oldMakineIds.Select(id => machineDict.ContainsKey(id) ? machineDict[id] : $"Makine#{id}"));
                         var newMakineNames = string.Join(", ", newMakineIds.Select(id => machineDict.ContainsKey(id) ? machineDict[id] : $"Makine#{id}"));
-
                         sb.AppendLine($"- Makine Atamaları: {oldMakineNames} → {newMakineNames}");
-
-                        LogHelper.LogAction(_currentUser.Id, sb.ToString().Trim());
-
-                        var mainWindow = Application.Current.Windows.OfType<YedekParca>().FirstOrDefault();
-                        if (mainWindow != null)
-                        {
-                            mainWindow.LoadTable(); // DataGrid Yenilensin
-                        }
-
-                        Window.GetWindow(this)?.Close();
+                        hasChange = true;
                     }
-                    else
+
+                    if (hasChange)
                     {
-                        MessageBox.Show($"Güncelleme başarısız! {productResponse.StatusCode}\n{responseContent}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                        LogHelper.LogAction(_currentUser.Id, sb.ToString().Trim());
                     }
+
+                    // Pencereyi kapat ve tabloyu yenile
+                    var mainWindow = Application.Current.Windows.OfType<YedekParca>().FirstOrDefault();
+                    mainWindow?.LoadTable();
+
+                    MessageBox.Show("Yedek parça başarıyla güncellendi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Window.GetWindow(this)?.Close();
+                }
+                else
+                {
+                    MessageBox.Show($"Güncelleme başarısız! {productResponse.StatusCode}\n{responseContent}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
@@ -219,6 +236,7 @@ namespace ERPClient.YedekParcaModule
                 MessageBox.Show($"Güncelleme işlemi başarısız: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
 
         // Geri butonu (Kapat)

@@ -1,8 +1,6 @@
 ﻿using EntityLayer.DTOs;
 using ERPClient.Model;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net.Http;
@@ -53,7 +51,7 @@ namespace ERPClient.SiparisModule
                 var allCustomers = JsonConvert.DeserializeObject<List<Customer>>(json) ?? new();
 
                 customers = allCustomers
-                    .Where(c => !string.Equals(c.CountryName?.Trim(), "Türkiye", StringComparison.OrdinalIgnoreCase))
+                    .Where(c => string.Equals(c.CountryName?.Trim(), "Türkiye", StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
                 filteredCustomers = new ObservableCollection<Customer>(customers);
@@ -108,8 +106,9 @@ namespace ERPClient.SiparisModule
             if (cmbProduct.SelectedItem is Product selectedProduct)
             {
                 txtProductName.Text = selectedProduct.ParcaAdi;
-                txtUnitPrice.Text = selectedProduct.FiyatEUR.ToString("N2");
+                txtUnitPrice.Text = selectedProduct.FiyatTL.ToString("N2");
                 txtQuantity.Text = "1"; // her zaman başlangıç olarak 1
+                txtShippingFee.Text = "0"; // kargo ücreti başlangıçta 0
 
                 if (!decimal.TryParse(txtShippingFee.Text, out decimal shippingFee))
                 {
@@ -230,6 +229,27 @@ namespace ERPClient.SiparisModule
                 {
                     MessageBox.Show("Sipariş başarıyla oluşturuldu!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                     LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, '{selectedCustomer.CustomerName}' için yeni bir yurt dışı siparişi oluşturdu.");
+
+                    foreach (var item in dto.OrderItems)
+                    {
+                        var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                        if (product != null)
+                        {
+                            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, '{product.ParcaAdi}' ürününün stok miktarını siparişle birlikte {item.Quantity} adet düşürdü.");
+                        }
+
+                        int newStok = product.Stok - item.Quantity;
+
+                        if (newStok < 0)
+                        {
+                            MessageBox.Show($"DİKKAT! '{product.ParcaAdi}' ürününün stok miktarı eksiye düştü!", "Stok Ekside", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                        else if (newStok <= 10)
+                        {
+                            MessageBox.Show($"UYARI! '{product.ParcaAdi}' ürününün stok miktarı azaldı!", "Stok Azaldı", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+
                     // Formu temizle
                     orderItems.Clear();
                     cmbCustomer.SelectedIndex = -1;

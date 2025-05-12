@@ -222,6 +222,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("Sinif")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Stok")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Products");

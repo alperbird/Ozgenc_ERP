@@ -1,15 +1,16 @@
-﻿using DataAccessLayer.Data;
-using EntityLayer.Entities;
+﻿using EntityLayer.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DataAccessLayer.Data;
 using System.Windows;
 using System.Windows.Controls;
-
 using System.Windows.Input;
+using System.Net.Http;
+using System.Text.Json;
+using Microsoft.IdentityModel.Logging;
+using ERPClient.Model;
 
 
 namespace ERPClient.LoginRegister
@@ -31,7 +32,7 @@ namespace ERPClient.LoginRegister
            _parent.ShowRegister();
         }
 
-        private void BtnLogin_Click(object sender, RoutedEventArgs e)
+        private async void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Password;
@@ -44,44 +45,39 @@ namespace ERPClient.LoginRegister
 
             try
             {
-                var options = new DbContextOptionsBuilder<AppDbContext>()
-                    .UseSqlServer("Server=192.168.5.81,1433;Database=Ozgenc_ERP;User Id=sa;Password=ozgencmachine16;TrustServerCertificate=True;")
-                    .Options;
-                using (var context = new AppDbContext(options)) // ← kendi context adını yaz knk
+                using var client = new HttpClient();
+                var loginData = new
                 {
-                    var user = context.Users
-                        .Include(u => u.Role)
-                        .FirstOrDefault(u => u.UserName == username && u.Password == password);
+                    Username = username,
+                    Password = password
+                };
 
-                    if (user == null)
+                var json = JsonSerializer.Serialize(loginData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await client.PostAsync("http://192.168.5.81:5001/api/User/login", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                    var user = JsonSerializer.Deserialize<User>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (user != null)
                     {
-                        MessageBox.Show("Kullanıcı adı veya şifre hatalı.", "Hatalı Giriş", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
+                        MainWindow main = new MainWindow(user); // ← kullanıcıyı gönderiyoruz
+                        Model.LogHelper.LogAction(user.Id, $"{user.Name} {user.Surname} sisteme giriş yaptı.");
+                        main.Show();
+                        Window.GetWindow(this)?.Close();
                     }
-
-                    // Log Kaydı
-                    var log = new Log
-                    {
-                        UserId = user.Id,
-                        Information = $"{user.Name} {user.Surname} giriş yaptı",
-                        Date = DateTime.Now
-                    };
-
-                    context.Logs.Add(log);
-                    context.SaveChanges();
-
-                    // Ana pencereyi aç
-                    MainWindow main = new MainWindow(user); // ← ana ekran hangisiyse onu aç
-                    main.Show();
-
-                    // Giriş ekranını kapat
-                    Window.GetWindow(this)?.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Kullanıcı adı veya şifre hatalı.", "Hatalı Giriş", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                MessageBox.Show("Sunucuya bağlanılamadı:\n" + ex.Message, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
