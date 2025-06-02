@@ -100,6 +100,19 @@ namespace BusinessLayer.Services
             product.Stok += dto.Stok;
             await _repository.UpdateProduct(product);
         }
+
+        public async Task ChangeStockAsync(ProductStockChangeDto dto)
+        {
+            var product = await _repository.GetByIdAsync(dto.Id);
+
+            if (product == null)
+            {
+                throw new Exception("Ürün bulunamadı.");
+            }
+
+            product.Stok = dto.QuantityChange;
+            await _repository.UpdateProduct(product);
+        }
     }
     
 }

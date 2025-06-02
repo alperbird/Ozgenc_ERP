@@ -31,5 +31,9 @@ namespace EntityLayer.Entities
         public decimal TotalPrice => UnitPrice * Quantity;
 
         public string? CustomProductName { get; set; }
+
+        public string? SelectedMachine { get; set; }
+
+
     }
 }

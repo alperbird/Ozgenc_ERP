@@ -28,6 +28,9 @@ namespace ERPClient.MusteriModule
         private Model.Customer? _selectedCustomer;
         private ObservableCollection<Model.Customer> allCustomer = new ObservableCollection<Model.Customer>();
 
+        private List<Model.Customer> filteredCustomer = new();
+        private bool IsFiltered = false; // Filtreleme durumu
+
         private ObservableCollection<Model.Customer> paginatedCustomers = new ObservableCollection<Model.Customer>();
         private int currentPage = 1;
         private int pageSize = 10;
@@ -182,9 +185,12 @@ namespace ERPClient.MusteriModule
 
                     if (response.IsSuccessStatusCode)
                     {
+                        allCustomer.Remove(selectedCustomer);
+                        if(IsFiltered)
+                            filteredCustomer.Remove(selectedCustomer);
+                        UpdatePagination();
                         MessageBox.Show("Müşteri başarıyla silindi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                         LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} müşteri sildi. Müşteri adı: {selectedCustomer.CustomerName}");
-                        LoadTable();
                     }
                     else
                     {
@@ -229,14 +235,35 @@ namespace ERPClient.MusteriModule
 
         private void UpdatePagination()
         {
-            if (allCustomer.Count == 0) return; // Eğer hiç veri yoksa pagination çalıştırma
+            //if (allCustomer.Count == 0) return; // Eğer hiç veri yoksa pagination çalıştırma
 
-            int totalItems = allCustomer.Count;
+            //int totalItems = allCustomer.Count;
+            //int totalPages = (totalItems + pageSize - 1) / pageSize;
+            //int skip = (currentPage - 1) * pageSize;
+
+            //paginatedCustomers.Clear();
+            //foreach (var item in allCustomer.Skip(skip).Take(pageSize))
+            //{
+            //    paginatedCustomers.Add(item);
+            //}
+
+            //dgMusteri.ItemsSource = paginatedCustomers;
+            //txtPageInfo.Text = $"Sayfa {currentPage} / {totalPages}";
+
+            //btnPrevious.IsEnabled = currentPage > 1;
+            //btnNext.IsEnabled = currentPage < totalPages;
+
+            var sourceList = IsFiltered ? filteredCustomer : allCustomer.ToList();
+
+
+            if (sourceList.Count == 0) return;
+
+            int totalItems = sourceList.Count;
             int totalPages = (totalItems + pageSize - 1) / pageSize;
             int skip = (currentPage - 1) * pageSize;
 
             paginatedCustomers.Clear();
-            foreach (var item in allCustomer.Skip(skip).Take(pageSize))
+            foreach (var item in sourceList.Skip(skip).Take(pageSize))
             {
                 paginatedCustomers.Add(item);
             }
@@ -343,6 +370,43 @@ namespace ERPClient.MusteriModule
             return JsonConvert.DeserializeObject<List<Country>>(json) ?? new List<Country>();
         }
 
-        
+        #region Burası aradığımız yer
+        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Search();
+        }
+
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            Search();
+
+        }
+
+        private void Search()
+        {
+            string keyword = txtSearch.Text.Trim().ToLower();
+
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                IsFiltered = false;
+                currentPage = 1;
+                UpdatePagination(); // Normal listeyi göster
+                return;
+            }
+
+            filteredCustomer = allCustomer
+                .Where(c =>
+                    (!string.IsNullOrEmpty(c.CustomerName) && c.CustomerName.ToLower().Contains(keyword)) ||
+                    (!string.IsNullOrEmpty(c.Contact) && c.Contact.ToLower().Contains(keyword)))
+                .ToList();
+
+            IsFiltered = true;
+            currentPage = 1;
+            UpdatePagination(); // Filtrelenmiş listeyi göster
+        }
+
+        #endregion
+
+
     }
 }

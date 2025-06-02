@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using ERPClient.Model;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using System.Text;
 
 
 
@@ -23,7 +25,9 @@ namespace ERPClient.SiparisModule
         //pagination 
         private int currentPage = 1;
         private int maxPage;
-        private const int pageSize = 16; 
+        private const int pageSize = 16;
+
+        
         public SiparisGecmisi(User user)
         {
             InitializeComponent();
@@ -199,6 +203,73 @@ namespace ERPClient.SiparisModule
 
             btnPrevious.IsEnabled = true;
             btnNext.IsEnabled = true;
+        }
+
+        private async void btnOnaylandiMi_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.DataContext is OrderListDto selectedOrder)
+            {
+                var confirm = MessageBox.Show("Siparişi onaylamak istiyor musunuz?", "Onay", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (confirm != MessageBoxResult.Yes)
+                    return;
+
+                // Sipariş ID'si
+                int orderId = selectedOrder.Id;
+
+                // Buradan detayları çekip işlemleri yapabilirsin...
+                var response = await _client.GetAsync($"http://192.168.5.81:5001/api/Order/{orderId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Sipariş detayı alınamadı!");
+                    return;
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var detail = JsonConvert.DeserializeObject<OrderDetailDto>(json);
+
+                var groupedItems = detail.OrderItems
+                    .GroupBy(x => x.ProductId)
+                    .Select(g => new
+                    {
+                        ProductId = g.Key,
+                        TotalQuantity = g.Sum(x => x.Quantity)
+                    });
+
+                foreach (var item in groupedItems)
+                {
+                    var stockResp = await _client.GetAsync($"http://192.168.5.81:5001/api/Product/{item.ProductId}");
+                    if (!stockResp.IsSuccessStatusCode)
+                        continue;
+
+                    var productJson = await stockResp.Content.ReadAsStringAsync();
+                    var product = JsonConvert.DeserializeObject<Product>(productJson);
+
+                    int newStock = product.Stok - item.TotalQuantity;
+
+                    if (newStock < 0)
+                    {
+                        MessageBox.Show($"{product.ParcaAdi} stoğu eksiye düştü! Yeni stok: {newStock}", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else if (newStock <= 10)
+                    {
+                        MessageBox.Show($"{product.ParcaAdi} stoğu kritik seviyeye düştü! Yeni stok: {newStock}", "Bilgilendirme", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+
+                    var updateDto = new ProductStockChangeDto
+                    {
+                        Id = item.ProductId,
+                        QuantityChange = newStock
+                    };
+
+                    var jsonUpdate = JsonConvert.SerializeObject(updateDto);
+                    var content = new StringContent(jsonUpdate, Encoding.UTF8, "application/json");
+
+                    await _client.PutAsync("http://192.168.5.81:5001/api/Product/change-stock", content);
+                }
+
+                MessageBox.Show("Sipariş başarıyla onaylandı. Stok güncellendi.");
+            }
         }
     }
 }

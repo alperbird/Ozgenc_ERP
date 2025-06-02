@@ -12,5 +12,8 @@ namespace EntityLayer.DTOs
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal Total { get; set; }
+        public bool Kdv { get; set; }
+
+        public string? SelectedMachine { get; set; }
     }
 }

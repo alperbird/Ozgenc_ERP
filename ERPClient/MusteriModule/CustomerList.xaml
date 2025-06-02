@@ -41,21 +41,13 @@
             <!-- Yedek Parça Listesi (Sol Taraf) -->
             <StackPanel Grid.Column="0" Margin="10">
                 <TextBlock Text="Müşteri İşlemleri" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
-                <!-- Arama Çubuğu -->
-                <!--<Border Grid.Column="0" Margin="10" Padding="5" Background="White" BorderBrush="#CCC" BorderThickness="1" CornerRadius="15" Width="300">
-                    <DockPanel>
-                        --><!-- Arama Metin Kutusu --><!--
-                        <TextBox Name="txtSearch" Width="250" Height="35" FontSize="14"
-                        BorderThickness="0" Background="Transparent"
-                        TextChanged="txtSearch_TextChanged"
-                        KeyDown="txtSearch_KeyDown"/>
 
-                        --><!-- Arama Butonu --><!--
-                        <Button Width="40" Height="35" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="btnSearch_Click">
-                            <Image Source="/Assets/magnifying.png" Width="30" Height="30"/>
-                        </Button>
-                    </DockPanel>
-                </Border>-->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBox x:Name="txtSearch" Width="200" Height="25"
+                             VerticalContentAlignment="Center" TextChanged="txtSearch_TextChanged"/>
+                    <Button Content="Ara" Width="60" Height="35" Margin="5,0,0,0" Click="btnSearch_Click"/>
+                </StackPanel>
+                
                 <ContentControl Name="MainContent" Grid.Row="1" Grid.Column="0"/>
                 <DataGrid x:Name="dgMusteri" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Visibility="Visible"
                       Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Single" SelectionUnit="FullRow"

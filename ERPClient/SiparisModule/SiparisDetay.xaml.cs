@@ -58,8 +58,14 @@ namespace ERPClient.SiparisModule
                 ParcaAdi = string.IsNullOrWhiteSpace(x.CustomProductName) ? x.Product.ParcaAdi : x.CustomProductName,
                 x.Quantity,
                 x.UnitPrice,
-                Total = x.Quantity * x.UnitPrice
+                Total = x.Quantity * x.UnitPrice,
+                SelectedMachine = x.SelectedMachine ?? "GENEL",
             }).ToList();
+
+            foreach (var item in items)
+            {
+                Debug.WriteLine($"PARÇA: {item.ParcaAdi} / MAKİNE: {item.SelectedMachine}");
+            }
 
             dgOrderItems.ItemsSource = items;
         }
@@ -96,7 +102,9 @@ namespace ERPClient.SiparisModule
                         ParcaAdi = x.ParcaAdi,
                         Quantity = x.Quantity,
                         UnitPrice = x.UnitPrice,
-                        Total = x.Total
+                        Total = x.Total,
+
+                        SelectedMachine = string.IsNullOrWhiteSpace(x.SelectedMachine) ? "GENEL" : x.SelectedMachine
                     }).ToList();
 
                 string jsonItems = System.Text.Json.JsonSerializer.Serialize(items);
@@ -122,9 +130,9 @@ namespace ERPClient.SiparisModule
                     {
                         FileName = exePath,
                         Arguments = arguments,
-                        UseShellExecute = false, // Shell'e ihtiyaç yok
+                        UseShellExecute = false, 
                         CreateNoWindow = true,   // CMD ekranını sakla
-                        //WindowStyle = ProcessWindowStyle.Hidden // Garanti olsun
+                        //WindowStyle = ProcessWindowStyle.Hidden
                     };
 
                     Process.Start(psi);
