@@ -105,7 +105,7 @@ namespace ApiLayer.Controllers
         [HttpPost("upload-photo")]
         public async Task<IActionResult> ResimYukle(IFormFile file)
         {
-            if(file == null || file.Length == 0)
+            if (file == null || file.Length == 0)
             {
                 Console.WriteLine("FOTOĞRAF YOK AMK!");
                 return BadRequest("Fotoğraf yok veya yüklenemedi.");
@@ -125,7 +125,7 @@ namespace ApiLayer.Controllers
             //aynı isimde dosya varsa, dosya adının sonuna sayı ekle
             int count = 1;
             string finalPath = filePath;
-            while(System.IO.File.Exists(finalPath))
+            while (System.IO.File.Exists(finalPath))
             {
                 string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
                 string ext = Path.GetExtension(fileName);
@@ -141,9 +141,9 @@ namespace ApiLayer.Controllers
             Console.WriteLine($"Fotoğraf başarıyla kaydedildi: {finalPath}");
 
             //resim yolu olarak kaydedilecek olan dosyanın adını al (veritabanına kaydedilecek format)
-            var relativePath = Path.Combine("YedekParcaAssets", Path.GetFileName(finalPath)).Replace("\\","/");
+            var relativePath = Path.Combine("YedekParcaAssets", Path.GetFileName(finalPath)).Replace("\\", "/");
 
-            return Ok(new {photoPath = relativePath});
+            return Ok(new { photoPath = relativePath });
         }
 
 
@@ -202,6 +202,12 @@ namespace ApiLayer.Controllers
             return Ok(new { message = "Stok güncellendi!" });
         }
 
+        [HttpPut("change-stock")]
+        public async Task<IActionResult> QuantityUpdate([FromBody] ProductStockChangeDto dto)
+        {
+            await _service.ChangeStockAsync(dto);
+            return Ok(new { message = "Stok güncellendi!" });
+        }
     }
 
 }

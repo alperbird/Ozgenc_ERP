@@ -46,7 +46,8 @@ namespace ApiLayer.Controllers
                     ProductId = x.ProductId,
                     Quantity = x.Quantity,
                     UnitPrice = x.UnitPrice,
-                    CustomProductName = x.CustomProductName
+                    CustomProductName = x.CustomProductName,
+                    SelectedMachine = x.SelectedMachine
                 }).ToList()
             };
 
@@ -83,7 +84,8 @@ namespace ApiLayer.Controllers
                 ProductId = x.ProductId,
                 Quantity = x.Quantity,
                 UnitPrice = x.UnitPrice,
-                CustomProductName = x.CustomProductName
+                CustomProductName = x.CustomProductName,
+                SelectedMachine = x.SelectedMachine
             }).ToList();
 
             await _orderService.UpdateOrderAsync(existingOrder);

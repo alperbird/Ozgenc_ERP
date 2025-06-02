@@ -1,6 +1,7 @@
 ﻿<Window x:Class="ERPClient.SiparisModule.YurtDisi"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Loaded="Window_Loaded"
         Title="YurtDisi" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}" Background="#F4F4F4"
         WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
     <Grid>

@@ -39,8 +39,8 @@ namespace ERPClient.SiparisModule
         public YurtDisi(User user)
         {
             InitializeComponent();
-            LoadCustomers();
-            LoadProducts();
+            //LoadCustomers();
+            //LoadProducts();
             _currentUser = user;
             dgProducts.ItemsSource = orderItems;
         }
@@ -76,6 +76,7 @@ namespace ERPClient.SiparisModule
                 txtUnitPrice.Text = selectedProduct.FiyatEUR.ToString("N2");
                 txtQuantity.Text = "1"; // her zaman başlangıç olarak 1
                 txtShippingFee.Text = "0"; 
+                txtAdjustmentPercentage.Text = "20"; // indirim sabit %20
 
                 if (!decimal.TryParse(txtShippingFee.Text, out decimal shippingFee))
                 {
@@ -129,7 +130,7 @@ namespace ERPClient.SiparisModule
         // Sipariş kaydetme işlemi
         private async void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            // Yine bir validation işlemi yapalım sakatlık çıkmasın...
+            
             if (cmbCustomer.SelectedItem is not Customer selectedCustomer)
             {
                 MessageBox.Show("Lütfen bir müşteri seçin.");
@@ -154,19 +155,20 @@ namespace ERPClient.SiparisModule
                 adjustmentType = parsedType;
             }
 
-            // Oranı alıyoruz
+            
             decimal.TryParse(txtAdjustmentPercentage.Text, out decimal adjustmentPercentage);
 
-            //OrderItems -> ProductId eşleştirmesi
+            
             var items = orderItems.Select(item => new OrderItemCreateDto
             {
                 ProductId = item.ProductId,
                 Quantity = item.Quantity,
                 UnitPrice = item.UnitPrice,
-                CustomProductName = item.CustomProductName
+                CustomProductName = item.CustomProductName,
+                SelectedMachine = item.SelectedMachine ?? "GENEL"
             }).ToList();
 
-            //DTO
+            
             var dto = new OrderCreateDto
             {
                 CustomerId = selectedCustomer.Id,
@@ -179,7 +181,8 @@ namespace ERPClient.SiparisModule
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     UnitPrice = item.UnitPrice,
-                    CustomProductName = item.CustomProductName
+                    CustomProductName = item.CustomProductName,
+                    SelectedMachine = item.SelectedMachine ?? "GENEL"
 
                 }).ToList()
             };
@@ -196,25 +199,25 @@ namespace ERPClient.SiparisModule
                     MessageBox.Show("Sipariş başarıyla oluşturuldu!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                     LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, '{selectedCustomer.CustomerName}' için yeni bir yurt dışı siparişi oluşturdu.");
 
-                    foreach (var item in dto.OrderItems)
-                    {
-                        var product = products.FirstOrDefault(p => p.Id == item.ProductId);
-                        if (product != null)
-                        {
-                            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, '{product.ParcaAdi}' ürününün stok miktarını siparişle birlikte {item.Quantity} adet düşürdü.");
-                        }
+                    //foreach (var item in dto.OrderItems)
+                    //{
+                    //    var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                    //    if (product != null)
+                    //    {
+                    //        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname}, '{product.ParcaAdi}' ürününün stok miktarını siparişle birlikte {item.Quantity} adet düşürdü.");
+                    //    }
 
-                        int newStok = product.Stok - item.Quantity;
+                    //    int newStok = product.Stok - item.Quantity;
 
-                        if (newStok < 0)
-                        {
-                            MessageBox.Show($"DİKKAT! '{product.ParcaAdi}' ürününün stok miktarı eksiye düştü!", "Stok Ekside", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        }
-                        else if (newStok <= 10)
-                        {
-                            MessageBox.Show($"UYARI! '{product.ParcaAdi}' ürününün stok miktarı azaldı!", "Stok Azaldı", MessageBoxButton.OK, MessageBoxImage.Information);
-                        }
-                    }
+                    //    if (newStok < 0)
+                    //    {
+                    //        MessageBox.Show($"DİKKAT! '{product.ParcaAdi}' ürününün stok miktarı eksiye düştü!", "Stok Ekside", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    //    }
+                    //    else if (newStok <= 10)
+                    //    {
+                    //        MessageBox.Show($"UYARI! '{product.ParcaAdi}' ürününün stok miktarı azaldı!", "Stok Azaldı", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //    }
+                    //}
 
                     // Formu temizle
                     orderItems.Clear();
@@ -249,7 +252,7 @@ namespace ERPClient.SiparisModule
         }
 
         // Yurt Dışı müşterilerini çeken müşteri listesi
-        private async void LoadCustomers()
+        private async Task LoadCustomers()
         {
             try
             {
@@ -275,7 +278,7 @@ namespace ERPClient.SiparisModule
         }
 
         // Ürünleri çeken fonksiyon
-        private async void LoadProducts()
+        private async Task LoadProducts()
         {
             try
             {
@@ -360,8 +363,13 @@ namespace ERPClient.SiparisModule
         }
 
 
+
         #endregion
 
-        
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            await LoadCustomers();
+            await LoadProducts();
+        }
     }
 }

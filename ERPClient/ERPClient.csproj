@@ -18,6 +18,7 @@
   <ItemGroup>
     <None Remove="Assets\add.png" />
     <None Remove="Assets\addcustomer.png" />
+    <None Remove="Assets\approve.png" />
     <None Remove="Assets\customer.png" />
     <None Remove="Assets\delete.png" />
     <None Remove="Assets\exit.png" />
@@ -56,6 +57,7 @@
   <ItemGroup>
     <Resource Include="Assets\add.png" />
     <Resource Include="Assets\addcustomer.png" />
+    <Resource Include="Assets\approve.png" />
     <Resource Include="Assets\customer.png" />
     <Resource Include="Assets\delete.png" />
     <Resource Include="Assets\exit.png" />

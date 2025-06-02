@@ -13,5 +13,7 @@ namespace EntityLayer.DTOs
         public decimal UnitPrice { get; set; }
 
         public string? CustomProductName { get; set; } // parça adını değiştirilebilir yapmak için bunu ekledim.
+
+        public string SelectedMachine { get; set; } // makine seçimi için ekledim.
     }
 }

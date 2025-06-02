@@ -3,13 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace GeneratePdf
 {
-    public class Program
+    public class Program    
     {
+        
         static void Main(string[] args)
         {
             if (args.Length < 11)
@@ -89,12 +91,15 @@ namespace GeneratePdf
                     int row = 18;
                     foreach (var item in items)
                     {
+                        sheet.Cells[row, 2].Value = string.IsNullOrWhiteSpace(item.SelectedMachine) ? "GENEL" : item.SelectedMachine;
                         sheet.Cells[row, 4].Value = item.ParcaAdi;
                         sheet.Cells[row, 8].Value = item.Quantity;
                         sheet.Cells[row, 9].Value = item.UnitPrice;
                         sheet.Cells[row, 10].Value = item.Total;
                         row++;
                     }
+
+
                 }
                 else
                 {
@@ -137,8 +142,15 @@ namespace GeneratePdf
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Hata oluştu: " + ex.Message);
-                Console.WriteLine("StackTrace: " + ex.StackTrace);
+                string masaustu1 = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string log = Path.Combine(masaustu1, "Invoice", "status.txt");
+
+                File.WriteAllText(log, $"PDF OLUŞTURULAMADI! {DateTime.Now: dd/MM/yyyy HH:mm:ss}" +
+                    $"HATA: {ex.Message}\n" +
+                    $"STACKTRACE: {ex.StackTrace}");
+                Console.WriteLine($"PDF OLUŞTURULAMADI! HATA: ", ex.Message);
+                Console.ReadKey();
+
             }
             finally
             {
@@ -147,6 +159,7 @@ namespace GeneratePdf
                 Marshal.ReleaseComObject(sheet);
                 Marshal.ReleaseComObject(workbook);
                 Marshal.ReleaseComObject(excelApp);
+                Environment.Exit(0);
             }
         }
 
@@ -156,6 +169,7 @@ namespace GeneratePdf
             public int Quantity { get; set; }
             public decimal UnitPrice { get; set; }
             public decimal Total { get; set; }
+            public string SelectedMachine { get; set; }
         }
     }
 

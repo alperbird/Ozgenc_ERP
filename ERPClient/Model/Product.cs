@@ -25,5 +25,9 @@ namespace ERPClient.Model
         public int Stok { get; set; }
         [JsonIgnore]
         public List<ProductMachine>? ProductMachines { get; set; }
+
+        public string MakineAdlari => ProductMachines != null
+        ? string.Join(", ", ProductMachines.Select(pm => pm.Machine?.MakineAdi).Where(n => !string.IsNullOrEmpty(n)))
+        : string.Empty;
     }
 }

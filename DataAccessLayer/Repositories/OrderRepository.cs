@@ -76,14 +76,15 @@ namespace DataAccessLayer.Repositories
                 ProductId = x.ProductId,
                 Quantity = x.Quantity,
                 UnitPrice = x.UnitPrice,
-                CustomProductName = x.CustomProductName
+                CustomProductName = x.CustomProductName,
+                SelectedMachine = x.SelectedMachine,
             }).ToList();
 
             await _context.SaveChangesAsync();
         }
 
 
-        public async Task<List<Order>> SearchAsync(string? keyword)
+        public async Task<List<Order>> SearchAsync(string? keyword) //burası web kısmındaki arama kısmı
         {
             var query = _context.Orders
         .Include(o => o.Customer).ThenInclude(c => c.CountryName)
@@ -103,7 +104,7 @@ namespace DataAccessLayer.Repositories
             return await query.OrderByDescending(o => o.OrderDate).ToListAsync();
         }
 
-        public async Task<List<Order>> GetPagedOrderAsync(int page, int pageSize)
+        public async Task<List<Order>> GetPagedOrderAsync(int page, int pageSize) //pagination
         {
             return await _context.Orders
                 .Include(o => o.Customer)
