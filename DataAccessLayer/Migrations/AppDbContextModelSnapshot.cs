@@ -184,6 +184,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("SelectedMachine")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
 

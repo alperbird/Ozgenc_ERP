@@ -14,5 +14,7 @@ namespace EntityLayer.DTOs
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public string? CustomProductName { get; set; }
+
+        public string SelectedMachine { get; set; }
     }
 }

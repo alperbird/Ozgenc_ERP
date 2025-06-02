@@ -25,6 +25,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         _currentUser = user;
+        txtWelcome.Text = $"Hoş Geldin, {user.Name} {user.Surname}.";
     }
 
     private void btnMenuToggle_Click(object sender, RoutedEventArgs e)

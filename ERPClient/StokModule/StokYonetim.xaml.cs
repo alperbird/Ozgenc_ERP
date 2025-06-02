@@ -88,8 +88,6 @@ namespace ERPClient.StokModule
         }
 
 
-
-
         #region Stok Butonları
         private async void BtnStokEkle_Click(object sender, RoutedEventArgs e)
         {
