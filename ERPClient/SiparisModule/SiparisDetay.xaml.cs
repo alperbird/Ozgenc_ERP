@@ -90,7 +90,15 @@ namespace ERPClient.SiparisModule
                 string email = txtEmail.Text;
                 string phone = txtPhone.Text;
                 string country = txtCountry.Text.Trim();
-                string adjustment = txtAdjustmentPercentage.Text;
+                string adjustment = txtAdjustmentPercentage.Text.Trim();
+
+                if (decimal.TryParse(adjustment.Replace("%", "").Replace(",", "."), out decimal adjustmentValue))
+                {
+                    if (adjustmentValue == 0)
+                        adjustment = "";
+                }
+
+
                 string shippingFee = txtShippingFee.Text.Replace("₺", "").Replace("€", "").Trim();
                 string total = txtTotal.Text;
 
