@@ -109,7 +109,6 @@ namespace ERPClient.SiparisModule
                 txtUnitPrice.Text = selectedProduct.FiyatTL.ToString("N2");
                 txtQuantity.Text = "1"; // her zaman başlangıç olarak 1
                 txtShippingFee.Text = "0"; // kargo ücreti başlangıçta 0
-                txtAdjustmentPercentage.Text = "20"; // indirim sabit %20
 
                 if (!decimal.TryParse(txtShippingFee.Text, out decimal shippingFee))
                 {
