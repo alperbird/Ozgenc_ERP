@@ -11,6 +11,7 @@ namespace EntityLayer.Entities
     {
         public int Id { get; set; }
         public string? ResimYolu { get; set; }
+        public byte[]? ResimData { get; set; }
 
         [NotMapped]
         public string MakineAdi { get; set; } = string.Empty;
@@ -22,5 +23,7 @@ namespace EntityLayer.Entities
         public int Stok { get; set; }
 
         public List<ProductMachine> ProductMachines { get; set; } = new List<ProductMachine>(); // Many-to-Many ilişki
+
+
     }
 }

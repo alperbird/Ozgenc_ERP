@@ -51,7 +51,7 @@
                 <TextBlock Name="txtPhotoNameUpdate" Text="Seçili Fotoğraf Yok" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"/>
 
                 <!-- Fotoğraf Seçme Butonu -->
-                <Button Content="📷 Fotoğraf Seç" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                <Button Content="Fotoğraf Seç" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"
                     Background="#007BFF" Foreground="White" Padding="5,2" Cursor="Hand"
                     Click="btnSelectPhotoUpdate_Click" Margin="0,0,200,0"/>
             </Grid>
