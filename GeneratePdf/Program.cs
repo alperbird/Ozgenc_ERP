@@ -28,6 +28,22 @@ namespace GeneratePdf
             string phone = args[5];
             string country = args[6];
             string adjustmentText = args[7];
+
+            string normalizedAdj = adjustmentText.Trim().Replace("%", "").Replace(",", ".").Replace(" ", "");
+
+            bool hideDiscountLabels = false;
+            decimal adjVal = 0;
+
+            if (decimal.TryParse(normalizedAdj, System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture, out adjVal))
+            {
+                hideDiscountLabels = adjVal == 0;
+                if (hideDiscountLabels)
+                    adjustmentText = ""; // hücreye boş yazılacak
+                hideDiscountLabels = true;
+            }
+
+
             string shippingFee = args[8];
             string total = args[9];
             string jsonItems = args[10];
@@ -121,7 +137,27 @@ namespace GeneratePdf
                         row++;
                     }
 
-                    sheet.Cells[25, 17].Value = adjustmentText;
+                    if (!hideDiscountLabels)
+                    {
+                        //sheet.Cells[25, 8].Value = "DISCOUNT";
+                        //sheet.Cells[25, 16].Value = ":";
+                        //sheet.Cells[25, 17].Value = adjustmentText;
+
+                        sheet.Cells[25, 8].Value = null;   // H25
+                        sheet.Cells[25, 16].Value = null;  // P25
+                        sheet.Cells[25, 17].Value = null;  // Q25
+
+                    }
+                    else
+                    {
+                        sheet.Cells[25, 8].Value = "DISCOUNT";
+                        sheet.Cells[25, 16].Value = ":";
+                        sheet.Cells[25, 17].Value = adjustmentText;
+
+                        //sheet.Cells[25, 8].Value = null;   // H25
+                        //sheet.Cells[25, 16].Value = null;  // P25
+                        //sheet.Cells[25, 17].Value = null;  // Q25
+                    }
                     sheet.Cells[27, 17].Value = shippingFee;
                     sheet.Cells[28, 17].Value = total;
                 }

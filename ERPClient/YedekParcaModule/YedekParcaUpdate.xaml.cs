@@ -3,8 +3,6 @@ using ERPClient.Model;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -27,7 +25,8 @@ namespace ERPClient.YedekParcaModule
         private readonly HttpClient _client;
         private readonly string apiUrl = "http://192.168.5.81:5001/api/Product";
         private readonly string apiMachineUrl = "http://192.168.5.81:5001/api/Machine";
-        private string? selectedImagePathUpdate = null;
+        private string? selectedImagePathUpdate;
+        private byte[]? selectedImageDataUpdate;
         private EntityLayer.Entities.Product selectedProduct;
         private User user;
 
@@ -134,6 +133,7 @@ namespace ERPClient.YedekParcaModule
             try
             {
                 var selectedMachineIds = lstMakine.SelectedItems.Cast<Machine>().Select(m => m.Id).ToList();
+                selectedImageDataUpdate = File.ReadAllBytes(selectedImagePathUpdate);
 
                 var updatedProduct = new ProductUpdateDto
                 {
@@ -143,7 +143,8 @@ namespace ERPClient.YedekParcaModule
                     FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
                     FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
                     Aciklama = txtAciklama.Text,
-                    ResimYolu = selectedImagePathUpdate,
+                    ResimYolu = Path.GetFileName(selectedImagePathUpdate),
+                    ResimData = selectedImageDataUpdate, // Resim verisi API'ye yükleniyor, burada null bırakıyoruz
                     MakineIdleri = selectedMachineIds
                 };
 
@@ -267,7 +268,7 @@ namespace ERPClient.YedekParcaModule
 
 
         #region Fotoğraf güncellme işlemleri
-        private async void btnSelectPhotoUpdate_Click(object sender, RoutedEventArgs e)
+        private void btnSelectPhotoUpdate_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -279,13 +280,12 @@ namespace ERPClient.YedekParcaModule
             {
                 selectedImagePathUpdate = openFileDialog.FileName;
 
-                // Seçilen fotoğrafın adını göster
                 txtPhotoNameUpdate.Text = Path.GetFileName(selectedImagePathUpdate);
 
-                // Fotoğrafı API'ye yükle ve yeni yolu al
-                selectedImagePathUpdate = await UploadImage(selectedImagePathUpdate);
+                selectedImageDataUpdate = File.ReadAllBytes(selectedImagePathUpdate);
             }
         }
+
 
         private async Task<string> UploadImage(string filePath)
         {

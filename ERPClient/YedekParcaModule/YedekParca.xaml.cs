@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using ERPClient.Model;
 using System.Text.Json;
 using ERPClient.YedekParcaModule;
@@ -17,7 +14,6 @@ using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using Path = System.IO.Path;
 using Microsoft.Win32;
-using System.Net.Http.Headers;
 using User = EntityLayer.Entities.User;
 
 namespace ERPClient
@@ -33,7 +29,8 @@ namespace ERPClient
         private const string apiUrlMachine = "http://192.168.5.81:5001/api/Machine";
         private List<Product> tumParcalar = new List<Product>(); // Tüm verileri saklamak için
         private Product? _selectedProduct;
-        private string? selectedImagePath = null;
+        private string? selectedImagePath;
+        private byte[]? selectedImageData;
         private readonly User _currentUser;
 
         private ObservableCollection<Product> allProducts = new ObservableCollection<Product>(); // Tüm veriler burada tutulacak
@@ -162,7 +159,8 @@ namespace ERPClient
                     FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
                     FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
                     Aciklama = txtAciklama.Text,
-                    ResimYolu = selectedImagePath,
+                    ResimYolu = selectedImagePath != null ? Path.GetFileName(selectedImagePath) : "yedekparcafoto",
+                    ResimData = selectedImageData,
                     MakineIdleri = selectedMachineIds
                 };
 
@@ -171,7 +169,6 @@ namespace ERPClient
                     WriteIndented = true
                 });
 
-                //MessageBox.Show($"Giden JSON:\n{jsonContent}");
 
                 var productContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                 HttpResponseMessage productResponse = await _client.PostAsync(apiUrl, productContent);
@@ -258,6 +255,9 @@ namespace ERPClient
             txtTL.Clear();
             txtEUR.Clear();
             txtAciklama.Clear();
+            selectedImagePath = null;
+            imgPreview.Source = null; 
+            txtFileName.Text = "Dosya seçilmedi";
         }
 
         #region Arama Çubuğu ve Filtreleme işlemleri
@@ -416,27 +416,21 @@ namespace ERPClient
         {
             if (sender is Image img && img.DataContext is Product selectedProduct)
             {
-                if (string.IsNullOrEmpty(selectedProduct.ResimYolu))
+                Console.WriteLine($"Tıklanan ürün ID: {selectedProduct.Id}, ResimData Null mu: {selectedProduct.ResimData == null}, Uzunluk: {selectedProduct.ResimData?.Length}");
+
+                if (selectedProduct.ResimData == null || selectedProduct.ResimData.Length == 0)
                 {
                     MessageBox.Show("Bu ürüne ait fotoğraf bulunmamaktadır.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
-                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), selectedProduct.ResimYolu);
-
-                if (!File.Exists(fullPath))
-                {
-                    MessageBox.Show("Fotoğraf dosyası bulunamadı!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
 
                 // Yeni bir pencere aç ve fotoğrafı göster
-                ShowImageWindow(fullPath);
+                ShowImageWindow(selectedProduct.ResimData);
             }
         }
 
-        private void ShowImageWindow(string imagePath)
+        private void ShowImageWindow(byte[] imagePath)
         {
             Window imageWindow = new Window
             {
@@ -446,9 +440,18 @@ namespace ERPClient
                 WindowStartupLocation = WindowStartupLocation.CenterScreen
             };
 
+            var image = new BitmapImage();
+            using (var mem = new MemoryStream(imagePath))
+            {
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.StreamSource = mem;
+                image.EndInit();
+            }
+
             Image img = new Image
             {
-                Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute)),
+                Source = image,
                 Stretch = Stretch.Uniform
             };
 
@@ -456,10 +459,10 @@ namespace ERPClient
             imageWindow.ShowDialog();
         }
 
-            #endregion
+        #endregion
 
-            #region Fotoğraf Yükleme işlemleri
-            private async void btnSelectPhoto_Click(object sender, RoutedEventArgs e)
+        #region Fotoğraf Yükleme işlemi
+        private void btnSelectPhoto_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -469,37 +472,34 @@ namespace ERPClient
 
             if (openFileDialog.ShowDialog() == true)
             {
-                selectedImagePath = openFileDialog.FileName;
+                string selectedPath = openFileDialog.FileName;
+                selectedImageData = File.ReadAllBytes(selectedPath);
+                
 
-                // Sadece dosya adını göster
-                txtFileName.Text = Path.GetFileName(selectedImagePath);
-
-                // Fotoğrafı API'ye yükle ve kaydet
-                selectedImagePath = await UploadImage(selectedImagePath);
-            }
-        }
-
-        private async Task<string> UploadImage(string filePath)
-        {
-            using (var client = new HttpClient())
-            {
-                var form = new MultipartFormDataContent();
-                var stream = File.OpenRead(filePath);
-                var fileContent = new StreamContent(stream);
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-
-                form.Add(fileContent, "file", Path.GetFileName(filePath));
-
-                var response = await client.PostAsync("http://192.168.5.81:5001/api/Product/upload-photo", form);
-                if (response.IsSuccessStatusCode)
+                if (_selectedProduct == null)
                 {
-                    var result = await response.Content.ReadAsAsync<dynamic>();
-                    return result.photoPath; // API'den dönen fotoğraf yolu
+                    _selectedProduct = new Product(); // eğer selectedProduct null gelirse, yeni bir product nesnesi oluştur karşim. Çok yarrak gibi bir bypass oldu ama şimdilik dursun...
                 }
-                return null;
+
+                _selectedProduct.ResimYolu = Path.GetFileName(selectedPath);
+                _selectedProduct.ResimData = selectedImageData;
+
+                txtFileName.Text = Path.GetFileName(selectedPath);
+                txtFileName.Foreground = Brushes.Black;
+                txtFileName.FontStyle = FontStyles.Normal;
+
+                // Önizleme (görselini göster)
+                var image = new BitmapImage();
+                using (var mem = new MemoryStream(selectedImageData))
+                {
+                    image.BeginInit();
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.StreamSource = mem;
+                    image.EndInit();
+                }
+                imgPreview.Source = image;
             }
         }
-
         #endregion
     }
 

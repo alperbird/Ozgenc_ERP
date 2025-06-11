@@ -78,7 +78,7 @@
                                 <DataTemplate>
                                     <Image Width="50" Height="50"
                                     Cursor="Hand"
-                                    Source="{Binding ResimYolu, Converter={StaticResource ImagePathConverter}}"
+                                    Source="{Binding ThumbnailImage, FallbackValue=/Assets/image.png}"
                                     PreviewMouseDown="Photo_PreviewMouseDown"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -165,12 +165,18 @@
                     <TextBlock Text="Parça Açıklaması:" FontWeight="Bold"/>
                     <TextBox Name="txtAciklama" Width="250" Margin="0,5,0,10" TextWrapping="Wrap" AcceptsReturn="True"/>
 
-                    <TextBlock Name="txtFileName" Text="Dosya seçilmedi" FontWeight="Bold" TextAlignment="Center" Margin="5"/>
+                    <TextBlock x:Name="txtFileName" Text="Dosya seçilmedi" FontWeight="Bold" TextAlignment="Center" Margin="5"/>
 
                     <!-- Fotoğraf Seçme Butonu -->
-                    <Button Content="📷 Fotoğraf Seç" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                    <Button Content="Fotoğraf Seç" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom"
                             Background="#007BFF" Foreground="White" Padding="5,2" Cursor="Hand"
                             Click="btnSelectPhoto_Click"/>
+                    <Image x:Name="imgPreview"
+                            Width="1"
+                            Height="1"
+                            Stretch="UniformToFill"
+                            Margin="10"
+                            Visibility="Visible"/>
 
                     <!-- Ekle Butonu -->
                     <Button Content="➕ Ekle" Width="150" Height="40" Background="#28A745" Foreground="White"
