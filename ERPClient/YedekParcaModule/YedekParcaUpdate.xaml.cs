@@ -111,6 +111,7 @@ namespace ERPClient.YedekParcaModule
                 cmbSinif.SelectedItem = _selectedProduct.Sinif;
             }
             txtParcaAdi.Text = _selectedProduct.ParcaAdi;
+            txtEnglishProduct.Text = _selectedProduct.ParcaIngilizce; 
             txtTL.Text = _selectedProduct.FiyatTL.ToString();
             txtEUR.Text = _selectedProduct.FiyatEUR.ToString();
             txtAciklama.Text = _selectedProduct.Aciklama;
@@ -133,20 +134,30 @@ namespace ERPClient.YedekParcaModule
             try
             {
                 var selectedMachineIds = lstMakine.SelectedItems.Cast<Machine>().Select(m => m.Id).ToList();
-                selectedImageDataUpdate = File.ReadAllBytes(selectedImagePathUpdate);
 
-                var updatedProduct = new ProductUpdateDto
+                if (!string.IsNullOrEmpty(selectedImagePathUpdate) && File.Exists(selectedImagePathUpdate)) //yeni foto seçildiyse değiştir
                 {
-                    Id = _selectedProduct.Id,
-                    Sinif = cmbSinif.SelectedItem.ToString(),
-                    ParcaAdi = txtParcaAdi.Text,
-                    FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
-                    FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
-                    Aciklama = txtAciklama.Text,
-                    ResimYolu = Path.GetFileName(selectedImagePathUpdate),
-                    ResimData = selectedImageDataUpdate, // Resim verisi API'ye yükleniyor, burada null bırakıyoruz
-                    MakineIdleri = selectedMachineIds
-                };
+                    selectedImageDataUpdate = File.ReadAllBytes(selectedImagePathUpdate);
+                }
+                else //yeni foto seçilmediyse eskisini koru işte olm
+                {
+                    selectedImageDataUpdate = _selectedProduct.ResimData; 
+                    selectedImagePathUpdate = _selectedProduct.ResimYolu; 
+                }
+
+                    var updatedProduct = new ProductUpdateDto
+                    {
+                        Id = _selectedProduct.Id,
+                        Sinif = cmbSinif.SelectedItem.ToString(),
+                        ParcaAdi = txtParcaAdi.Text,
+                        ParcaIngilizce = txtEnglishProduct.Text,
+                        FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
+                        FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
+                        Aciklama = txtAciklama.Text,
+                        ResimYolu = !string.IsNullOrEmpty(selectedImagePathUpdate) ? Path.GetFileName(selectedImagePathUpdate) : _selectedProduct.ResimYolu,
+                        ResimData = selectedImageDataUpdate,
+                        MakineIdleri = selectedMachineIds
+                    };
 
                 await UpdateProduct(updatedProduct);
 
@@ -285,7 +296,6 @@ namespace ERPClient.YedekParcaModule
                 selectedImageDataUpdate = File.ReadAllBytes(selectedImagePathUpdate);
             }
         }
-
 
         private async Task<string> UploadImage(string filePath)
         {

@@ -17,6 +17,7 @@ namespace EntityLayer.Entities
         public string MakineAdi { get; set; } = string.Empty;
         public string? Sinif { get; set; }
         public string? ParcaAdi { get; set; }
+        public string? ParcaIngilizce { get; set; }
         public decimal FiyatTL { get; set; }
         public decimal FiyatEUR { get; set; }
         public string? Aciklama { get; set; }

@@ -72,7 +72,7 @@ namespace ERPClient.SiparisModule
         {
             if (cmbProduct.SelectedItem is Product selectedProduct)
             {
-                txtProductName.Text = selectedProduct.ParcaAdi;
+                txtProductName.Text = selectedProduct.ParcaIngilizce;
                 txtUnitPrice.Text = selectedProduct.FiyatEUR.ToString("N2");
                 txtQuantity.Text = "1"; // her zaman başlangıç olarak 1
                 txtShippingFee.Text = "0"; 

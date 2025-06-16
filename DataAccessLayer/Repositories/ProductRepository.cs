@@ -78,6 +78,7 @@ namespace DataAccessLayer.Repositories
             {
                 existingProduct.Sinif = p.Sinif;
                 existingProduct.ParcaAdi = p.ParcaAdi;
+                existingProduct.ParcaIngilizce = p.ParcaIngilizce;
                 existingProduct.FiyatTL = p.FiyatTL;
                 existingProduct.FiyatEUR = p.FiyatEUR;
                 existingProduct.Aciklama = p.Aciklama;
