@@ -135,4 +135,14 @@ public partial class MainWindow : Window
         StokYonetim sy = new StokYonetim(_currentUser);
         sy.Show();
     }
+
+    private void Test1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+
+    }
+
+    private void Test2_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+
+    }
 }

@@ -109,7 +109,6 @@
                 </Button.ContextMenu>
             </Button>
 
-
         </DockPanel>
 
         <!-- Sol Menü -->
@@ -142,6 +141,7 @@
                     </TreeViewItem>
                     
                 </TreeView>
+                
                 <Button Style="{StaticResource SidebarButtonStyle}" BorderThickness="0" Click="btnToggleTree_Click" Tag="treeSales">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/Assets/sales.png" Width="30" Height="30" Margin="0,0,5,0"/>
@@ -221,6 +221,32 @@
                     </TreeViewItem>
                 </TreeView>
 
+                <Button Style="{StaticResource SidebarButtonStyle}" BorderThickness="0" Click="btnToggleTree_Click" Tag="treeReports">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/filter.png" Width="30" Height="30" Margin="0,0,5,0"/>
+                        <TextBlock Text="Test kısmı" FontSize="16" FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+                <TreeView Name="treeReports" Background="#EEE" Visibility="Collapsed">
+                    <TreeViewItem Header="Test kısmı 2">
+                        <TreeViewItem>
+                            <TreeViewItem.Header>
+                                <StackPanel Orientation="Horizontal" PreviewMouseDown="Test1_PreviewMouseDown">
+                                    <Image Source="/Assets/add.png" Width="30" Height="30" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Müşterilere Ait Testler" Foreground="Black" Cursor="Hand"/>
+                                </StackPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem>
+                            <TreeViewItem.Header>
+                                <StackPanel Orientation="Horizontal" PreviewMouseDown="Test2_PreviewMouseDown">
+                                    <Image Source="/Assets/add.png" Width="30" Height="30" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Makinelere Ait Testler" Foreground="Black" Cursor="Hand"/>
+                                </StackPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                    </TreeViewItem>
+                </TreeView>
             </StackPanel>
 
 
