@@ -118,7 +118,7 @@ namespace ERPClient.YedekParcaModule
             if (!string.IsNullOrEmpty(_selectedProduct.ResimYolu))
             {
                 txtPhotoNameUpdate.Text = Path.GetFileName(_selectedProduct.ResimYolu);
-                selectedImagePathUpdate = _selectedProduct.ResimYolu;
+                selectedImagePathUpdate = File.ReadAllBytes(selectedImagePathUpdate);
             }
             else
             {
