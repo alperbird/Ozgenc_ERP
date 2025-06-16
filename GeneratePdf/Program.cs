@@ -119,13 +119,44 @@ namespace GeneratePdf
                 }
                 else
                 {
+
+                    string prefix = "MSP";
+                    string datePart = DateTime.Now.ToString("yyyyMMdd");
+
+                    string invoiceDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Invoice");
+                    Directory.CreateDirectory(invoiceDir);
+
+                    string pattern = $"{prefix}{datePart}";
+                    int nextIndex = 1;
+
+                    var existingFiles = Directory.GetFiles(invoiceDir, $"*{pattern}*.pdf");
+                    if (existingFiles.Length > 0)
+                    {
+                        var lastNumber = existingFiles
+                            .Select(path => Path.GetFileNameWithoutExtension(path))
+                            .Where(name => name.StartsWith(pattern))
+                            .Select(name =>
+                            {
+                                string numPart = name.Substring(pattern.Length);
+                                return int.TryParse(numPart, out int n) ? n : 0;
+                            })
+                            .OrderByDescending(n => n)
+                            .FirstOrDefault();
+
+                        nextIndex = lastNumber + 1;
+                    }
+
+                    string finalProformaNumber = $"{prefix}{datePart}{nextIndex.ToString("D2")}";
+
+
                     sheet.Cells[7, 4].Value = customerName;
                     sheet.Cells[8, 4].Value = address;
                     sheet.Cells[9, 4].Value = deliveryAddress;
                     sheet.Cells[10, 4].Value = contact;
                     sheet.Cells[11, 4].Value = email;
                     sheet.Cells[7, 11].Value = DateTime.Now.ToString("dd/MM/yyyy");
-                    sheet.Cells[8, 11].Value = phone;
+                    sheet.Cells[8, 11].Value = finalProformaNumber;
+                    sheet.Cells[11, 11].Value = phone;
 
                     int row = 16;
                     foreach (var item in items)
@@ -139,24 +170,15 @@ namespace GeneratePdf
 
                     if (!hideDiscountLabels)
                     {
-                        //sheet.Cells[25, 8].Value = "DISCOUNT";
-                        //sheet.Cells[25, 16].Value = ":";
-                        //sheet.Cells[25, 17].Value = adjustmentText;
-
                         sheet.Cells[25, 8].Value = null;   // H25
                         sheet.Cells[25, 16].Value = null;  // P25
                         sheet.Cells[25, 17].Value = null;  // Q25
-
                     }
                     else
                     {
                         sheet.Cells[25, 8].Value = "DISCOUNT";
                         sheet.Cells[25, 16].Value = ":";
                         sheet.Cells[25, 17].Value = adjustmentText;
-
-                        //sheet.Cells[25, 8].Value = null;   // H25
-                        //sheet.Cells[25, 16].Value = null;  // P25
-                        //sheet.Cells[25, 17].Value = null;  // Q25
                     }
                     sheet.Cells[27, 17].Value = shippingFee;
                     sheet.Cells[28, 17].Value = total;
