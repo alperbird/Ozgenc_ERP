@@ -219,6 +219,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("ParcaAdi")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ParcaIngilizce")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<byte[]>("ResimData")
                         .HasColumnType("varbinary(max)");
 

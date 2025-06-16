@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ERPClient.YedekParcaModule"
       mc:Ignorable="d" 
-      Background="#F4F4F4" Height="600" Width="800"
+      Background="#F4F4F4" Height="650" Width="800"
       >
 
     <Grid>
@@ -36,6 +36,9 @@
 
             <TextBlock Text="Parça Adı:" FontWeight="Bold"/>
             <TextBox Name="txtParcaAdi" Width="250" Margin="0,5,0,10"/>
+
+            <TextBlock Text="Parça Adı (İngilizce):" FontWeight="Bold"/>
+            <TextBox Name="txtEnglishProduct" Width="250" Margin="0,5,0,10"/>
 
             <TextBlock Text="Fiyat (TL):" FontWeight="Bold"/>
             <TextBox Name="txtTL" Width="250" Margin="0,5,0,10"/>

@@ -1,12 +1,6 @@
 ﻿using DataAccessLayer.Repositories;
 using EntityLayer.DTOs;
 using EntityLayer.Entities;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Services
 {
@@ -38,6 +32,7 @@ namespace BusinessLayer.Services
             {
                 existingProduct.Sinif = productDto.Sinif;
                 existingProduct.ParcaAdi = productDto.ParcaAdi;
+                existingProduct.ParcaIngilizce = productDto.ParcaIngilizce;
                 existingProduct.FiyatTL = productDto.FiyatTL;
                 existingProduct.FiyatEUR = productDto.FiyatEUR;
                 existingProduct.Aciklama = productDto.Aciklama;

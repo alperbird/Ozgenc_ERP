@@ -156,6 +156,7 @@ namespace ERPClient
                 {
                     Sinif = cmbSinif.SelectedItem.ToString(),
                     ParcaAdi = txtParcaAdi.Text,
+                    ParcaIngilizce = txtEnglishProduct.Text,
                     FiyatTL = decimal.TryParse(txtTL.Text, out decimal fiyatTL) ? fiyatTL : 0,
                     FiyatEUR = decimal.TryParse(txtEUR.Text, out decimal fiyatEUR) ? fiyatEUR : 0,
                     Aciklama = txtAciklama.Text,
@@ -252,6 +253,7 @@ namespace ERPClient
             lstMakine.SelectedItems.Clear();
             cmbSinif.SelectedItem = null;
             txtParcaAdi.Clear();
+            txtEnglishProduct.Clear();
             txtTL.Clear();
             txtEUR.Clear();
             txtAciklama.Clear();

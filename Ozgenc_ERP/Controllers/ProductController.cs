@@ -1,13 +1,7 @@
 ﻿using BusinessLayer.Services;
-using DataAccessLayer.Repositories;
 using EntityLayer.DTOs;
 using EntityLayer.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ApiLayer.Controllers
 {
@@ -33,6 +27,7 @@ namespace ApiLayer.Controllers
                 Id = p.Id,
                 Sinif = p.Sinif,
                 ParcaAdi = p.ParcaAdi,
+                ParcaIngilizce = p.ParcaIngilizce,
                 FiyatTL = p.FiyatTL,
                 FiyatEUR = p.FiyatEUR,
                 ResimYolu = p.ResimYolu,
@@ -92,6 +87,7 @@ namespace ApiLayer.Controllers
             {
                 Sinif = productDto.Sinif,
                 ParcaAdi = productDto.ParcaAdi,
+                ParcaIngilizce = productDto.ParcaIngilizce,
                 FiyatTL = productDto.FiyatTL,
                 FiyatEUR = productDto.FiyatEUR,
                 Aciklama = productDto.Aciklama,

@@ -21,6 +21,7 @@ namespace ERPClient.Model
         public string? ResimYolu { get; set; }
         public byte[]? ResimData { get; set; }
         public string? ParcaAdi { get; set; }
+        public string? ParcaIngilizce { get; set; }
         public decimal FiyatTL { get; set; }
         public decimal FiyatEUR { get; set; }
         public string? Aciklama { get; set; }
