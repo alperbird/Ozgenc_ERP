@@ -45,6 +45,49 @@ namespace GeneratePdf
 
 
             string shippingFee = args[8];
+
+            string prefix = "MSP";
+            string datePart = DateTime.Now.ToString("yyyyMMdd");
+
+
+
+            // Sayaç dosyası klasörü
+            string proformaNoDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ERP_ProformaNo");
+            Directory.CreateDirectory(proformaNoDir);
+
+            foreach (string file in Directory.GetFiles(proformaNoDir, "MSP*.txt"))
+            {
+                DateTime lastWrite = File.GetLastWriteTime(file);
+                if ((DateTime.Now - lastWrite).TotalDays > 7)
+                {
+                    try
+                    {
+                        File.Delete(file);
+                        Console.WriteLine($"Sayaç dosyası silindi: {Path.GetFileName(file)}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Sayaç silme hatası: {ex.Message}");
+                    }
+                }
+            }
+
+            string counterFile = Path.Combine(proformaNoDir, $"{prefix}{datePart}.txt");
+
+            int currentIndex = 1;
+
+            if (File.Exists(counterFile))
+            {
+                string content = File.ReadAllText(counterFile);
+                if (int.TryParse(content, out int existingIndex))
+                {
+                    currentIndex = existingIndex + 1;
+                }
+            }
+
+            File.WriteAllText(counterFile, currentIndex.ToString());
+            string finalProformaNumber = $"{prefix}{datePart}{currentIndex.ToString("D2")}";
+
             string total = args[9];
             string jsonItems = args[10];
 
@@ -120,9 +163,6 @@ namespace GeneratePdf
                 else
                 {
 
-                    string prefix = "MSP";
-                    string datePart = DateTime.Now.ToString("yyyyMMdd");
-
                     string invoiceDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Invoice");
                     Directory.CreateDirectory(invoiceDir);
 
@@ -146,8 +186,6 @@ namespace GeneratePdf
                         nextIndex = lastNumber + 1;
                     }
 
-                    string finalProformaNumber = $"{prefix}{datePart}{nextIndex.ToString("D2")}";
-
 
                     sheet.Cells[7, 4].Value = customerName;
                     sheet.Cells[8, 4].Value = address;
@@ -161,7 +199,10 @@ namespace GeneratePdf
                     int row = 16;
                     foreach (var item in items)
                     {
-                        sheet.Cells[row, 2].Value = item.ParcaAdi;
+                        string machineCode = string.IsNullOrWhiteSpace(item.SelectedMachine) ? " " : item.SelectedMachine;
+                        string makineliParcaAdi = $"{machineCode} / {item.ParcaAdi}";
+
+                        sheet.Cells[row, 2].Value = makineliParcaAdi;
                         sheet.Cells[row, 10].Value = item.Quantity;
                         sheet.Cells[row, 12].Value = item.UnitPrice;
                         sheet.Cells[row, 17].Value = item.Total;

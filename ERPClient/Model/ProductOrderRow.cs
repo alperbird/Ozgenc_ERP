@@ -39,9 +39,6 @@ namespace ERPClient.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(v));
         }
 
-
-        
-
         //Açıklama: Burası sadece ve sadece YurtDisi ve YurtIci siparişlerinde ekle butonuna basıldığında referans alınacak olan model sınıfıdır.
     }
 }
