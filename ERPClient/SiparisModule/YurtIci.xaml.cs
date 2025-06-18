@@ -152,8 +152,8 @@ namespace ERPClient.SiparisModule
                     selectedProduct.ProductMachines?
                     .Select(pm => pm.Machine.MakineAdi)
                     .Distinct()
-                    .ToList() ?? new List<string?> {"GENEL"}),
-                SelectedMachine = selectedProduct.ProductMachines?.FirstOrDefault()?.Machine.MakineAdi ?? "GENEL",
+                    .ToList() ?? new List<string?> {" "}),
+                SelectedMachine = selectedProduct.ProductMachines?.FirstOrDefault()?.Machine.MakineAdi ?? " ",
             };
 
             orderItems.Add(newItem);

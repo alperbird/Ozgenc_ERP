@@ -119,7 +119,13 @@ namespace ERPClient.SiparisModule
                 ProductName = txtProductName.Text,
                 CustomProductName = txtProductName.Text, // Kullanıcı tarafından girilen özel parça adı
                 Quantity = quantity,
-                UnitPrice = unitPrice
+                UnitPrice = unitPrice,
+                AvailableMachines = new ObservableCollection<string>(
+                    selectedProduct.ProductMachines?
+                    .Select(pm => pm.Machine.MakineAdi)
+                    .Distinct()
+                    .ToList() ?? new List<string?> { " " }),
+                SelectedMachine = selectedProduct.ProductMachines?.FirstOrDefault()?.Machine.MakineAdi ?? " ",
             };
 
             orderItems.Add(newItem);
