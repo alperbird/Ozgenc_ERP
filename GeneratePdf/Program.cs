@@ -147,6 +147,7 @@ namespace GeneratePdf
                     sheet.Cells[11, 9].Value = DateTime.Now.ToString("dd/MM/yyyy");
                     sheet.Cells[15, 9].Value = email;
 
+                    decimal toplamTutar = 0;
                     int row = 18;
                     foreach (var item in items)
                     {
@@ -155,9 +156,30 @@ namespace GeneratePdf
                         sheet.Cells[row, 8].Value = item.Quantity;
                         sheet.Cells[row, 9].Value = item.UnitPrice;
                         sheet.Cells[row, 10].Value = item.Total;
+                        toplamTutar += item.Total;
                         row++;
                     }
 
+                    
+
+                    //J28 → TOPLAM
+                    sheet.Cells[28, 10].Value = $" ₺ {toplamTutar}" ;
+
+                    //string normalizedAdj = adjustmentText.Replace("%", "").Replace(",", ".").Trim();
+                    decimal.TryParse(normalizedAdj, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out decimal kdvOrani);
+
+                    if (kdvOrani > 0)
+                    {
+                        //J33 → KDV’li TOPLAM
+                        decimal kdvliTutar = toplamTutar * (1 + (kdvOrani / 100));
+                        sheet.Cells[33, 10].Value = $" ₺ {kdvliTutar:0.00}";
+                    }
+                    else
+                    {
+                        //KDV sıfırsa boş geç
+                        sheet.Cells[33, 10].Value = null;
+                    }
 
                 }
                 else
