@@ -1,0 +1,30 @@
+﻿<Window x:Class="ERPClient.GenelModule.GenelParcaSayfasi"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ERPClient.GenelModule"
+        mc:Ignorable="d"
+        Title="GenelParcaSayfasi" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}" Background="#F4F4F4"
+        WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <!-- Üst Menü -->
+            <RowDefinition Height="*"/>
+            <!-- İçerik -->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Üst Menü -->
+        <DockPanel Grid.Row="0" Grid.ColumnSpan="2" Background="#003366">
+            <TextBlock Text="Genel Parça Sayfası" Foreground="White" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <Button x:Name="btnExit" Background="DarkRed" BorderThickness="0" Cursor="Hand" Click="btnExit_Click" HorizontalAlignment="Right" Margin="0,0,20,0" Width="100">
+                <Image Source="/Assets/exit.png" Width="75" Height="44"/>
+            </Button>
+        </DockPanel>
+    </Grid>
+</Window>

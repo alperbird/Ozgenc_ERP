@@ -221,7 +221,7 @@ namespace GeneratePdf
                     int row = 16;
                     foreach (var item in items)
                     {
-                        string machineCode = string.IsNullOrWhiteSpace(item.SelectedMachine) ? " " : item.SelectedMachine;
+                        string machineCode = string.IsNullOrWhiteSpace(item.SelectedMachine) ? "GENERAL" : item.SelectedMachine;
                         string makineliParcaAdi = $"{machineCode} / {item.ParcaAdi}";
 
                         sheet.Cells[row, 2].Value = makineliParcaAdi;

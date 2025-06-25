@@ -8,7 +8,7 @@ using BusinessLayer.SignalR;
 
 namespace BusinessLayer.Services
 {
-    public class StockService
+    public class StockService //Bu yedek parçaların servisi. KARIŞTIRMAYIN!!!
     {
         private readonly ProductRepository _repo;
         private readonly IHubContext<StockHub> _hub;

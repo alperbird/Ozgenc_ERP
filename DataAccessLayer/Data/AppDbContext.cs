@@ -29,7 +29,12 @@ namespace DataAccessLayer.Data
 
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Log> Logs { get; set; } 
+        public DbSet<Log> Logs { get; set; }
+
+        public DbSet<F_GeneralPart> F_MalzemeAdlari { get; set; }
+        public DbSet<F_Supplier> F_Tedarikci { get; set; }
+        public DbSet<F_Warehouse> F_Depo { get; set; }
+        public DbSet<GeneralStock> F_StokGiris { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
