@@ -26,6 +26,7 @@
     <None Remove="Assets\image.png" />
     <None Remove="Assets\list.png" />
     <None Remove="Assets\listcustomer.png" />
+    <None Remove="Assets\lock.png" />
     <None Remove="Assets\magnifying.png" />
     <None Remove="Assets\order.png" />
     <None Remove="Assets\orderhistory.png" />
@@ -65,6 +66,7 @@
     <Resource Include="Assets\image.png" />
     <Resource Include="Assets\list.png" />
     <Resource Include="Assets\listcustomer.png" />
+    <Resource Include="Assets\lock.png" />
     <Resource Include="Assets\magnifying.png" />
     <Resource Include="Assets\order.png" />
     <Resource Include="Assets\orderhistory.png" />

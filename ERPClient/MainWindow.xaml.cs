@@ -1,5 +1,6 @@
 ﻿using EntityLayer.Entities;
 using ERPClient.FormModule;
+using ERPClient.GenelModule;
 using ERPClient.LoginRegister;
 using ERPClient.Model;
 using ERPClient.MusteriModule;
@@ -128,6 +129,10 @@ public partial class MainWindow : Window
         login.Show();
         this.Close();
     }
+    private void MenuItem_Log_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
 
     private void Stok_Click(object sender, MouseButtonEventArgs e)
     {
@@ -138,11 +143,9 @@ public partial class MainWindow : Window
 
     private void Test1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-
+        LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Genel Parça sayfasına giriş yaptı.");
+        GenelParcaSayfasi gp = new GenelParcaSayfasi(_currentUser);
+        gp.Show();
     }
 
-    private void Test2_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-    {
-
-    }
 }
