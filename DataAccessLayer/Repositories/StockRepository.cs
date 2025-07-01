@@ -43,7 +43,12 @@ namespace DataAccessLayer.Repositories
 
         public async Task<List<GeneralStock>> GetAllStock()
         {
-            return await _context.F_StokGiris.ToListAsync();
+            return await _context.F_StokGiris
+                .Include(s => s.GeneralPart)
+                .Include(s => s.Supplier)
+                .Include(s => s.Warehose)
+                .OrderBy(s => s.Id)
+                .ToListAsync();
         }
 
         public async Task<GeneralStock?> GetStockById(int id)

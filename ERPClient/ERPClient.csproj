@@ -56,6 +56,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="BusinessLayer">
+      <HintPath>..\BusinessLayer\bin\Debug\net8.0-windows\BusinessLayer.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\add.png" />
     <Resource Include="Assets\addcustomer.png" />
     <Resource Include="Assets\approve.png" />

@@ -1,18 +1,10 @@
 ﻿using ERPClient.DTOs;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Diagnostics;
 
 namespace ERPClient.ViewModel
 {
-    public class StokYonetimViewModel : INotifyPropertyChanged
+    public class StokYonetimViewModel : BaseViewModel
     {
         private const int PageSize = 10;
 
@@ -68,9 +60,6 @@ namespace ERPClient.ViewModel
         public string PageInfo => $"Sayfa {CurrentPage} / {TotalPages}";
         public int TotalPages => (int)Math.Ceiling((double)AllProducts.Count / PageSize);
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void OnPropertyChanged(string prop) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 
         public void LoadProducts(List<ProductStockDto> products)
         {

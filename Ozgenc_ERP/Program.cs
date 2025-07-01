@@ -55,6 +55,18 @@ namespace ApiLayer
             builder.Services.AddScoped<StockService>();
             builder.Services.AddSignalR();
 
+            builder.Services.AddScoped<IParcalar, GeneralPartRepository>();
+            builder.Services.AddScoped<IParcalarService, GeneralPartService>();
+
+            builder.Services.AddScoped<ITedarikci, SupplierRepository>();
+            builder.Services.AddScoped<ITedarikciService, SupplierService>();
+
+            builder.Services.AddScoped<IDepo, WarehouseRepository>();
+            builder.Services.AddScoped<IDepoService, WarehouseService>();
+
+            builder.Services.AddScoped<IStok, StockRepository>();
+            builder.Services.AddScoped<IStokService, GeneralStockService>();
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

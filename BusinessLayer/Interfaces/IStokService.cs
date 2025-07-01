@@ -9,7 +9,7 @@ namespace BusinessLayer.Interfaces
 {
     public interface IStokService
     {
-        Task AddStok(GeneralStock stok);
+        Task<bool> AddStok(GeneralStock stok);
         Task UpdateStok(GeneralStock stok);
         Task DeleteStok(int id);
         Task<List<GeneralStock>> GetAllStoks();

@@ -1,4 +1,6 @@
 ﻿using EntityLayer.Entities;
+using ERPClient.Model;
+using ERPClient.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,12 +27,28 @@ namespace ERPClient.GenelModule
         {
             _currentUser = user;
             InitializeComponent();
+
+            //var stokService = App.StokService;
+            //var depoService = App.DepoService;
+            //var parcaService = App.ParcalarService;
+            //var tedarikciService = App.TedarikciService;
+
+            if (App.StokService == null || App.DepoService == null || App.ParcalarService == null || App.TedarikciService == null)
+            {
+                MessageBox.Show("Servisler çözülmedi. App.xaml.cs içinde servisleri düzgün başlattın mı?");
+                return;
+            }
+
+
+            // ViewModel'i oluştur ve bağla
+            this.DataContext = new GeneralStockViewModel(App.StokService, App.DepoService, App.ParcalarService, App.TedarikciService);
         }
 
 
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Genel Parça sayfasından çıkış yaptı.");
             this.Close();
         }
     }
