@@ -71,6 +71,7 @@ namespace ApiLayer.Controllers
                 return NotFound($"Stok bulunamadı! Id: {up.Id}");
             }
 
+            existingStock.Id = up.Id;
             existingStock.GeneralPartId = up.GeneralPartId;
             existingStock.SupplierId = up.SupplierId;
             existingStock.WarehouseId = up.WarehouseId;

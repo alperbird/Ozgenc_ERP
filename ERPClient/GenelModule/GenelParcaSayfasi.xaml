@@ -7,24 +7,78 @@
         mc:Ignorable="d"
         Title="GenelParcaSayfasi" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}" Background="#F4F4F4"
         WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
+
+    <!-- İÇERİK - GENERAL STOCK -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
-            <!-- Üst Menü -->
+            <!-- ÜST MENÜ -->
             <RowDefinition Height="*"/>
-            <!-- İçerik -->
+            <!-- İÇERİK -->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Üst Menü -->
-        <DockPanel Grid.Row="0" Grid.ColumnSpan="2" Background="#003366">
-            <TextBlock Text="Genel Parça Sayfası" Foreground="White" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
-            <Button x:Name="btnExit" Background="DarkRed" BorderThickness="0" Cursor="Hand" Click="btnExit_Click" HorizontalAlignment="Right" Margin="0,0,20,0" Width="100">
+        <!-- ÜST MENÜ -->
+        <DockPanel Grid.Row="0" Grid.ColumnSpan="2" Background="#003366" Height="50">
+            <TextBlock Text="Genel Parça Sayfası" Foreground="White" FontSize="20" FontWeight="Bold"
+                       VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <Button x:Name="btnExit" Background="DarkRed" BorderThickness="0" Cursor="Hand"
+                    Click="btnExit_Click" HorizontalAlignment="Right" Margin="0,0,20,0" Width="100">
                 <Image Source="/Assets/exit.png" Width="75" Height="44"/>
             </Button>
         </DockPanel>
+
+        <!-- ASIL İÇERİK -->
+        <Grid Grid.Row="1" Grid.Column="1" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- FİLTRE + BUTONLAR -->
+                <RowDefinition Height="*"/>
+                <!-- LİSTE -->
+                <RowDefinition Height="Auto"/>
+                <!-- SAYFALAMA -->
+            </Grid.RowDefinitions>
+
+            <!-- FİLTRE + BUTONLAR -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10" Grid.Row="0">
+                <DatePicker SelectedDate="{Binding FilterStartDate}" Width="120" Margin="0,0,5,0"/>
+                <TextBlock Text="–" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <DatePicker SelectedDate="{Binding FilterEndDate}" Width="120" Margin="0,0,10,0"/>
+                <ComboBox ItemsSource="{Binding PartList}" SelectedItem="{Binding SelectedPart}" DisplayMemberPath="Name"  Width="150" Margin="0,0,10,0"/>
+                <ComboBox ItemsSource="{Binding SupplierList}" SelectedItem="{Binding SelectedSupplier}" DisplayMemberPath="Name" Width="150" Margin="0,0,10,0"/>
+                <Button Content="Filtrele" Width="100" Command="{Binding ApplyFiltersCommand}" Margin="0,0,5,0"/>
+                <Button Content="Temizle" Width="100" Command="{Binding ClearFiltersCommand}" Margin="0,0,20,0"/>
+                <Button Content="Yeni Stok Ekle" Width="100" Command="{Binding OpenAddPopupCommand}" Margin="0,0,5,0"/>
+                <Button Content="Yenile" Width="100" Command="{Binding LoadCommand}"/>
+            </StackPanel>
+
+            <!-- DATAGRID -->
+            <DataGrid x:Name="dgGeneralStock" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                      ItemsSource="{Binding PagedList}" SelectionMode="Single" HeadersVisibility="Column"
+                      ColumnHeaderHeight="30" RowHeight="28">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                    <DataGridTextColumn Header="Malzeme Adı" Binding="{Binding GeneralPartName}" Width="*"/>
+                    <DataGridTextColumn Header="Tedarikçi" Binding="{Binding SupplierName}" Width="*"/>
+                    <DataGridTextColumn Header="Depo/Bölüm" Binding="{Binding WarehouseName}" Width="*"/>
+                    <DataGridTextColumn Header="Sipariş Tarihi" Binding="{Binding OrderDate, StringFormat=dd.MM.yyyy}" Width="*"/>
+                    <DataGridTextColumn Header="Giriş Tarihi" Binding="{Binding DeliveryDate, StringFormat=dd.MM.yyyy}" Width="*"/>
+                    <DataGridTextColumn Header="Sipariş Adedi" Binding="{Binding OrderQuantity}" Width="*"/>
+                    <DataGridTextColumn Header="Gelen Adet" Binding="{Binding ReceivedQuantity}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- SAYFALAMA -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2" Margin="0,10,0,0">
+                <Button Content="Geri" Width="40" Margin="5" Command="{Binding PreviousPageCommand}" />
+                <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5"/>
+                <TextBlock Text="/" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center" Margin="5"/>
+                <Button Content="İleri" Width="40" Margin="5" Command="{Binding NextPageCommand}" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

@@ -18,9 +18,10 @@ namespace BusinessLayer.Services
             _repo = repo;
         }
 
-        public async Task AddStok(GeneralStock stok)
+        public async Task<bool> AddStok(GeneralStock stok)
         {
             await _repo.AddStock(stok);
+            return true; // Assuming the operation is successful, you might want to handle exceptions and return false if needed.
         }
 
         public async Task UpdateStok(GeneralStock stok)

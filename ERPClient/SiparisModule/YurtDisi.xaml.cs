@@ -2,11 +2,8 @@
 using EntityLayer.Entities;
 using ERPClient.Model;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Windows;
@@ -121,7 +118,7 @@ namespace ERPClient.SiparisModule
                 Quantity = quantity,
                 UnitPrice = unitPrice,
                 AvailableMachines = new ObservableCollection<string>(
-                    selectedProduct.ProductMachines?
+                    selectedProduct.ProductMachines
                     .Select(pm => pm.Machine.MakineAdi)
                     .Distinct()
                     .ToList() ?? new List<string?> { " " }),
