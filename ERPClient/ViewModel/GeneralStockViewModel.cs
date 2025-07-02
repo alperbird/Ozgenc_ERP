@@ -40,6 +40,32 @@ namespace ERPClient.ViewModel
         public ICommand ApplyFiltersCommand { get; }
         public ICommand ClearFiltersCommand { get; }
 
+        private ObservableCollection<F_GeneralPart> _allParts = new(); // combobox arama kısmı için kullanılacak
+        private string _partSearchText;
+        public string PartSearchText
+        {
+            get => _partSearchText;
+            set
+            {
+                _partSearchText = value;
+                OnPropertyChanged(nameof(PartSearchText));
+                FilterParts();
+            }
+        }
+
+        private ObservableCollection<F_Supplier> _allSuppliers = new();
+        private string _supplierSearchText;
+        public string SupplierSearchText
+        {
+            get => _supplierSearchText;
+            set
+            {
+                _supplierSearchText = value;
+                OnPropertyChanged(nameof(SupplierSearchText));
+                FilterSuppliers();
+            }
+        }
+
         public GeneralStockViewModel(IStokService service, IDepoService depo, IParcalarService parca, ITedarikciService tedarikci)
         {
             _service = service;
@@ -58,6 +84,46 @@ namespace ERPClient.ViewModel
             _ = LoadListAsync();
         }
 
+        private void FilterParts()
+        {
+            if (string.IsNullOrWhiteSpace(PartSearchText))
+            {
+                PartList = new ObservableCollection<F_GeneralPart>(_allParts);
+            }
+            else
+            {
+                var keyword = PartSearchText.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                var filtered = _allParts
+                    .Where(p => p.F_MalzemeAdi != null &&
+                                 keyword.All(k => p.F_MalzemeAdi.ToLower().Contains(k)))
+                    .ToList();
+
+                PartList = new ObservableCollection<F_GeneralPart>(filtered);
+            }
+            OnPropertyChanged(nameof(PartList));
+        }
+
+        private void FilterSuppliers()
+        {
+            if (string.IsNullOrWhiteSpace(SupplierSearchText))
+            {
+                SupplierList = new ObservableCollection<F_Supplier>(_allSuppliers);
+            }
+            else
+            {
+                var keyword = SupplierSearchText.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                var filtered = _allSuppliers
+                    .Where(s => s.F_TedarikciAdi != null &&
+                                 keyword.All(k => s.F_TedarikciAdi.ToLower().Contains(k)))
+                    .ToList();
+                SupplierList = new ObservableCollection<F_Supplier>(filtered);
+            }
+            OnPropertyChanged(nameof(SupplierList));
+
+        }
+
         private async Task LoadListAsync()
         {
             try
@@ -65,6 +131,12 @@ namespace ERPClient.ViewModel
                 PartList = new ObservableCollection<F_GeneralPart>(await _parca.GetAllParcalar());
                 SupplierList = new ObservableCollection<F_Supplier>(await _tedarikci.GetAllTedarikcis());
                 WarehouseList = new ObservableCollection<F_Warehouse>(await _depo.GetWarehouses());
+
+                _allParts = new ObservableCollection<F_GeneralPart>(await _parca.GetAllParcalar()); // Arama için
+                PartList = new ObservableCollection<F_GeneralPart>(_allParts);
+
+                _allSuppliers = new ObservableCollection<F_Supplier>(await _tedarikci.GetAllTedarikcis()); // Arama için
+                SupplierList = new ObservableCollection<F_Supplier>(_allSuppliers);
 
                 OnPropertyChanged(nameof(PartList));
                 OnPropertyChanged(nameof(SupplierList));
