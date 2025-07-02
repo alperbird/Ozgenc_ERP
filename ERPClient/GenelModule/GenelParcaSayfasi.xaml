@@ -47,8 +47,12 @@
                 <DatePicker SelectedDate="{Binding FilterStartDate}" Width="120" Margin="0,0,5,0"/>
                 <TextBlock Text="–" VerticalAlignment="Center" Margin="0,0,5,0"/>
                 <DatePicker SelectedDate="{Binding FilterEndDate}" Width="120" Margin="0,0,10,0"/>
-                <ComboBox ItemsSource="{Binding PartList}" SelectedItem="{Binding SelectedPart}" DisplayMemberPath="Name"  Width="150" Margin="0,0,10,0"/>
-                <ComboBox ItemsSource="{Binding SupplierList}" SelectedItem="{Binding SelectedSupplier}" DisplayMemberPath="Name" Width="150" Margin="0,0,10,0"/>
+                <ComboBox ItemsSource="{Binding PartList}" SelectedItem="{Binding SelectedPart, Mode=TwoWay}" DisplayMemberPath="F_MalzemeAdi"
+                          IsEditable="True" Text="{Binding PartSearchText, UpdateSourceTrigger=PropertyChanged}"
+                          Width="200" Margin="0,0,10,0"/>
+                <ComboBox ItemsSource="{Binding SupplierList}" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay}" DisplayMemberPath="F_TedarikciAdi" 
+                          IsEditable="True" Text="{Binding SupplierSearchText, UpdateSourceTrigger=PropertyChanged}"
+                          Width="200" Margin="0,0,10,0"/>
                 <Button Content="Filtrele" Width="100" Command="{Binding ApplyFiltersCommand}" Margin="0,0,5,0"/>
                 <Button Content="Temizle" Width="100" Command="{Binding ClearFiltersCommand}" Margin="0,0,20,0"/>
                 <Button Content="Yeni Stok Ekle" Width="100" Command="{Binding OpenAddPopupCommand}" Margin="0,0,5,0"/>

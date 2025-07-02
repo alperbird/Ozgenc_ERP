@@ -41,15 +41,18 @@
 
             <!-- Malzeme -->
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Malzeme:" VerticalAlignment="Center" Margin="0,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding PartList}" SelectedItem="{Binding SelectedPart}" DisplayMemberPath="Name" />
+            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding PartList}" SelectedItem="{Binding SelectedPart, Mode=TwoWay}" DisplayMemberPath="F_MalzemeAdi" 
+                      IsEditable="True" Text="{Binding PartSearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
             <!-- Tedarikçi -->
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Tedarikçi:" VerticalAlignment="Center" Margin="0,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding SupplierList}" SelectedItem="{Binding SelectedSupplier}" DisplayMemberPath="Name" />
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding SupplierList}" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay}" DisplayMemberPath="F_TedarikciAdi" 
+                      IsEditable="True" Text="{Binding SupplierSearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
             <!-- Depo -->
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Depo/Bölüm:" VerticalAlignment="Center" Margin="0,5"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding WarehouseList}" SelectedItem="{Binding SelectedWarehouse}" DisplayMemberPath="Name" />
+            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding WarehouseList}" SelectedItem="{Binding SelectedWarehouse, Mode=TwoWay}" DisplayMemberPath="DepoAdi" 
+                      IsEditable="True" Text="{Binding WarehouseSearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
             <!-- Sipariş Tarihi -->
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Sipariş Tarihi:" VerticalAlignment="Center" Margin="0,5"/>
