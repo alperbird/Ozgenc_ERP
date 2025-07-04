@@ -15,6 +15,10 @@ namespace ERPClient.ViewModel
         private readonly IParcalarService _parcaService;
         private readonly ITedarikciService _tedarikciService;
 
+        public ICommand AddPartCommand { get; set; }
+        public ICommand AddSupplierCommand { get; set; }
+        public ICommand AddWarehouseCommand { get; set; }
+
         public ObservableCollection<F_GeneralPart> PartList { get; set; } = new();
         public ObservableCollection<F_Supplier> SupplierList { get; set; } = new();
         public ObservableCollection<F_Warehouse> WarehouseList { get; set; } = new();
@@ -133,6 +137,9 @@ namespace ERPClient.ViewModel
             _tedarikciService = tedarikci;
 
             SaveCommand = new RelayCommand<object>(async _ => await SaveAsync());
+            AddPartCommand = new RelayCommand<object>(_ => OpenAddPart());
+            AddSupplierCommand = new RelayCommand<object>(_ => OpenAddSupplier());
+            AddWarehouseCommand = new RelayCommand<object>(_ => OpenAddWarehouse());
 
             _ = LoadListsAsync();
         }
@@ -155,10 +162,34 @@ namespace ERPClient.ViewModel
             OnPropertyChanged(nameof(PartList));
             OnPropertyChanged(nameof(SupplierList));
             OnPropertyChanged(nameof(WarehouseList));
+        }
 
-            //OnPropertyChanged(nameof(PartList));
-            //OnPropertyChanged(nameof(SupplierList));
-            //OnPropertyChanged(nameof(WarehouseList));
+        private async void OpenAddPart()
+        {
+            var part = new GeneralPartAddWindow(_parcaService);
+
+            if(part.ShowDialog() == true)
+            {
+                await LoadListsAsync(); // Yeni parça eklendikten sonra listeyi güncelle
+            }
+        }
+
+        private async void OpenAddSupplier()
+        {
+            var supplier = new SupplierAddWindow(_tedarikciService);
+            if (supplier.ShowDialog() == true)
+            {
+                await LoadListsAsync(); // Yeni tedarikçi eklendikten sonra listeyi güncelle
+            }
+        }
+
+        private async void OpenAddWarehouse()
+        {
+            var warehouse = new WarehouseAddWindow(_depoService);
+            if (warehouse.ShowDialog() == true)
+            {
+                await LoadListsAsync(); // Yeni depo eklendikten sonra listeyi güncelle
+            }
         }
 
         private async Task<bool> SaveAsync()
@@ -185,8 +216,6 @@ namespace ERPClient.ViewModel
             ClosePopup(true);
             return true;
         }
-
-
 
         private void ClosePopup(bool result)
         {

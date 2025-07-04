@@ -40,20 +40,33 @@
             </Grid.ColumnDefinitions>
 
             <!-- Malzeme -->
+
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Malzeme:" VerticalAlignment="Center" Margin="0,5"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding PartList}" SelectedItem="{Binding SelectedPart, Mode=TwoWay}" DisplayMemberPath="F_MalzemeAdi" 
-                      IsEditable="True" Text="{Binding PartSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                <ComboBox Width="545" ItemsSource="{Binding PartList}" SelectedItem="{Binding SelectedPart, Mode=TwoWay}" DisplayMemberPath="F_MalzemeAdi" 
+           IsEditable="True" Text="{Binding PartSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Content="+" Width="25" Height="25" Margin="5,0,0,0" Command="{Binding AddPartCommand}"/>
+            </StackPanel>
+           
+
 
             <!-- Tedarikçi -->
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Tedarikçi:" VerticalAlignment="Center" Margin="0,5"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding SupplierList}" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay}" DisplayMemberPath="F_TedarikciAdi" 
-                      IsEditable="True" Text="{Binding SupplierSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                <ComboBox Width="545" ItemsSource="{Binding SupplierList}" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay}" DisplayMemberPath="F_TedarikciAdi" 
+          IsEditable="True" Text="{Binding SupplierSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Content="+" Width="25" Height="25" Margin="5,0,0,0" Command="{Binding AddSupplierCommand}"/>
+            </StackPanel>
+            
 
             <!-- Depo -->
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Depo/Bölüm:" VerticalAlignment="Center" Margin="0,5"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding WarehouseList}" SelectedItem="{Binding SelectedWarehouse, Mode=TwoWay}" DisplayMemberPath="DepoAdi" 
-                      IsEditable="True" Text="{Binding WarehouseSearchText, UpdateSourceTrigger=PropertyChanged}"/>
-
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                <ComboBox Width="545" ItemsSource="{Binding WarehouseList}" SelectedItem="{Binding SelectedWarehouse, Mode=TwoWay}" DisplayMemberPath="DepoAdi" 
+          IsEditable="True" Text="{Binding WarehouseSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Content="+" Width="25" Height="25" Margin="5,0,0,0" Command="{Binding AddWarehouseCommand}"/>
+            </StackPanel>
+            
             <!-- Sipariş Tarihi -->
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Sipariş Tarihi:" VerticalAlignment="Center" Margin="0,5"/>
             <DatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding OrderDate}" />
