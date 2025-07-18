@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interfaces;
 using EntityLayer.Entities;
+using ERPClient.Model;
 using System.Windows;
 using System.Windows.Input;
 
@@ -7,6 +8,7 @@ namespace ERPClient.ViewModel
 {
     public class SupplierAddViewModel : BaseViewModel
     {
+        private readonly User _currentUser;
         private string _tedarikciAdi;
 
         public string tedarikciAdi
@@ -23,10 +25,11 @@ namespace ERPClient.ViewModel
 
         public ICommand SaveCommand { get; }
 
-        public SupplierAddViewModel(ITedarikciService tedarikci)
+        public SupplierAddViewModel(ITedarikciService tedarikci, User user)
         {
             _tedarikci = tedarikci;
             SaveCommand = new RelayCommand<object>(SavePart);
+            _currentUser = user;
         }
 
         private async void SavePart(object obj)
@@ -39,6 +42,7 @@ namespace ERPClient.ViewModel
             var newSupplier = new F_Supplier { F_TedarikciAdi = tedarikciAdi };
             await _tedarikci.AddTedarikci(newSupplier);
             MessageBox.Show("Tedarikçi başarıyla eklendi.");
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} yeni bir tedarikçi ekledi: {tedarikciAdi}");
             CloseWindow();
         }
 
@@ -50,9 +54,11 @@ namespace ERPClient.ViewModel
                 {
                     window.DialogResult = true;
                     window.Close();
+                    LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} tedarikçi ekleme penceresini kapattı.");
                     break;
                 }
             }
+            
         }
     }
 }

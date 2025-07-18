@@ -43,8 +43,14 @@ public partial class MainWindow : Window
             }
         }
     }
+
     private void TextBlock_Click(object sender, MouseButtonEventArgs e)
     {
+        //if (_currentUser.Role?.Department != "Teknik Servis")
+        //{
+        //    MessageBox.Show("ERİŞİM YETKİNİZ BULUNMAMAKTADIR!");
+        //    return;
+        //}
         MessageBox.Show("Yedek Parça Listesi Açılıyor...");
         e.Handled = true;
 
@@ -55,6 +61,12 @@ public partial class MainWindow : Window
 
     private void TextBlockMusteri_Click(object sender, MouseButtonEventArgs e)
     {
+        //if (_currentUser.Role?.Department != "Teknik Servis")
+        //{
+        //    MessageBox.Show("ERİŞİM YETKİNİZ BULUNMAMAKTADIR!");
+        //    return;
+        //}
+
         MessageBox.Show("Müşteri Listesi Açılıyor...");
         e.Handled = true;
 
@@ -65,6 +77,12 @@ public partial class MainWindow : Window
 
     private void Yurtİci_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
+        //if (_currentUser.Role?.Department != "Teknik Servis")
+        //{
+        //    MessageBox.Show("ERİŞİM YETKİNİZ BULUNMAMAKTADIR!");
+        //    return;
+        //}
+
         e.Handled = true;
 
         LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yurt İçi Sipariş sayfasına girdi.");
@@ -74,6 +92,12 @@ public partial class MainWindow : Window
 
     private void YurtDisi_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
+        //if (_currentUser.Role?.Department != "Teknik Servis")
+        //{
+        //    MessageBox.Show("ERİŞİM YETKİNİZ BULUNMAMAKTADIR!");
+        //    return;
+        //}
+
         e.Handled = true;
 
         LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Yurt Dışı Sipariş sayfasına girdi.");
@@ -83,6 +107,12 @@ public partial class MainWindow : Window
 
     private void SiparisGecmisi_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
+        //if (_currentUser.Role?.Department != "Teknik Servis")
+        //{
+        //    MessageBox.Show("ERİŞİM YETKİNİZ BULUNMAMAKTADIR!");
+        //    return;
+        //}
+
         e.Handled = true;
 
         LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Sipariş Geçmişi sayfasına girdi.");
@@ -92,6 +122,12 @@ public partial class MainWindow : Window
 
     private void TeklifFormu_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
+        //if (_currentUser.Role?.Department != "Teknik Servis")
+        //{
+        //    MessageBox.Show("ERİŞİM YETKİNİZ BULUNMAMAKTADIR!");
+        //    return;
+        //}
+
         e.Handled = true;
 
         LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Teklif Formu sayfasına girdi.");
@@ -101,6 +137,12 @@ public partial class MainWindow : Window
 
     private void IsEmriFormu_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
+        //if (_currentUser.Role?.Department != "Teknik Servis")
+        //{
+        //    MessageBox.Show("ERİŞİM YETKİNİZ BULUNMAMAKTADIR!");
+        //    return;
+        //}
+
         e.Handled = true;
 
         LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Malzeme İstek sayfasına girdi.");
@@ -136,6 +178,13 @@ public partial class MainWindow : Window
 
     private void Stok_Click(object sender, MouseButtonEventArgs e)
     {
+        //if (_currentUser.Role?.Department != "Teknik Servis")
+        //{
+        //    MessageBox.Show("ERİŞİM YETKİNİZ BULUNMAMAKTADIR!");
+        //    return;
+        //}
+
+        e.Handled = true;
         LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Stok Takip sayfasına giriş yaptı.");
         StokYonetim sy = new StokYonetim(_currentUser);
         sy.Show();
@@ -143,6 +192,13 @@ public partial class MainWindow : Window
 
     private void Test1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
+        //if (_currentUser.Role?.Department != "Üretim" && _currentUser.Role?.Department != "İnsan Kaynakları")
+        //{
+        //    MessageBox.Show("ERİŞİM YETKİNİZ BULUNMAMAKTADIR!");
+        //    return;
+        //}
+
+        e.Handled = true;
         LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Genel Parça sayfasına giriş yaptı.");
         GenelParcaSayfasi gp = new GenelParcaSayfasi(_currentUser);
         gp.Show();

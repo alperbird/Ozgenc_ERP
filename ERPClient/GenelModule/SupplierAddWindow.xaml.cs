@@ -1,4 +1,6 @@
 ﻿using BusinessLayer.Interfaces;
+using EntityLayer.Entities;
+using ERPClient.Model;
 using ERPClient.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -21,15 +23,19 @@ namespace ERPClient.GenelModule
     /// </summary>
     public partial class SupplierAddWindow : Window
     {
-        public SupplierAddWindow(ITedarikciService tedarikci)
+        private readonly User _currentuser;
+        public SupplierAddWindow(ITedarikciService tedarikci, User user)
         {
             InitializeComponent();
-            DataContext = new SupplierAddViewModel(tedarikci);
+            _currentuser = user;
+            LogHelper.LogAction(user.Id, $"{user.Name} {user.Surname}, Tedarikçi Ekleme penceresini açtı.");
+            DataContext = new SupplierAddViewModel(tedarikci, user);
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+            LogHelper.LogAction(_currentuser.Id, $"{_currentuser.Name} {_currentuser.Surname} Tedarikçi Ekleme penceresini kapattı.");
         }
     }
 }
