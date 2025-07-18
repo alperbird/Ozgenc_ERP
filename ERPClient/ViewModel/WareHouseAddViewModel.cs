@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Interfaces;
 using DataAccessLayer.Data;
 using EntityLayer.Entities;
+using ERPClient.Model;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -9,6 +10,7 @@ namespace ERPClient.ViewModel
 {
     public class WareHouseAddViewModel: BaseViewModel
     {
+        private readonly User _currentUser;
         private readonly IDepoService _depo;
         private string _depoAdi;
 
@@ -24,9 +26,10 @@ namespace ERPClient.ViewModel
 
         public ICommand SaveCommand { get; set; }
 
-        public WareHouseAddViewModel(IDepoService depo)
+        public WareHouseAddViewModel(IDepoService depo, User user)
         {
             _depo = depo;
+            _currentUser = user;
             SaveCommand = new RelayCommand<object>(SaveWareHouse);
         }
 
@@ -44,6 +47,7 @@ namespace ERPClient.ViewModel
             {
                 await _depo.AddWarehouse(newWarehouse);
                 MessageBox.Show("Yeni kayıt başarıyla eklendi.");
+                LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} yeni bir depo ekledi: {DepoAdi}");
                 CloseWindow();
             }
             catch (Exception ex)
@@ -60,6 +64,7 @@ namespace ERPClient.ViewModel
                 {
                     window.DialogResult = true;
                     window.Close();
+                    LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} depo ekleme penceresini kapattı.");
                     break;
                 }
             }

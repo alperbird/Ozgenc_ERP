@@ -1,4 +1,6 @@
 ﻿using BusinessLayer.Interfaces;
+using EntityLayer.Entities;
+using ERPClient.Model;
 using ERPClient.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -21,15 +23,19 @@ namespace ERPClient.GenelModule
     /// </summary>
     public partial class GeneralPartAddWindow : Window
     {
-        public GeneralPartAddWindow(IParcalarService parca)
+        private readonly User _currentUser;
+        public GeneralPartAddWindow(IParcalarService parca, User user)
         {
+            _currentUser = user;
             InitializeComponent();
-            DataContext = new GeneralPartAddViewModel(parca);
+            LogHelper.LogAction(user.Id, $"{user.Name} {user.Surname} Genel Parça Ekleme sayfasına giriş yaptı.");
+            DataContext = new GeneralPartAddViewModel(parca, user);
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Genel Parça Ekleme sayfasından çıkış yaptı.");
         }
     }
 }

@@ -2,6 +2,7 @@
 using DataAccessLayer.Interfaces;
 using EntityLayer.Entities;
 using ERPClient.GenelModule;
+using ERPClient.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
@@ -14,6 +15,8 @@ namespace ERPClient.ViewModel
         private readonly IDepoService _depoService;
         private readonly IParcalarService _parcaService;
         private readonly ITedarikciService _tedarikciService;
+
+        private readonly User _currentUser;
 
         public ICommand AddPartCommand { get; set; }
         public ICommand AddSupplierCommand { get; set; }
@@ -129,12 +132,13 @@ namespace ERPClient.ViewModel
 
         public ICommand SaveCommand { get; }
 
-        public GeneralStockAddViewModel(IStokService stok, IDepoService depo, IParcalarService parca, ITedarikciService tedarikci)
+        public GeneralStockAddViewModel(IStokService stok, IDepoService depo, IParcalarService parca, ITedarikciService tedarikci, User user)
         {
             _stokService = stok;
             _depoService = depo;
             _parcaService = parca;
             _tedarikciService = tedarikci;
+            _currentUser = user;
 
             SaveCommand = new RelayCommand<object>(async _ => await SaveAsync());
             AddPartCommand = new RelayCommand<object>(_ => OpenAddPart());
@@ -166,7 +170,7 @@ namespace ERPClient.ViewModel
 
         private async void OpenAddPart()
         {
-            var part = new GeneralPartAddWindow(_parcaService);
+            var part = new GeneralPartAddWindow(_parcaService, _currentUser);
 
             if(part.ShowDialog() == true)
             {
@@ -176,7 +180,7 @@ namespace ERPClient.ViewModel
 
         private async void OpenAddSupplier()
         {
-            var supplier = new SupplierAddWindow(_tedarikciService);
+            var supplier = new SupplierAddWindow(_tedarikciService, _currentUser);
             if (supplier.ShowDialog() == true)
             {
                 await LoadListsAsync(); // Yeni tedarikçi eklendikten sonra listeyi güncelle
@@ -185,7 +189,7 @@ namespace ERPClient.ViewModel
 
         private async void OpenAddWarehouse()
         {
-            var warehouse = new WarehouseAddWindow(_depoService);
+            var warehouse = new WarehouseAddWindow(_depoService, _currentUser);
             if (warehouse.ShowDialog() == true)
             {
                 await LoadListsAsync(); // Yeni depo eklendikten sonra listeyi güncelle
@@ -213,6 +217,7 @@ namespace ERPClient.ViewModel
 
             await _stokService.AddStok(entity);
             MessageBox.Show("Stok başarıyla eklendi.");
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} yeni bir stok ekledi. Parça: {SelectedPart.F_MalzemeAdi},\n Tedarikçi: {SelectedSupplier.F_TedarikciAdi},\n Depo: {SelectedWarehouse.DepoAdi}");
             ClosePopup(true);
             return true;
         }
@@ -225,6 +230,7 @@ namespace ERPClient.ViewModel
                 {
                     window.DialogResult = result;
                     window.Close();
+                    LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Genel Parça Stok Ekleme penceresini kapattı.");
                     break;
                 }
             }

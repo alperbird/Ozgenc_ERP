@@ -39,9 +39,9 @@ namespace ERPClient.GenelModule
                 return;
             }
 
-
+            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} Genel Parça sayfasına girdi.");
             // ViewModel'i oluştur ve bağla
-            this.DataContext = new GeneralStockViewModel(App.StokService, App.DepoService, App.ParcalarService, App.TedarikciService);
+            this.DataContext = new GeneralStockViewModel(App.StokService, App.DepoService, App.ParcalarService, App.TedarikciService, user);
         }
 
 

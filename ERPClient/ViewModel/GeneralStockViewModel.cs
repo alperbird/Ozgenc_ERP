@@ -14,6 +14,7 @@ namespace ERPClient.ViewModel
         private readonly IDepoService _depo;
         private readonly IParcalarService _parca;
         private readonly ITedarikciService _tedarikci;
+        private readonly User _currentuser;
 
         public ObservableCollection<GeneralStockDto> AllStocks { get; set; } = new();
         public ObservableCollection<GeneralStockDto> FilteredList { get; set; } = new();
@@ -66,12 +67,13 @@ namespace ERPClient.ViewModel
             }
         }
 
-        public GeneralStockViewModel(IStokService service, IDepoService depo, IParcalarService parca, ITedarikciService tedarikci)
+        public GeneralStockViewModel(IStokService service, IDepoService depo, IParcalarService parca, ITedarikciService tedarikci, User user)
         {
             _service = service;
             _depo = depo;
             _parca = parca;
             _tedarikci = tedarikci;
+            _currentuser = user;
 
             LoadCommand = new RelayCommand<object>(async _ => await LoadListAsync());
             OpenAddPopupCommand = new RelayCommand<object>(_ => OpenAddPopup());
@@ -224,7 +226,7 @@ namespace ERPClient.ViewModel
 
         private void OpenAddPopup()
         {
-            var popup = new GeneralStockAddWindow(_service, _depo, _parca, _tedarikci);
+            var popup = new GeneralStockAddWindow(_service, _depo, _parca, _tedarikci, _currentuser);
             bool? result = popup.ShowDialog();
 
             if (result == true)
