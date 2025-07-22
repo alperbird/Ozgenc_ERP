@@ -173,6 +173,12 @@ public partial class MainWindow : Window
     }
     private void MenuItem_Log_Click(object sender, RoutedEventArgs e)
     {
+        if(_currentUser.Role?.Department != "Admin")
+        {
+            MessageBox.Show("Buraya kadar geldiğiniz için teşekkür ederiz. Ancak burası test amacıyla koyulmuş bir seçenektir. İtibar etmeyiniz.\n Saygılarımla... -Alper Kuş", "Bilgilendirme", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
 
     }
 
