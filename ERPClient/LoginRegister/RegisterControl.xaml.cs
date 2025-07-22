@@ -56,6 +56,41 @@ namespace ERPClient.LoginRegister
                 RoleId = selectedRole.Id
             };
 
+            if (selectedRole.Department == "Admin")
+            {
+                try
+                {
+                    using var aclient = new HttpClient();
+                    var response = await aclient.GetAsync("http://192.168.5.81:5001/api/User/");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var users = JsonConvert.DeserializeObject<List<User>>(content);
+
+                        bool adminVar = users.Any(u => u.Role?.Department == "Admin");
+
+                        if (adminVar)
+                        {
+                            MessageBox.Show("Zaten bir admin mevcut. Yeni admin EKLEYEMEZSİN!", "HATA", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                    }
+
+                    else
+                    {
+                        MessageBox.Show("Admin kontrolü sırasında bir hata oluştu.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("API bağlantı hatası:\n" + ex.Message, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+
             try
             {
                 using var client = new HttpClient();

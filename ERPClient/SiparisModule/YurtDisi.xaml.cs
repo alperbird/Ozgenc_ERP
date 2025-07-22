@@ -167,14 +167,14 @@ namespace ERPClient.SiparisModule
                 Quantity = item.Quantity,
                 UnitPrice = item.UnitPrice,
                 CustomProductName = item.CustomProductName,
-                SelectedMachine = item.SelectedMachine ?? "GENEL"
+                SelectedMachine = item.SelectedMachine ?? "GENERAL"
             }).ToList();
 
             
             var dto = new OrderCreateDto
             {
                 CustomerId = selectedCustomer.Id,
-                OrderDate = DateTime.Now,
+                OrderDate = DateTime.Now, 
                 ShippingFee = shippingFee,
                 AdjustmentType = (EntityLayer.Entities.Enums.PriceAdjustmentType)adjustmentType,
                 AdjustmentPercentage = adjustmentPercentage,

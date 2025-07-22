@@ -40,6 +40,17 @@ namespace ApiLayer.Controllers
             return Ok("Yeni kullanıcı başarılı bir şekilde oluşturuldu.");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _service.GetAllUsersAsync();
+            if (users == null || !users.Any())
+            {
+                return NotFound("Kullanıcı bulunamadı.");
+            }
+            return Ok(users);
+        }
+
         [HttpGet("id")]
         public async Task<IActionResult> GetById(int id)
         {
