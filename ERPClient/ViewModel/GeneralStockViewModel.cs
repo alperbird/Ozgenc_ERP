@@ -30,7 +30,7 @@ namespace ERPClient.ViewModel
 
         public F_GeneralPart SelectedPart { get; set; }
         public F_Supplier SelectedSupplier { get; set; }
-        public int PageSize { get; set; } = 10;
+        public int PageSize { get; set; } = 25;
         public int CurrentPage { get; set; } = 1;
         public int TotalPages => (int)Math.Ceiling((double)FilteredList.Count / PageSize);
 
