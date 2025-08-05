@@ -72,6 +72,28 @@
                     <DataGridTextColumn Header="Giriş Tarihi" Binding="{Binding DeliveryDate, StringFormat=dd.MM.yyyy}" Width="*"/>
                     <DataGridTextColumn Header="Sipariş Adedi" Binding="{Binding OrderQuantity}" Width="*"/>
                     <DataGridTextColumn Header="Gelen Adet" Binding="{Binding ReceivedQuantity}" Width="*"/>
+                    <DataGridTemplateColumn Header="Düzenle" Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="🖋️" 
+                    Command="{Binding DataContext.Update, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                    CommandParameter="{Binding}"
+                    Cursor="Hand"
+                    Background="PowderBlue" Foreground="White"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Sil" Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="🗑️" 
+                                        Command="{Binding DataContext.Delete, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"
+                                        Cursor="Hand"
+                                        Background="DarkRed" Foreground="White"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
 

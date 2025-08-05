@@ -37,6 +37,9 @@
     <None Remove="Assets\spareparts.png" />
     <None Remove="Assets\update.png" />
     <None Remove="Assets\user.png" />
+    <None Remove="Image\alu500.png" />
+    <None Remove="Image\mrt260.png" />
+    <None Remove="Image\tw400.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -83,6 +86,9 @@
     <Resource Include="Assets\spareparts.png" />
     <Resource Include="Assets\update.png" />
     <Resource Include="Assets\user.png" />
+    <Resource Include="Image\alu500.png" />
+    <Resource Include="Image\mrt260.png" />
+    <Resource Include="Image\tw400.png" />
   </ItemGroup>
 
 </Project>

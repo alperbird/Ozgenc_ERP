@@ -27,7 +27,7 @@ namespace ERPClient.FormModule
         private List<Customer> customers = new();
         private List<Product> products = new();
         private ICollectionView productView;
-        private ICollectionView customerView;
+        //private ICollectionView customerView;
 
         private TextBox cmbCustomerTextBox;
         private ObservableCollection<ProductOrderRow> orderItems = new();
