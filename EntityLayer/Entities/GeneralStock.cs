@@ -30,5 +30,7 @@ namespace EntityLayer.Entities
         public DateTime DeliveryDate { get; set; } // siparişin giriş tarihi
         public int OrderQuantity { get; set; } //sipariş adedi
         public int ReceivedQuantity { get; set; } //gelen adet
+
+        public string? Metraj { get; set; }
     }
 }

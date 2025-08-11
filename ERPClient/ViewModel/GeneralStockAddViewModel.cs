@@ -17,6 +17,7 @@ namespace ERPClient.ViewModel
         private readonly ITedarikciService _tedarikciService;
 
         private readonly User _currentUser;
+        private GeneralStock _existingStock;
 
         public ICommand AddPartCommand { get; set; }
         public ICommand AddSupplierCommand { get; set; }
@@ -129,16 +130,54 @@ namespace ERPClient.ViewModel
 
         public int OrderedQuantity { get; set; }
         public int ReceivedQuantity { get; set; }
-
+        public string? Metraj { get; set; }
         public ICommand SaveCommand { get; }
 
-        public GeneralStockAddViewModel(IStokService stok, IDepoService depo, IParcalarService parca, ITedarikciService tedarikci, User user)
+
+        public int SelectedPartId
+        {
+            get => SelectedPart?.Id ?? 0;
+            set
+            {
+                SelectedPart = PartList.FirstOrDefault(p => p.Id == value) ?? new F_GeneralPart();
+                OnPropertyChanged(nameof(SelectedPartId));
+                OnPropertyChanged(nameof(SelectedPart));
+            }
+        }
+
+
+        public int SelectedSupplierId
+        {
+            get => SelectedSupplier?.Id ?? 0;
+            set
+            {
+                SelectedSupplier = SupplierList.FirstOrDefault(s => s.Id == value) ?? new F_Supplier();
+                OnPropertyChanged(nameof(SelectedSupplierId));
+                OnPropertyChanged(nameof(SelectedSupplier));
+            }
+        }
+
+        public int SelectedWarehouseId
+        {
+            get => SelectedWarehouse?.Id ?? 0;
+            set
+            {
+                SelectedWarehouse = WarehouseList.FirstOrDefault(w => w.Id == value) ?? new F_Warehouse();
+                OnPropertyChanged(nameof(SelectedWarehouseId));
+                OnPropertyChanged(nameof(SelectedWarehouse));
+            }
+        }
+
+
+        private readonly int? _selectedStockId;
+        public GeneralStockAddViewModel(IStokService stok, IDepoService depo, IParcalarService parca, ITedarikciService tedarikci, User user, int? id = null)
         {
             _stokService = stok;
             _depoService = depo;
             _parcaService = parca;
             _tedarikciService = tedarikci;
             _currentUser = user;
+            _selectedStockId = id;
 
             SaveCommand = new RelayCommand<object>(async _ => await SaveAsync());
             AddPartCommand = new RelayCommand<object>(_ => OpenAddPart());
@@ -148,24 +187,53 @@ namespace ERPClient.ViewModel
             _ = LoadListsAsync();
         }
 
+        
         private async Task LoadListsAsync()
         {
-            PartList = new ObservableCollection<F_GeneralPart>(await _parcaService.GetAllParcalar());
-            SupplierList = new ObservableCollection<F_Supplier>(await _tedarikciService.GetAllTedarikcis());
-            WarehouseList = new ObservableCollection<F_Warehouse>(await _depoService.GetWarehouses());
+            // 1. Tüm liste verilerini önce çek
+            var parts = await _parcaService.GetAllParcalar();
+            var suppliers = await _tedarikciService.GetAllTedarikcis();
+            var warehouses = await _depoService.GetWarehouses();
 
-            _allParts = new ObservableCollection<F_GeneralPart>(await _parcaService.GetAllParcalar()); // Arama için
+            // 2. Arama listelerine ata
+            _allParts = new ObservableCollection<F_GeneralPart>(parts);
+            _allSuppliers = new ObservableCollection<F_Supplier>(suppliers);
+            _allWarehouses = new ObservableCollection<F_Warehouse>(warehouses);
+
+            // 3. Görünen listelere ata
             PartList = new ObservableCollection<F_GeneralPart>(_allParts);
-
-            _allSuppliers = new ObservableCollection<F_Supplier>(await _tedarikciService.GetAllTedarikcis()); // Arama için
             SupplierList = new ObservableCollection<F_Supplier>(_allSuppliers);
-
-            _allWarehouses = new ObservableCollection<F_Warehouse>(await _depoService.GetWarehouses()); // Arama için
             WarehouseList = new ObservableCollection<F_Warehouse>(_allWarehouses);
 
             OnPropertyChanged(nameof(PartList));
             OnPropertyChanged(nameof(SupplierList));
             OnPropertyChanged(nameof(WarehouseList));
+
+            // 4. _selectedStockId varsa, değerleri ata (liste dolduktan sonra!)
+            if (_selectedStockId.HasValue)
+            {
+                _existingStock = await _stokService.GetStokById(_selectedStockId.Value);
+                if (_existingStock != null)
+                {
+                    SelectedPart = PartList.FirstOrDefault(p => p.Id == _existingStock.GeneralPartId);
+                    SelectedSupplier = SupplierList.FirstOrDefault(s => s.Id == _existingStock.SupplierId);
+                    SelectedWarehouse = WarehouseList.FirstOrDefault(w => w.Id == _existingStock.WarehouseId);
+                    OrderDate = _existingStock.OrderDate;
+                    DeliveryDate = _existingStock.DeliveryDate;
+                    OrderedQuantity = _existingStock.OrderQuantity;
+                    ReceivedQuantity = _existingStock.ReceivedQuantity;
+                    Metraj = _existingStock.Metraj;
+
+                    OnPropertyChanged(nameof(SelectedPart));
+                    OnPropertyChanged(nameof(SelectedSupplier));
+                    OnPropertyChanged(nameof(SelectedWarehouse));
+                    OnPropertyChanged(nameof(OrderDate));
+                    OnPropertyChanged(nameof(DeliveryDate));
+                    OnPropertyChanged(nameof(OrderedQuantity));
+                    OnPropertyChanged(nameof(ReceivedQuantity));
+                    OnPropertyChanged(nameof(Metraj));
+                }
+            }
         }
 
         private async void OpenAddPart()
@@ -204,20 +272,43 @@ namespace ERPClient.ViewModel
                 return false;
             }
 
-            var entity = new GeneralStock
+            if (_selectedStockId.HasValue)
             {
-                GeneralPartId = SelectedPart.Id,
-                SupplierId = SelectedSupplier.Id,
-                WarehouseId = SelectedWarehouse.Id,
-                OrderDate = OrderDate ?? DateTime.Now,
-                DeliveryDate = DeliveryDate ?? DateTime.Now,
-                OrderQuantity = OrderedQuantity,
-                ReceivedQuantity = ReceivedQuantity
-            };
+                //Id = _selectedStockId.Value,
+                _existingStock.GeneralPartId = SelectedPart.Id;
+                _existingStock.SupplierId = SelectedSupplier.Id;
+                _existingStock.WarehouseId = SelectedWarehouse.Id;
+                _existingStock.OrderDate = OrderDate ?? DateTime.Now;
+                _existingStock.DeliveryDate = DeliveryDate ?? DateTime.Now;
+                _existingStock.OrderQuantity = OrderedQuantity;
+                _existingStock.ReceivedQuantity = ReceivedQuantity;
+                _existingStock.Metraj = Metraj;
 
-            await _stokService.AddStok(entity);
-            MessageBox.Show("Stok başarıyla eklendi.");
-            LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} yeni bir stok ekledi. Parça: {SelectedPart.F_MalzemeAdi},\n Tedarikçi: {SelectedSupplier.F_TedarikciAdi},\n Depo: {SelectedWarehouse.DepoAdi}");
+
+                await _stokService.UpdateStok(_existingStock);
+                MessageBox.Show("Stok başarıyla güncellendi.");
+                LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} stok güncellemesi yaptı. Parça: {SelectedPart.F_MalzemeAdi},\n Tedarikçi: {SelectedSupplier.F_TedarikciAdi},\n Depo: {SelectedWarehouse.DepoAdi}");
+            }
+
+            else
+            {
+                var entity = new GeneralStock
+                {
+                    GeneralPartId = SelectedPart.Id,
+                    SupplierId = SelectedSupplier.Id,
+                    WarehouseId = SelectedWarehouse.Id,
+                    OrderDate = OrderDate ?? DateTime.Now,
+                    DeliveryDate = DeliveryDate ?? DateTime.Now,
+                    OrderQuantity = OrderedQuantity,
+                    ReceivedQuantity = ReceivedQuantity,
+                    Metraj = Metraj
+                };
+
+                await _stokService.AddStok(entity);
+                MessageBox.Show("Stok başarıyla eklendi.");
+                LogHelper.LogAction(_currentUser.Id, $"{_currentUser.Name} {_currentUser.Surname} yeni bir stok ekledi. Parça: {SelectedPart.F_MalzemeAdi},\n Tedarikçi: {SelectedSupplier.F_TedarikciAdi},\n Depo: {SelectedWarehouse.DepoAdi}");
+            }
+
             ClosePopup(true);
             return true;
         }

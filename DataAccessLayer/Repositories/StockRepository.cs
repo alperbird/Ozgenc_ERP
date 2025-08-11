@@ -53,7 +53,8 @@ namespace DataAccessLayer.Repositories
 
         public async Task<GeneralStock?> GetStockById(int id)
         {
-            return await _context.F_StokGiris.FirstOrDefaultAsync(s => s.Id == id);
+            return await _context.F_StokGiris
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
     }

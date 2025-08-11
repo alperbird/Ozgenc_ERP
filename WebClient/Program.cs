@@ -24,6 +24,12 @@ namespace WebClient
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IOrderService, OrderService>();
 
+            builder.Services.AddScoped<ProductRepository>();
+            builder.Services.AddScoped<ProductService>();
+
+            builder.Services.AddScoped<CustomerRepository>();
+            builder.Services.AddScoped<CustomerService>();
+
 
             var app = builder.Build();
 

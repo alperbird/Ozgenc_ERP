@@ -152,6 +152,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("GeneralPartId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Metraj")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 

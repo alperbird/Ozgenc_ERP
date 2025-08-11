@@ -16,5 +16,6 @@ namespace EntityLayer.DTOs
         public DateTime DeliveryDate { get; set; } //sipariş giriş tarihi
         public int OrderQuantity { get; set; } //sipariş adedi
         public int ReceivedQuantity { get; set; } //gelen sipariş adedi
+        public string Metraj { get; set; } = string.Empty;
     }
 }

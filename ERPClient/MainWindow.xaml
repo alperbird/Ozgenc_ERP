@@ -253,9 +253,31 @@
         </Border>
 
         <!-- İçerik Alanı -->
-        <Border Grid.Row="1" Grid.Column="1" Background="White" Padding="10">
-            <ContentControl Name="ContentArea"/>
+        <Border Grid.Row="1" Grid.Column="1" Padding="10" Background="Transparent">
+            <Grid>
+                <!-- Kaydırılabilir görsel alanı --><!--
+                <Grid ClipToBounds="True">
+                    <Canvas x:Name="ImageCanvas">
+                        <Image x:Name="imgSlider"
+                       Width="600" Height="300"
+                       Stretch="UniformToFill"
+                       Canvas.Left="0"/>
+                    </Canvas>
+                </Grid>
+
+                --><!-- Önceki/Sonraki butonlar --><!--
+                <Button Content="◀" Width="30" Height="30"
+                Click="BtnPrev_Click"
+                HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10"/>
+                <Button Content="▶" Width="30" Height="30"
+                Click="BtnNext_Click"
+                HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10"/>-->
+
+                <!-- ERP İçeriğin -->
+                <ContentControl x:Name="ContentArea" Panel.ZIndex="2"/>
+            </Grid>
         </Border>
+
     </Grid>
     
 

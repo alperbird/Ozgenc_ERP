@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using ERPClient.GenelModule;
 using EntityLayer.Entities;
+using ERPClient.Model;
 
 namespace ERPClient.ViewModel
 {
@@ -15,6 +16,7 @@ namespace ERPClient.ViewModel
         private readonly IParcalarService _parca;
         private readonly ITedarikciService _tedarikci;
         private readonly User _currentuser;
+        private readonly int? id;
 
         public ObservableCollection<GeneralStockDto> AllStocks { get; set; } = new();
         public ObservableCollection<GeneralStockDto> FilteredList { get; set; } = new();
@@ -40,6 +42,9 @@ namespace ERPClient.ViewModel
         public ICommand NextPageCommand { get; }
         public ICommand ApplyFiltersCommand { get; }
         public ICommand ClearFiltersCommand { get; }
+
+        public ICommand Update { get; set; }
+        public ICommand Delete { get; set; }
 
         private ObservableCollection<F_GeneralPart> _allParts = new(); // combobox arama kısmı için kullanılacak
         private string _partSearchText;
@@ -67,6 +72,20 @@ namespace ERPClient.ViewModel
             }
         }
 
+        private string? _metraj;
+        public string? Metraj
+        {
+            get => _metraj;
+            set
+            {
+                if (_metraj != value)
+                {
+                    _metraj = value;
+                    OnPropertyChanged(nameof(Metraj));
+                }
+            }
+        }   
+
         public GeneralStockViewModel(IStokService service, IDepoService depo, IParcalarService parca, ITedarikciService tedarikci, User user)
         {
             _service = service;
@@ -79,6 +98,9 @@ namespace ERPClient.ViewModel
             OpenAddPopupCommand = new RelayCommand<object>(_ => OpenAddPopup());
             PreviousPageCommand = new RelayCommand<object>(_ => ChangePage(-1), _ => CurrentPage > 1);
             NextPageCommand = new RelayCommand<object>(_ => ChangePage(1), _ => CurrentPage < TotalPages);
+            Update = new RelayCommand<GeneralStockDto>(UpdateItem);
+            Delete = new RelayCommand<GeneralStockDto>(DeleteItem);
+            
 
             ApplyFiltersCommand = new RelayCommand<object>(_ => ApplyFilters());
             ClearFiltersCommand = new RelayCommand<object>(_ => ClearFilters());
@@ -159,6 +181,7 @@ namespace ERPClient.ViewModel
                         DeliveryDate = item.DeliveryDate,
                         OrderQuantity = item.OrderQuantity,
                         ReceivedQuantity = item.ReceivedQuantity,
+                        Metraj = item.Metraj,
 
                         GeneralPartName = item.GeneralPart?.F_MalzemeAdi,
                         SupplierName = item.Supplier?.F_TedarikciAdi,
@@ -246,6 +269,49 @@ namespace ERPClient.ViewModel
             OnPropertyChanged(nameof(SelectedSupplier));
 
             ApplyFilters();
+        }
+
+        private async void UpdateItem(GeneralStockDto item)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            var popup = new GeneralStockAddWindow(_service, _depo, _parca, _tedarikci, _currentuser, item.Id);
+
+            bool? result = popup.ShowDialog();
+
+            if (result == true)
+            {
+                _ = LoadListAsync();
+            }
+        }
+        private async void DeleteItem(GeneralStockDto item)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            var confirm = MessageBox.Show("Bu kaydı silmek istediğinize emin misiniz?", "Onay", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (confirm != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                await _service.DeleteStok(item.Id);
+                MessageBox.Show("Kayıt başarıyla silindi.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
+                LogHelper.LogAction(_currentuser.Id, $"{_currentuser.Name} {_currentuser.Surname} Genel Parça Stok Silme işlemi yaptı. Stok ID: {item.Id}, Parça Adı: {item.GeneralPartName}");
+                _ = LoadListAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Kayıt silinirken hata oluştu:\n" + ex.Message, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
         }
 
     }

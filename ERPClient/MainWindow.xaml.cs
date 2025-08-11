@@ -9,6 +9,10 @@ using ERPClient.StokModule;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 
 namespace ERPClient;
@@ -19,11 +23,36 @@ namespace ERPClient;
 public partial class MainWindow : Window
 {
     private readonly User _currentUser;
+    //private readonly List<string> _imagepath = new()
+    //{
+    //    "pack://application:,,,/Image/alu500.png",
+    //    "pack://application:,,,/Image/mrt260.png",
+    //    "pack://application:,,,/Image/tw400.png"
+    //};
+
+    private enum SlideDirection{ Previous, Next }
+    private int _currentIndex = 0;
+    //private readonly DispatcherTimer _timer;
+
     public MainWindow(User user)
     {
         InitializeComponent();
         _currentUser = user;
         txtWelcome.Text = $"Hoş Geldin, {user.Name} {user.Surname}.";
+
+        //imgSlider.Source = new BitmapImage(new Uri(_imagepath[_currentIndex], UriKind.Absolute));
+
+        //// Slayt için zamanlayıcı başlat
+        //_timer = new DispatcherTimer
+        //{
+        //    Interval = TimeSpan.FromSeconds(5)
+        //};
+        //_timer.Tick += (s, e) =>
+        //{
+        //    _currentIndex = (_currentIndex + 1) % _imagepath.Count;
+        //    imgSlider.Source = new BitmapImage(new Uri(_imagepath[_currentIndex], UriKind.Absolute));
+        //};
+        //_timer.Start();
     }
 
     private void btnMenuToggle_Click(object sender, RoutedEventArgs e)
@@ -209,5 +238,67 @@ public partial class MainWindow : Window
         GenelParcaSayfasi gp = new GenelParcaSayfasi(_currentUser);
         gp.Show();
     }
+
+    #region Butoncuk
+
+    //private void ShowPrev()
+    //{
+    //    _currentIndex = (_currentIndex - 1 + _imagepath.Count) % _imagepath.Count;
+    //    SlideImage(SlideDirection.Previous);
+    //}
+
+
+    //private void ShowNext()
+    //{
+    //    _currentIndex = (_currentIndex + 1) % _imagepath.Count;
+    //    SlideImage(SlideDirection.Next);
+    //}
+
+    //private void SlideImage(SlideDirection direction)
+    //{
+    //    double canvasWidth = imgSlider.ActualWidth;
+    //    double from = direction == SlideDirection.Next ? canvasWidth : -canvasWidth;
+
+    //    var newImg = new Image
+    //    {
+    //        Width = imgSlider.Width,
+    //        Height = imgSlider.Height,
+    //        Stretch = Stretch.UniformToFill,
+    //        Source = new BitmapImage(new Uri(_imagepath[_currentIndex], UriKind.Absolute))
+    //    };
+
+    //    Canvas.SetLeft(newImg, from);
+    //    ImageCanvas.Children.Add(newImg);
+
+    //    var animOld = new DoubleAnimation(0, -from, TimeSpan.FromSeconds(0.5));
+    //    var animNew = new DoubleAnimation(from, 0, TimeSpan.FromSeconds(0.5));
+
+    //    imgSlider.BeginAnimation(Canvas.LeftProperty, animOld);
+    //    newImg.BeginAnimation(Canvas.LeftProperty, animNew);
+
+    //    animNew.Completed += (s, e) =>
+    //    {
+    //        ImageCanvas.Children.Remove(imgSlider);
+    //        imgSlider = newImg;
+    //    };
+    //}
+
+    //private void LoadImage(int index)
+    //{
+    //    imgSlider.Source = new BitmapImage(new Uri(_imagepath[index], UriKind.Absolute));
+    //}
+
+    //private void BtnPrev_Click(object sender, RoutedEventArgs e)
+    //{
+    //    ShowPrev();
+    //}
+
+    //private void BtnNext_Click(object sender, RoutedEventArgs e)
+    //{
+    //    ShowNext();
+    //}
+
+    #endregion
+
 
 }
