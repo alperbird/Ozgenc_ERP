@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ERPClient.GenelModule"
+
         mc:Ignorable="d"
         Title="GenelParcaSayfasi" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}" Background="#F4F4F4"
         WindowState="Maximized" WindowStyle="None" WindowStartupLocation="CenterScreen">
@@ -70,8 +71,34 @@
                     <DataGridTextColumn Header="Depo/Bölüm" Binding="{Binding WarehouseName}" Width="*"/>
                     <DataGridTextColumn Header="Sipariş Tarihi" Binding="{Binding OrderDate, StringFormat=dd.MM.yyyy}" Width="*"/>
                     <DataGridTextColumn Header="Giriş Tarihi" Binding="{Binding DeliveryDate, StringFormat=dd.MM.yyyy}" Width="*"/>
+                    <DataGridTextColumn Header="Metraj" Binding="{Binding Metraj}" Width="*"/>
                     <DataGridTextColumn Header="Sipariş Adedi" Binding="{Binding OrderQuantity}" Width="*"/>
-                    <DataGridTextColumn Header="Gelen Adet" Binding="{Binding ReceivedQuantity}" Width="*"/>
+                    <DataGridTemplateColumn Header="Gelen Adet">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border x:Name="cellBorder" Background="Transparent" Padding="2">
+                                    <TextBlock Text="{Binding ReceivedQuantity}"
+                           HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Value="True">
+                                        <DataTrigger.Binding>
+                                            <MultiBinding Converter="{StaticResource QuantityHighlightConverter}">
+                                                <Binding Path="ReceivedQuantity"/>
+                                                <Binding Path="OrderQuantity"/>
+                                                <!-- gerçek adı neyse -->
+                                            </MultiBinding>
+                                        </DataTrigger.Binding>
+                                        <Setter TargetName="cellBorder" Property="Background" Value="Yellow"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+
+
                     <DataGridTemplateColumn Header="Düzenle" Width="50">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

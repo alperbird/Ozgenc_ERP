@@ -31,8 +31,10 @@
                 <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/> <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150"/>
@@ -43,8 +45,8 @@
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Malzeme:" VerticalAlignment="Center" Margin="0,5"/>
             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-                <ComboBox Width="545" ItemsSource="{Binding PartList}" SelectedItem="{Binding SelectedPart, Mode=TwoWay}" DisplayMemberPath="F_MalzemeAdi" 
-           IsEditable="True" Text="{Binding PartSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox Width="545" ItemsSource="{Binding PartList}" SelectedItem="{Binding SelectedPart, Mode=TwoWay}"
+                          DisplayMemberPath="F_MalzemeAdi" IsEditable="True" Text="{Binding PartSearchText, UpdateSourceTrigger=PropertyChanged}"/>
                 <Button Content="+" Width="25" Height="25" Margin="5,0,0,0" Command="{Binding AddPartCommand}"/>
             </StackPanel>
            
@@ -53,8 +55,8 @@
             <!-- Tedarikçi -->
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Tedarikçi:" VerticalAlignment="Center" Margin="0,5"/>
             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-                <ComboBox Width="545" ItemsSource="{Binding SupplierList}" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay}" DisplayMemberPath="F_TedarikciAdi" 
-          IsEditable="True" Text="{Binding SupplierSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox Width="545" ItemsSource="{Binding SupplierList}" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay}"
+                          DisplayMemberPath="F_TedarikciAdi" IsEditable="True" Text="{Binding SupplierSearchText, UpdateSourceTrigger=PropertyChanged}"/>
                 <Button Content="+" Width="25" Height="25" Margin="5,0,0,0" Command="{Binding AddSupplierCommand}"/>
             </StackPanel>
             
@@ -62,8 +64,8 @@
             <!-- Depo -->
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Depo/Bölüm:" VerticalAlignment="Center" Margin="0,5"/>
             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-                <ComboBox Width="545" ItemsSource="{Binding WarehouseList}" SelectedItem="{Binding SelectedWarehouse, Mode=TwoWay}" DisplayMemberPath="DepoAdi" 
-          IsEditable="True" Text="{Binding WarehouseSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox Width="545" ItemsSource="{Binding WarehouseList}" SelectedItem="{Binding SelectedWarehouse, Mode=TwoWay}"
+                          DisplayMemberPath="DepoAdi" IsEditable="True" Text="{Binding WarehouseSearchText, UpdateSourceTrigger=PropertyChanged}"/>
                 <Button Content="+" Width="25" Height="25" Margin="5,0,0,0" Command="{Binding AddWarehouseCommand}"/>
             </StackPanel>
             
@@ -79,9 +81,13 @@
             <TextBlock Grid.Row="5" Grid.Column="0" Text="Sipariş Adedi:" VerticalAlignment="Center" Margin="0,5"/>
             <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding OrderedQuantity}" />
 
+            <!-- Gelen siparişin metrajı -->
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Metraj Birimi:" VerticalAlignment="Center" Margin="0,5"/>
+            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Metraj}" />
+
             <!-- Gelen Adet -->
-            <TextBlock Grid.Row="6" Grid.Column="0" Text="Gelen Adet:" VerticalAlignment="Center" Margin="0,5"/>
-            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding ReceivedQuantity}" />
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Gelen Adet:" VerticalAlignment="Top" Margin="0,5"/>
+            <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding ReceivedQuantity}"  />
 
             <!-- BUTONLAR -->
             <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">

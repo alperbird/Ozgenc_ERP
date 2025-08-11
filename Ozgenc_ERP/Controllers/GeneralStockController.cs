@@ -53,7 +53,8 @@ namespace ApiLayer.Controllers
                 OrderDate = s.OrderDate,
                 DeliveryDate = s.DeliveryDate,
                 OrderQuantity = s.OrderQuantity,
-                ReceivedQuantity = s.ReceivedQuantity
+                ReceivedQuantity = s.ReceivedQuantity,
+                Metraj = s.Metraj
             };
 
             await _service.AddStok(newStock);
@@ -79,6 +80,7 @@ namespace ApiLayer.Controllers
             existingStock.DeliveryDate = up.DeliveryDate;
             existingStock.OrderQuantity = up.OrderQuantity;
             existingStock.ReceivedQuantity = up.ReceivedQuantity;
+            existingStock.Metraj = up.Metraj;
             await _service.UpdateStok(existingStock);
             return NoContent();
         }

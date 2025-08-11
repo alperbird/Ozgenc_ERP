@@ -23,13 +23,15 @@ namespace ERPClient.GenelModule
     /// </summary>
     public partial class GeneralStockAddWindow : Window
     {
+        private int? _selectedStockId;
         private readonly User _currentUser;
-        public GeneralStockAddWindow(IStokService service, IDepoService depo, IParcalarService parca, ITedarikciService tedarikci, User user)
+        public GeneralStockAddWindow(IStokService service, IDepoService depo, IParcalarService parca, ITedarikciService tedarikci, User user, int? id = null)
         {
             InitializeComponent();
             _currentUser = user;
             LogHelper.LogAction(user.Id, $"{user.Name} {user.Surname} Genel Parça Stok Ekleme sayfasına giriş yaptı.");
-            DataContext = new GeneralStockAddViewModel(service, depo, parca, tedarikci, user);
+            DataContext = new GeneralStockAddViewModel(service, depo, parca, tedarikci, user, id);
+
         }
 
 

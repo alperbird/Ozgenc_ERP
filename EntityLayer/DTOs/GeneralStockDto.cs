@@ -17,6 +17,8 @@ namespace EntityLayer.DTOs
         public int OrderQuantity { get; set; } //sipariş adedi
         public int ReceivedQuantity { get; set; } //gelen sipariş adedi
 
+        public string Metraj { get; set; } = string.Empty;
+
         public string? GeneralPartName { get; set; }
         public string? SupplierName { get; set; }
         public string? WarehouseName { get; set; }
