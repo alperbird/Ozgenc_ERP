@@ -42,7 +42,7 @@ namespace DataAccessLayer.Repositories
 
         public async Task<List<F_GeneralPart>> GetAllGeneralPart()
         {
-            return await _context.F_MalzemeAdlari.ToListAsync();
+            return await _context.F_MalzemeAdlari.AsNoTracking().ToListAsync();
         }
 
         public async Task<F_GeneralPart?> GetGeneralPartById(int id)

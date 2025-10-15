@@ -220,7 +220,7 @@ namespace ERPClient.ViewModel
             foreach (var item in filtered)
                 FilteredList.Add(item);
 
-            CurrentPage = 1;
+            CurrentPage = TotalPages;
             UpdatePagedList();
             OnPropertyChanged(nameof(TotalPages));
         }

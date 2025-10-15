@@ -37,6 +37,7 @@ namespace ERPClient.SiparisModule
             txtContact.Text = _detail.Customer.Contact;
             txtPhone.Text = _detail.Customer.PhoneNumber;
             txtEmail.Text = _detail.Customer.Email;
+            txtTaxOffice.Text = _detail.Customer.TaxOffice;
 
             txtOrderDate.Text = _detail.OrderDate.ToShortDateString();
 
@@ -91,6 +92,7 @@ namespace ERPClient.SiparisModule
                 string phone = txtPhone.Text;
                 string country = txtCountry.Text.Trim();
                 string adjustment = txtAdjustmentPercentage.Text.Trim();
+                string taxoffice = txtTaxOffice.Text;
 
                 if (decimal.TryParse(adjustment.Replace("%", "").Replace(",", "."), out decimal adjustmentValue))
                 {
@@ -130,7 +132,18 @@ namespace ERPClient.SiparisModule
                 string escapedJson = jsonItems.Replace("\"", "\\\"");
 
                 // Argümanları hazırla
-                string arguments = $"\"{customerName}\" \"{address}\" \"{deliveryAddress}\" \"{contact}\" \"{email}\" \"{phone}\" \"{country}\" \"{adjustment}\" \"{shippingFee}\" \"{total}\" \"{escapedJson}\"";
+                string arguments = $"\"{customerName}\" " +
+                    $"\"{address}\" " +
+                    $"\"{deliveryAddress}\" " +
+                    $"\"{contact}\" " +
+                    $"\"{email}\" " +
+                    $"\"{phone}\" " +
+                    $"\"{country}\" " +
+                    $"\"{adjustment}\" " +
+                    $"\"{shippingFee}\" " +
+                    $"\"{total}\" " +
+                    $"\"{escapedJson}\" " +
+                    $"\"{taxoffice}\" ";
 
                 await Task.Run(() =>
                 {

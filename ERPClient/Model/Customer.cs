@@ -19,6 +19,7 @@ namespace ERPClient.Model
         public string PhoneNumber { get; set; } = string.Empty;
         public DateTime Date { get; set; }
         public string? TaxNo { get; set; }
+        public string? TaxOffice { get; set; }
         public DateTime LastUpdated { get; set; } = DateTime.Now;
 
     }

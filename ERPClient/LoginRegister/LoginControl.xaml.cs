@@ -75,9 +75,9 @@ namespace ERPClient.LoginRegister
                     MessageBox.Show("Kullanıcı adı veya şifre hatalı.", "Hatalı Giriş", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show("Sunucuya bağlanılamadı:\n" + ex.Message, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Sunucuya bağlanılamadı! Lütfen daha sonra tekrar deneyiniz.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

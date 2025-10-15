@@ -17,7 +17,8 @@ namespace EntityLayer.DTOs
         public string Contact { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
-        public string TaxNo { get; set; }
+        public string? TaxNo { get; set; }
+        public string? TaxOffice { get; set; }
         public DateTime Date { get; set; }
         public DateTime? LastUpdated { get; set; }
     }

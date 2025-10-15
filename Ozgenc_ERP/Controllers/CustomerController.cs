@@ -33,6 +33,7 @@ namespace ApiLayer.Controllers
                 Email = c.Email,
                 PhoneNumber = c.PhoneNumber,
                 TaxNo = c.TaxNo,
+                TaxOffice = c.TaxOffice,
                 Date = c.Date,
                 LastUpdated = c.LastUpdated
             }).ToList();
@@ -64,6 +65,7 @@ namespace ApiLayer.Controllers
                 Email = c.Email,
                 PhoneNumber = c.PhoneNumber,
                 TaxNo = c.TaxNo,
+                TaxOffice = c.TaxOffice,
                 Date = c.Date,
                 LastUpdated = DateTime.Now
             };
@@ -89,6 +91,7 @@ namespace ApiLayer.Controllers
             existingCustomer.Email = c.Email;
             existingCustomer.PhoneNumber = c.PhoneNumber;
             existingCustomer.TaxNo = c.TaxNo;
+            existingCustomer.TaxOffice = c.TaxOffice;
             existingCustomer.Date = c.Date;
             existingCustomer.LastUpdated = DateTime.Now;
 

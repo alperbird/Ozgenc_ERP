@@ -36,6 +36,8 @@
                 <TextBlock x:Name="txtCountry" Margin="5,0,20,0"/>
                 <TextBlock Text="Vergi No: " FontWeight="Bold"/>
                 <TextBlock x:Name="txtTaxNo" Margin="5,0,20,0"/>
+                <TextBlock Text="Vergi Dairesi: " FontWeight="Bold"/>
+                <TextBlock x:Name="txtTaxOffice" Margin="5,0,20,0"/>
             </WrapPanel>
 
             <WrapPanel>

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace EntityLayer.Entities
 {
     public class User
@@ -18,8 +20,8 @@ namespace EntityLayer.Entities
         [Required]
         public string UserName { get; set; } = string.Empty;
         [Required]
-        public string Password { get; set; } = string.Empty;
 
+        public string Password { get; set; } = string.Empty;
         public int RoleId { get; set; }
         [ForeignKey("RoleId")]
         public Role? Role { get; set; }

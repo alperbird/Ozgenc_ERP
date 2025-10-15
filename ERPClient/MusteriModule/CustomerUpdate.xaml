@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ERPClient.MusteriModule"
       mc:Ignorable="d" 
-      d:DesignHeight="480" d:DesignWidth="450"
+      d:DesignHeight="510" d:DesignWidth="450"
       Title="CustomerUpdate" Background="#F4F4F4">
 
     <Grid>
@@ -56,6 +56,9 @@
 
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Vergi No:" FontWeight="Bold"/>
             <TextBox x:Name="txtTaxNo" Width="250" Margin="0,2,0,5"/>
+            
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Vergi Dairesi" FontWeight="Bold"/>
+            <TextBox x:Name="txtTaxOffice" Width="250" Margin="0,2,0,5"/>
 
             <!-- Güncelle Butonu -->
             <Button Content="💾 Güncelle" Width="150" Height="40" Background="#007ACC" Foreground="White"

@@ -83,6 +83,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("TaxNo")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TaxOffice")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CountryId");
