@@ -10,7 +10,7 @@ namespace GeneratePdf
 {
     class Program
     {
-        // ---- Basit log yolları (C# 7.3 uyumlu) ----
+        // ---- Basit log yolları  ----
         static string GetInvoiceDir()
         {
             var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Invoice");
