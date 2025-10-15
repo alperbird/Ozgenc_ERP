@@ -66,6 +66,7 @@ namespace ERPClient.MusteriModule
             txtEmail.Text = _selectedCustomer.Email;
             txtPhoneNumber.Text = _selectedCustomer.PhoneNumber;
             txtTaxNo.Text = _selectedCustomer.TaxNo;
+            txtTaxOffice.Text = _selectedCustomer.TaxOffice;
 
             cmbCountry.SelectedValue = _selectedCustomer.CountryId;
         }
@@ -93,6 +94,7 @@ namespace ERPClient.MusteriModule
                 Email = txtEmail.Text,
                 PhoneNumber = txtPhoneNumber.Text,
                 TaxNo = txtTaxNo.Text,
+                TaxOffice = txtTaxOffice.Text,
                 Date = _selectedCustomer.Date,
                 LastUpdated = DateTime.Now,
 
@@ -139,6 +141,9 @@ namespace ERPClient.MusteriModule
 
                 if (old.TaxNo != updateCustomer.TaxNo)
                     sb.AppendLine($"Vergi No: {old.TaxNo} -> {updateCustomer.TaxNo}");
+
+                if (old.TaxOffice != updateCustomer.TaxOffice)
+                    sb.AppendLine($"Vergi Dairesi: {old.TaxOffice} -> {updateCustomer.TaxOffice}");
 
                 if (old.CountryId != updateCustomer.CountryId)
                 {

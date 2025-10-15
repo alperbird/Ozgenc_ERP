@@ -34,6 +34,7 @@ namespace BusinessLayer.Services
                 Email = c.Email,
                 PhoneNumber = c.PhoneNumber,
                 TaxNo = c.TaxNo,
+                TaxOffice = c.TaxOffice,
                 Date = c.Date,
                 LastUpdated = c.LastUpdated
             }

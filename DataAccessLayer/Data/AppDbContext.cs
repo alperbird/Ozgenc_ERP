@@ -6,12 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EntityLayer.Entities.Enums;
+using Microsoft.IdentityModel.Tokens;
+using Azure.Core.Cryptography;
 
 namespace DataAccessLayer.Data
 {
-    public class AppDbContext: DbContext
+    public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options){}
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+            
+        }
+
+        
 
         public DbSet<Product> Products { get; set; }
 

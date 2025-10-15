@@ -48,6 +48,7 @@ namespace DataAccessLayer.Repositories
                 .Include(s => s.Supplier)
                 .Include(s => s.Warehose)
                 .OrderBy(s => s.Id)
+                .AsNoTracking()
                 .ToListAsync();
         }
 

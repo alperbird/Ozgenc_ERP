@@ -41,5 +41,7 @@ namespace EntityLayer.Entities
 
         public string? TaxNo { get; set; }
         public DateTime LastUpdated { get; set; } = DateTime.Now;
+
+        public string? TaxOffice { get; set; }
     }
 }

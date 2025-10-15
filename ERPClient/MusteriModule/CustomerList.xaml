@@ -112,6 +112,7 @@
                         </DataGridTextColumn>
                         
                         <DataGridTextColumn Header="VatNumber" Binding="{Binding TaxNo}" Width="*"/>
+                        <DataGridTextColumn Header="Vergi Dairesi" Binding="{Binding TaxOffice}" Width="*"/>
                         
                         <DataGridTextColumn Header="Eklenme Tarihi" Binding="{Binding Date}" Width="*">
                             <DataGridTextColumn.ElementStyle>
@@ -213,6 +214,9 @@
 
                     <TextBlock Text="Müşteri Tax No:" FontWeight="Bold"/>
                     <TextBox x:Name="txtTaxNo" Width="250" Margin="0,2,0,5"/>
+                    
+                    <TextBlock Text="Vergi Dairesi:" FontWeight="Bold"/>
+                    <TextBox x:Name="txtTaxOffice" Width="250" Margin="0,2,0,5"/>
 
                     <!-- Ekle Butonu -->
                     <Button Content="➕ Ekle" Width="150" Height="40" Background="#28A745" Foreground="White"

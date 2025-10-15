@@ -69,6 +69,7 @@ namespace ERPClient.MusteriModule
                         Email = dto.Email,
                         PhoneNumber = dto.PhoneNumber,
                         TaxNo = dto.TaxNo,
+                        TaxOffice = dto.TaxOffice,
                         Date = dto.Date,
                         LastUpdated = dto.LastUpdated
                     })
@@ -102,6 +103,7 @@ namespace ERPClient.MusteriModule
                 Email = txtEmail.Text,
                 PhoneNumber = txtPhoneNumber.Text,
                 TaxNo = txtTaxNo.Text,
+                TaxOffice = txtTaxOffice.Text,
                 Date = DateTime.Now
             };
 
@@ -155,6 +157,7 @@ namespace ERPClient.MusteriModule
                     Email = dto.Email,
                     PhoneNumber = dto.PhoneNumber,
                     TaxNo = dto.TaxNo,
+                    TaxOffice = dto.TaxOffice,
                     Date = dto.Date,
                     LastUpdated = dto.LastUpdated
                 };
@@ -322,6 +325,7 @@ namespace ERPClient.MusteriModule
             txtEmail.Text = "";
             txtPhoneNumber.Text = "";
             txtTaxNo.Text = "";
+            txtTaxOffice.Text = "";
         }
 
         #region Combobox Ülke Doldurma

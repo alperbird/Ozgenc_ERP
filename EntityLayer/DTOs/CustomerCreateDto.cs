@@ -22,6 +22,7 @@ namespace EntityLayer.DTOs
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string? TaxNo { get; set; }
+        public string? TaxOffice { get; set; }
         public DateTime Date { get; set; }
         public DateTime LastUpdated { get; set; }
     }
