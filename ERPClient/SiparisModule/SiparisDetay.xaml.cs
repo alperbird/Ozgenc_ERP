@@ -93,6 +93,7 @@ namespace ERPClient.SiparisModule
                 string country = txtCountry.Text.Trim();
                 string adjustment = txtAdjustmentPercentage.Text.Trim();
                 string taxoffice = txtTaxOffice.Text;
+                string taxno = txtTaxNo.Text;
 
                 if (decimal.TryParse(adjustment.Replace("%", "").Replace(",", "."), out decimal adjustmentValue))
                 {
@@ -143,7 +144,8 @@ namespace ERPClient.SiparisModule
                     $"\"{shippingFee}\" " +
                     $"\"{total}\" " +
                     $"\"{escapedJson}\" " +
-                    $"\"{taxoffice}\" ";
+                    $"\"{taxoffice}\" " +
+                    $"\"{taxno}\" ";
 
                 await Task.Run(() =>
                 {
