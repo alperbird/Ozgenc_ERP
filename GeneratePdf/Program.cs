@@ -38,7 +38,7 @@ namespace GeneratePdf
             {
                 for (int j = 0; j < bad.Length; j++)
                 {
-                    if (arr[i] == bad[j]) { arr[i] = '_'; break; }
+                    if (arr[i] == bad[j]) { arr[i] = ' '; break; }
                 }
             }
             return new string(arr);
@@ -92,7 +92,7 @@ namespace GeneratePdf
             }
 
             // örn: MSP20251010_1
-            return $"MSP{today}_{nextIndex}";
+            return $"MSP{today}{nextIndex}";
         }
 
         // ---- DTO ----
@@ -113,8 +113,8 @@ namespace GeneratePdf
                 Info("=== GeneratePdf started ===");
 
                 // 12 param bekleniyor
-                if (args.Length < 12)
-                    Fail("Eksik parametre. Beklenen=12. Sıra: CustomerName, Address, DeliveryAddress, Contact, Email, Phone, Country, Adjustment, ShippingFee, Total, JSON_ÜrünListesi, TaxOffice", 2);
+                if (args.Length < 13)
+                    Fail("Eksik parametre. Beklenen=13. Sıra: CustomerName, Address, DeliveryAddress, Contact, Email, Phone, Country, Adjustment, ShippingFee, Total, JSON_ÜrünListesi, TaxOffice, TaxNo", 2);
 
                 // 0..11
                 string customerName = args[0] ?? "";
@@ -129,6 +129,7 @@ namespace GeneratePdf
                 string total = args[9] ?? "";
                 string jsonItems = args[10] ?? "";
                 string taxoffice = args[11] ?? "";
+                string taxno = args[12] ?? "";
 
                 Info("Args alındı.");
                 Info("country='" + country + "', taxoffice='" + taxoffice + "'");
@@ -188,11 +189,13 @@ namespace GeneratePdf
                         sheet.Cells[14, 4].Value2 = deliveryAddress;  // D14
 
                         // Sağ blok
-                        sheet.Cells[11, 9].Value2 = DateTime.Now.ToString("dd/MM/yyyy"); // I11
+                        sheet.Cells[11, 9].Value2 = DateTime.Now.ToString("dd/MM/yyyy");   // I11
+                        sheet.Cells[13, 9].NumberFormat = "@";                            // I13
+                        sheet.Cells[13, 9].Value2 = taxno;                                // I13 Vergi No
                         sheet.Cells[14, 9].NumberFormat = "@";                            // I14
                         sheet.Cells[14, 9].Value2 = taxoffice;                            // I14 Vergi Dairesi
                         sheet.Cells[15, 9].Value2 = email;                                // I15
-                        sheet.Cells[16, 9].Value2 = phone;                                // I16 (şablonda varsa)
+                        sheet.Cells[12, 9].Value2 = phone;                                // I12 (şablonda varsa)
 
                         // Kalemler
                         decimal toplamTutar = 0m;
