@@ -45,7 +45,7 @@
                 <Border Grid.Column="0" Margin="10" Padding="5" Background="White" BorderBrush="#CCC" BorderThickness="1" CornerRadius="15" Width="300">
                     <DockPanel>
                         <!-- Arama Metin Kutusu -->
-                        <TextBox Name="txtSearch" Width="250" Height="35" FontSize="14"
+                        <TextBox x:Name="txtSearch" Width="250" Height="35" FontSize="14"
                             BorderThickness="0" Background="Transparent"
                             TextChanged="txtSearch_TextChanged"
                             KeyDown="txtSearch_KeyDown"/>
@@ -53,11 +53,14 @@
                         <!-- Arama Butonu -->
                         <Button Width="40" Height="35" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="btnSearch_Click">
                             <Image Source="/Assets/magnifying.png" Width="30" Height="30"/>
+
                         </Button>
+
                     </DockPanel>
+
                 </Border>
-                <ContentControl Name="MainContent" Grid.Row="1" Grid.Column="0"/>
-                <DataGrid Name="dgYedekParca" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Visibility="Visible"
+                <ContentControl x:Name="MainContent" Grid.Row="1" Grid.Column="0"/>
+                <DataGrid x:Name="dgYedekParca" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Visibility="Visible"
                           Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Single" SelectionUnit="FullRow"
                           BorderBrush="#003366" BorderThickness="1" RowHeight="63" SelectionChanged="dgYedekParca_SelectionChanged">
 
@@ -65,7 +68,7 @@
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                         <DataGridTextColumn Header="Makineler" Binding="{Binding MakineAdlari}" Width="150">
                             <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
+                                <Style TargetType="{x:Type TextBlock}">
                                     <Setter Property="TextWrapping" Value="Wrap"/>
                                     <Setter Property="VerticalAlignment" Value="Top"/>
                                     <Setter Property="FontSize" Value="10"/>
@@ -88,7 +91,7 @@
                         <DataGridTextColumn Header="Fiyat (EUR)" Binding="{Binding FiyatEUR}" Width="100"/>
                         <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="150">
                             <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
+                                <Style TargetType="{x:Type TextBlock}">
                                     <Setter Property="TextWrapping" Value="Wrap"/>
                                     <Setter Property="VerticalAlignment" Value="Top"/>
                                     <Setter Property="FontSize" Value="10"/>
@@ -121,9 +124,9 @@
                     </DataGrid.Columns>
                 </DataGrid>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                    <Button Name="btnPrevious" Content="◀ Önceki" Click="btnPrevious_Click" Padding="5,2" Margin="5,0"/>
-                    <TextBlock Name="txtPageInfo" Text="Sayfa 1" VerticalAlignment="Center" FontWeight="Bold"/>
-                    <Button Name="btnNext" Content="Sonraki ▶" Click="btnNext_Click" Padding="5,2" Margin="5,0"/>
+                    <Button x:Name="btnPrevious" Content="◀ Önceki" Click="btnPrevious_Click" Padding="5,2" Margin="5,0"/>
+                    <TextBlock x:Name="txtPageInfo" Text="Sayfa 1" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <Button x:Name="btnNext" Content="Sonraki ▶" Click="btnNext_Click" Padding="5,2" Margin="5,0"/>
                 </StackPanel>
 
             </StackPanel>
@@ -153,7 +156,7 @@
                     <!-- Parça Adı -->
                     <TextBlock Text="Parça Adı:" FontWeight="Bold"/>
                     <TextBox Name="txtParcaAdi" Width="250" Margin="0,5,0,10" AcceptsReturn="True"/>
-                    
+
                     <!--Parça Adı (İngilizce)-->
                     <TextBlock Text="Parça Adı (İngilizce):" FontWeight="Bold"/>
                     <TextBox Name="txtEnglishProduct" Width="250" Margin="0,5,0,10" AcceptsReturn="True"/>
@@ -168,6 +171,7 @@
 
                     <TextBlock Text="Parça Açıklaması:" FontWeight="Bold"/>
                     <TextBox Name="txtAciklama" Width="250" Margin="0,5,0,10" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    <!--<Button Width="150" Height="30" Click="btnExcel_Click" Cursor="Hand" Content="Buna BASMA" Background="#FFC62929"/>-->
 
                     <TextBlock x:Name="txtFileName" Text="Dosya seçilmedi" FontWeight="Bold" TextAlignment="Center" Margin="5"/>
 
@@ -185,6 +189,8 @@
                     <!-- Ekle Butonu -->
                     <Button Content="➕ Ekle" Width="150" Height="40" Background="#28A745" Foreground="White"
                 BorderThickness="0" Cursor="Hand" Margin="10,-15,0,10" Click="btnAdd_Click"/>
+
+                    <!--<BU BUTON SADECE TABLOYU EXCEL FORMATINA ÇEVİRMEK İÇİN VARDIR.-->
                 </StackPanel>
             </Border>
         </Grid>
