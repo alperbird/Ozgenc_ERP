@@ -186,7 +186,7 @@ namespace GeneratePdf
                         sheet.Cells[11, 4].Value2 = customerName;     // D11
                         sheet.Cells[12, 4].Value2 = contact;          // D12
                         sheet.Cells[13, 4].Value2 = address;          // D13
-                        sheet.Cells[14, 4].Value2 = deliveryAddress;  // D14
+                        sheet.Cells[15, 4].Value2 = deliveryAddress;  // D15
 
                         // Sağ blok
                         sheet.Cells[11, 9].Value2 = DateTime.Now.ToString("dd/MM/yyyy");   // I11

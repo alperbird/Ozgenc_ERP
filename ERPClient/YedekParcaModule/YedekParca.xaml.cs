@@ -13,6 +13,7 @@ using EntityLayer.DTOs;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using Path = System.IO.Path;
+using OfficeOpenXml;
 using Microsoft.Win32;
 using User = EntityLayer.Entities.User;
 
@@ -503,8 +504,80 @@ namespace ERPClient
             }
         }
         #endregion
+
+
+/*        private void btnExcel_Click(object sender, RoutedEventArgs e)
+        {
+            // EPPlus lisans
+            ExcelPackage.License.SetNonCommercialOrganization("abc.");
+
+            if (allProducts == null || allProducts.Count == 0)
+            {
+                MessageBox.Show("Excel'e aktarılacak veri bulunamadı.", "Bilgi",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            //snapshot alıyoruz
+            var products = allProducts.ToList();
+
+            var sfd = new SaveFileDialog
+            {
+                Filter = "Excel Dosyası|*.xlsx",
+                FileName = $"YedekParcaListesi_{DateTime.Now:yyyyMMddHHmmss}.xlsx"
+            };
+
+            if (sfd.ShowDialog() != true)
+                return;
+
+            try
+            {
+                using (var package = new ExcelPackage())
+                {
+                    var sheet = package.Workbook.Worksheets.Add("YedekParcalar");
+
+                    // Başlıklar
+                    sheet.Cells[2, 1].Value = "ID";         // A2
+                    sheet.Cells[2, 2].Value = "MAKİNE";     // B2
+                    sheet.Cells[2, 3].Value = "SINIF";      // C2
+                    sheet.Cells[2, 4].Value = "PARÇA ADI";  // D2
+                    sheet.Cells[2, 5].Value = "FİYAT (TL)"; // E2
+                    sheet.Cells[2, 6].Value = "FİYAT (EUR)";// F2
+                    sheet.Cells[2, 7].Value = "NOTLAR";     // G2 (AÇIKLAMA)
+
+                    var row = 3; // Veriler
+
+                    foreach (var p in products)
+                    {
+                        sheet.Cells[row, 1].Value = p.Id;
+                        sheet.Cells[row, 2].Value = p.MakineAdlari; 
+                        sheet.Cells[row, 3].Value = p.Sinif;
+                        sheet.Cells[row, 4].Value = p.ParcaAdi;
+                        sheet.Cells[row, 5].Value = p.FiyatTL;
+                        sheet.Cells[row, 6].Value = p.FiyatEUR;
+                        sheet.Cells[row, 7].Value = p.Aciklama;
+                        row++;
+                    }
+
+                    // Kolon genişliklerini otomatik ayarla
+                    if (sheet.Dimension != null)
+                        sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                    var bytes = package.GetAsByteArray();
+                    File.WriteAllBytes(sfd.FileName, bytes);
+                }
+
+                MessageBox.Show("Excel dosyası başarıyla oluşturuldu.", "Başarılı",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Excel'e aktarılırken hata oluştu:\n" + ex.Message,
+                    "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+*/
     }
 
 
 }
-
